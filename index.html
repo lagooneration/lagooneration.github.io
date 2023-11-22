@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Auditory</title>
+    <link rel="stylesheet" href="./style.css">
+    
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "../build/three.module.js",
+          "three/addons/": "./jsm/"
+        }
+      }
+    </script>
+    <script type="module" src="./script.js"></script>
+    <canvas class="webgl"></canvas>
+    <script src="https://unpkg.com/split-type"></script>  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.27/bundled/lenis.min.js"></script>  -->
+</head>
+<body>
+
+    <!-- text revel -->
+    
+    
+
+
+
+    
+    <!--First Page  -->
+    <section class="section" id="section1">
+      
+
+      <script>
+        // first animation
+      document.addEventListener('DOMContentLoaded', () => {
+        // Disable scroll during the first 5 seconds
+        disableScrollForSeconds(3000);
+
+        // Add your code to load and play the animation
+        // ...
+
+        
+      });
+
+      function disableScrollForSeconds(milliseconds) {
+        // Disable scroll by adding a class to the body
+        document.body.style.overflow = 'hidden'; 
+        document.body.classList.remove('container1');
+        // You can also add a class to the body and use CSS to handle overflow
+        // document.body.classList.add('disable-scroll');
+
+        // Re-enable scroll after the specified time
+        setTimeout(() => {
+            enableScroll();
+        }, milliseconds);
+      }
+
+      function enableScroll() {
+        // Enable scroll by removing the class or resetting overflow
+        document.body.style.overflow = '';
+        // If using a class, you can remove it
+        // document.body.classList.remove('disable-scroll');
+      }
+
+      </script>
+      
+      <div id="magic">
+      <div class="playground">
+          
+      </div>
+      </div>
+
+
+      <div class = "containerText">
+        <header>
+          <h1 id="my-text">Real-Time EEG</h1>
+          
+        </header>
+        </div>
+        
+        <script>
+          // Enable scroll after 5 seconds
+        setTimeout(() => {
+            enableScroll();
+            const myText = new SplitType("#my-text")
+            gsap.to('.char',{
+            y: 0,
+            stagger: 0.05,
+            delay: 2,
+            duration: .1
+          })
+
+
+        }, 5000);
+        </script>
+        
+        <div class="loading-bar"></div>
+        <!-- <h2 id="my-text">detection</h2> -->
+        
+      
+        <div class = "container1">
+          <button class="button">Get Started</button>
+          
+             
+        </div> 
+
+        
+
+    </section>
+         
+    <!--Second Page  -->
+
+    <section class="section" id="section2">
+
+      <div id="r1">
+        <p class="reveal-type" data-bg-color="black" data-fg-color="#b6b600">Move your cursor to focus on your choice of sound.</p>
+      </div>
+      <div class="AudioContainer">
+        <button class="mainbutton">Play Audio</button>
+      </div> 
+      
+
+      <div id="secondPage">
+        <h1 id ="sec2">Speaker A</h1>
+        
+        
+        <h1 id ="sec3">Speaker B</h1>
+      </div>
+
+      
+
+      <script>
+        const myText2 = new SplitType("#sec2")
+        gsap.to('.char',{
+          y: 0,
+          stagger: 0.05,
+          delay: 0.2,
+          duration: .1
+        })
+
+        
+        const myText3 = new SplitType("#sec3")
+        gsap.to('.char',{
+          y: 0,
+          stagger: 0.05,
+          delay: 0.2,
+          duration: .1
+        })
+
+      </script>
+      
+      
+    </section>
+
+    <!--Third Page  -->
+ 
+    <section class="section" id="section3">
+      
+
+      
+
+      <div id="r2">
+        <p class="reveal-type" data-bg-color="black" data-fg-color="#b6b600">Move your cursor to hover your attention on individual instruments.</p>
+      </div>
+
+      <div class="muzieknootjes">
+        <div class="noot-1">
+        &#9835; &#9833;
+      </div>
+      <div class="noot-2">
+        &#9833;
+      </div>
+      <div class="noot-3">
+        &#9839; &#9834;
+      </div>
+      <div class="noot-4">
+        &#9834;
+      </div>
+      </div>
+
+      <div id="aad">
+        <!-- <h2 id ="sec4">EEG: Auditory Attention Detection</h2> -->
+        
+        
+        
+      </div>
+
+      <div class="AudioContainer2">
+        <button class="audiobutton">Play Audio</button>
+      </div> 
+      
+      
+      
+
+
+
+
+
+
+    </section>
+
+    <!--Fourth Page  -->
+
+    <section class="section" id="section4">
+
+      <div id="r3">
+        <div id="fourthPage">
+          <h2 id="fourtht1">neuro-steered auditory</h1>
+          
+          
+          <h2 id="fourtht2">detection headphones</h1>
+        </div>
+      
+      </div>
+      <!--       
+      1: A conceptual overview of a neuro-steered hearing device when there are two competing
+      speakers.  -->
+      
+      
+    </section>
+
+    <!--Fifth Page  -->
+
+
+    <section class="section" id="section5">
+
+      <div class="slide-container">
+        <span class="slider-span" id="slider-span1"></span>
+        <span class="slider-span" id="slider-span2"></span>
+        <span class="slider-span" id="slider-span3"></span>
+
+        <div class="image-slider">
+            <div class="slides-div" id="slide-1">
+                <img src="img/NC.jpg" alt="" class="img" id="img1">
+                <a href="#slider-span1" class="imgbutton" id="button-1"></a>
+            </div>
+            <div class="slides-div" id="slide-2">
+                <img src="img/kuleuven.jpg" alt="" class="img" id="img2">
+                <a href="#slider-span2" class="imgbutton" id="button-2"></a>
+            </div>
+            <div class="slides-div" id="slide-3">
+                <img src="img/iit.jpg" alt="" class="img" id="img3">
+                <a href="#slider-span3" class="imgbutton" id="button-3"></a>
+            </div>
+            <div class="slides-div" id="slide-4">
+              <img src="img/Selco.jpg" alt="" class="img" id="img4">
+              <a href="#slider-span4" class="imgbutton" id="button-4"></a>
+          </div>
+        </div>
+    </div>
+
+    <div>
+      <h1 >Journey</h1>
+    </div>
+      
+    </section>
+
+
+    <script>
+      gsap.registerPlugin(ScrollTrigger)
+
+      const splitTypes = document.querySelectorAll('.reveal-type')
+
+      splitTypes.forEach((char,i) => {
+
+          const bg = char.dataset.bgColor
+          const fg = char.dataset.fgColor
+
+          const text = new SplitType(char, { types: 'chars'})
+
+          gsap.fromTo(text.chars, 
+              {
+                  color: bg,
+              },
+            {
+                  color: fg,
+                  duration: 0.3,
+                  stagger: 0.02,
+                  scrollTrigger: {
+                      trigger: char,
+                      start: 'top 80%',
+                      end: 'top 20%',
+                      scrub: true,
+                      markers: false,
+                      toggleActions: 'play play reverse reverse'
+                  }
+            })
+      })
+    </script>
+
+    
+
+    
+</body>
+</html>
