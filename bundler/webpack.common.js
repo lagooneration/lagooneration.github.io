@@ -68,6 +68,20 @@ module.exports = {
                 }
             },
 
+            // Audio
+            {
+                test: /\.(mp3|wav|ogg)$/,
+                use: [
+                  {
+                    loader: 'file-loader',
+                    options: {
+                      name: '[name].[ext]',
+                      outputPath: 'audio/',
+                    },
+                  },
+                ],
+              },
+
             // Fonts
             {
                 test: /\.(ttf|eot|woff|woff2)$/,

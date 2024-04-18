@@ -360,7 +360,7 @@ nav.header .a:hover ~ .cursor {
 }
 
 .hero p {
-  font-size: 16px;
+  font-size: 26px;
   letter-spacing: 0px;
   font-family: sans-serif;
   width: 780px;
@@ -375,7 +375,15 @@ nav.header .a:hover ~ .cursor {
 
 .hero p.ended {
   opacity: 1;
+  
 }
+
+
+.text-container {
+  text-align: left;
+}
+
+
 
 .neurophones {
   pointer-events: all;
@@ -449,7 +457,7 @@ nav.header .a:hover ~ .cursor {
 }
 
 .neurophones-container p {
-  font-size: 16px;
+  font-size: 24px;
   font-family: sans-serif;
   line-height: 28px;
   width: 30%;
@@ -875,7 +883,7 @@ textarea{
     margin: 10px 0;
     font-weight: 100;
     letter-spacing: 0.2em;
-    font-size: 13vw;
+    font-size: 10vw;
   }
 
   .hero p {

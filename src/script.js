@@ -17,10 +17,79 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 
+import { gsap } from 'gsap'; 
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { SplitText } from 'gsap/SplitText';
+import { TextPlugin} from 'gsap/TextPlugin';
+
+gsap.registerPlugin(ScrollTrigger, SplitText, TextPlugin) 
 
 
 
 
+////////////////////////////////////////////////////////////////////////
+//// GSAP ANIMATION
+
+/*
+
+const textElements = document.querySelectorAll('.text');
+
+gsap.set(textElements, { opacity: 0, y: 20 });
+
+gsap.timeline({
+  scrollTrigger: {
+    trigger: '.text-container',
+    start: 'top center'
+  }
+})
+
+.to(textElements, {
+  opacity: 1,
+  y: 0,
+  duration: 1,
+  stagger: 0.3,
+  ease: 'power3.out'
+})
+
+*/
+
+
+
+var tl = gsap.timeline(),
+  mySplitText = new SplitText("#content", { type: "words,chars" }),
+  chars = mySplitText.chars; //an array of all the divs that wrap each character
+
+gsap.set("#content", { perspective: 400 });
+
+console.log(chars);
+ScrollTrigger.create({
+  trigger: '.neurophones-container',
+  start: 'top center',
+  onEnter: () => {
+    tl.from(chars, {
+      duration: 1.1,
+      opacity: 0,
+      scale: 0,
+      y: 80,
+      rotationX: 180,
+      transformOrigin: "0% 50% -50",
+      ease: "back",
+      stagger: 0.01
+    });
+},
+  onLeaveBack: () => {
+    gsap.to(mySplitText, {
+      opacity: 0,
+      duration: 1,
+      ease: 'power3.out'
+    });
+  }
+});
+
+
+
+////////////////////////////////////////////////////////////////////////
+//// LOADING MANAGER
 
 const ftsLoader = document.querySelector('.loader-roll');
 const looadingCover = document.getElementById('loading-text-intro');
@@ -57,7 +126,8 @@ loadingManager.onLoad = function () {
 
 
 ////////////////////////////////////////////////////////////////////////
-//// draco loader
+//// DRACO LOADER
+
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('/draco/');
 dracoLoader.setDecoderConfig({ type: 'js' });
@@ -75,7 +145,8 @@ let height = container.clientHeight;
 
 
 ////////////////////////////////////////////////////////////////////////
-//// scene
+//// RENDERER AND SCENE 
+
 const scene = new Scene();
 
 // renderer
@@ -104,7 +175,8 @@ containerFooter.appendChild(renderer3.domElement);
 
 
 ////////////////////////////////////////////////////////////////////////
-//// camera config
+//// CMAERA
+
 const cameraGroup = new Group();
 scene.add(cameraGroup);
 
@@ -136,6 +208,7 @@ scene.add(camera3);
 
 ////////////////////////////////////////////////////////////////////////
 //// resize event listener
+
 window.addEventListener('resize', () => {
   camera.aspect = container.clientWidth / container.clientHeight;
   camera.updateProjectionMatrix();
@@ -161,16 +234,19 @@ window.addEventListener('resize', () => {
 
 
 ////////////////////////////////////////////////////////////////////////
-//// lights
+//// LIGHTS
+
 const sunLight = new DirectionalLight(0xabadaf, 0.05);
 sunLight.position.set(-100, 0, -100);
 scene.add(sunLight);
 
-const fillLight = new PointLight(0xc3c3c3, 2, 3.2, 3);
+const fillLight = new PointLight(0xff00f0, 2, 3.2, 3);
 fillLight.position.set(30, 3, 1.8);
 scene.add(fillLight);
 
-
+const fillLight2 = new PointLight(0x0f00ff, 2.7, 4, 3)
+fillLight2.position.set(30,3,2.8)
+scene.add(fillLight2)
 
 
 
@@ -181,7 +257,7 @@ loader.load('models/gltf/brain.gltf', function (gltf) {
   gltf.scene.traverse((obj) => {
     if (obj.isMesh) {
       oldMaterial = obj.material;
-      obj.material = new THREE.MeshToonMaterial();
+      obj.material = new MeshPhongMaterial();
     }
 
   });
@@ -198,9 +274,121 @@ function clearScene() {
 }
 
 
+//////////////////////////////////////////////////
+//// AUDIO loaders
+
+let audioLoader = new THREE.AudioLoader();
+let listener = new THREE.AudioListener();
+camera.add( listener );
+
+// SPEACH and MUSIC
+const soundS = new THREE.Audio( listener );
+const soundM = new THREE.Audio( listener );
+
+// EVENT LISTERNERS
+let checkPlay = document.getElementById('start');
+let checkStop = document.getElementById('stop');
+
+let checkbox = document.querySelector('.containerR .radio-tile-group .input-container input[type="radio"]');
+let checkbox2 = document.querySelector('.play-btn .containerP input[type="checkbox"]');
+
+var musicR = document.getElementById('bike');
+var speechR = document.getElementById('walk');
+
+
+audioLoader.load('audio/s2.mp3', function (audioBuffer) {
+        soundM.setBuffer(audioBuffer);
+        soundM.setVolume(1.0); // Adjust volume as needed
+    },
+
+    // onProgress callback function (optional)
+    function (xhr) {
+        console.log((xhr.loaded / xhr.total * 100) + '% music loaded');
+    },
+    // onError callback function (optional)
+    function (err) {
+        console.log('An error happened:', err);
+    }
+);
+
+
+
+
+audioLoader.load('audio/s1.mp3', function (audioBuffer) {
+        soundS.setBuffer(audioBuffer);
+        soundS.setVolume(0.8); // Adjust volume as needed
+    },
+
+    // onProgress callback function (optional)
+    function (xhr) {
+        console.log((xhr.loaded / xhr.total * 100) + '% speech loaded');
+    },
+    // onError callback function (optional)
+    function (err) {
+        console.log('An error happened:', err);
+    },
+
+);
+
+
+var currentAudio = soundS;
+
+
+// RADIO BUTTONS FOR SELECTING sound
+document.getElementById('musicbtn').addEventListener('click', () => {
+    
+        soundS.isPlaying && soundS.stop();
+	    console.log('music playing')
+        currentAudio = soundM;
+        currentAudio.play();
+        checkbox2.checked = false;
+    });
+    
+
+document.getElementById('speechbtn').addEventListener('click', () => {
+	
+		soundM.isPlaying && soundM.stop();
+	    console.log('speech playing')
+		currentAudio = soundS;
+        currentAudio.play();
+        checkbox2.checked = false;
+});
+
+// PLAY BUTTON 
+
+checkPlay.addEventListener('click', function() {
+    if (currentAudio.isPlaying) {
+        // Play the current audio
+        currentAudio.stop();
+        console.log('function checking')
+        currentAudio.currentTime = 0;
+
+
+    } else {
+        // Stop the current audio
+        currentAudio.play();
+        
+        // checkbox2.checked = false;
+    }
+});
+
+
+// Add an event listener to reset the button when the audio ends
+        currentAudio.onEnded = function() {
+            checkbox2.checked = true;
+            console.log('?????????')
+};
+
+soundS.onEnded = function() {
+            checkbox2.checked = true;
+            console.log('!!!!!!!!!!')          
+};
+
+
 
 //////////////////////////////////////////////////
-//// intro animation
+//// INTRO ANIMATION
+
 function introAnimation() {
   new TWEEN.Tween(camera.position.set(0, 4, 2.7))
     .to({ x: 0, y: 2.4, z: 8.8 }, 3500)
@@ -232,7 +420,11 @@ document.getElementById('question').addEventListener('click', () => {
   speech.style.visibility = 'hidden'
   music.style.visibility = 'hidden'    
 
+  currentAudio.isPlaying && currentAudio.stop();
+  checkbox2.checked = true;
+
   fillLight.color.set(0xff00f0)
+  fillLight2.color.set(0x0f00ff)
   
   animateCamera({ x: 1.9, y: 2.7, z: 2.7 },{ y: 1.1 });
   // animateCamera({ x: 1.9, y: 2.7, z: 2.7 }, { y: 1.1 });
@@ -248,7 +440,14 @@ document.getElementById('cochlearSound').addEventListener('click', () => {
   speech.style.visibility = 'visible'
   music.style.visibility = 'visible'  
 
-  fillLight.color.set(0x3c3c3c)
+  document.getElementById('musicbtn').addEventListener('click', () => {
+    fillLight.color.set(0x3c3c3c)
+            fillLight2.color.set(0x3c3c3c)
+    })
+    document.getElementById('speechbtn').addEventListener('click', () => {
+    fillLight.color.set(0xff00f0)
+            fillLight2.color.set(0x0f00ff)
+    })
 
   animateCamera({ x: -1.7, y: 2.2, z: 12.6 },{ y: -0.1 });
   // animateCamera({ x: -0.9, y: 3.1, z: 2.6 }, { y: -0.1 });
@@ -264,7 +463,11 @@ document.getElementById('neuroSound').addEventListener('click', () => {
   speech.style.visibility = 'visible'
   music.style.visibility = 'visible'
 
+  currentAudio.isPlaying && currentAudio.stop();
+  checkbox2.checked = true;
+
   fillLight.color.set(0xff00f0)
+  fillLight2.color.set(0x0f00ff)
   
   animateCamera({ x: 9.0, y: 3.3, z: 0},{ y: 1.6});
   // animateCamera({ x: -0.4, y: 2.7, z: 1.9 }, { y: -0.6 });
@@ -321,9 +524,17 @@ function renderLoop() {
   fillLight.position.y -=
     (parallaxY * 9 + fillLight.position.y - 2) * deltaTime;
 
+  fillLight2.position.y -= 
+  ( (-parallaxY) *9 + fillLight2.position.y -2) * deltaTime;
+  
+
   const parallaxX = cursor.x;
   fillLight.position.x +=
     (parallaxX * 8 - fillLight.position.x) * 2 * deltaTime;
+
+  fillLight2.position.x += 
+  ((-parallaxX) *8 - fillLight2.position.x) * 2 * deltaTime;
+
 
   cameraGroup.position.z -=
     (parallaxY / 3 + cameraGroup.position.z) * 2 * deltaTime;
