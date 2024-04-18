@@ -175,7 +175,8 @@ scene.add(fillLight);
 
 
 ////////////////////////////////////////////////////////////////////////
-//// load model
+//// GLTF MODELS 
+
 loader.load('models/gltf/brain.gltf', function (gltf) {
   gltf.scene.traverse((obj) => {
     if (obj.isMesh) {
@@ -196,7 +197,10 @@ function clearScene() {
   renderer.renderLists.dispose();
 }
 
-// intro animation
+
+
+//////////////////////////////////////////////////
+//// intro animation
 function introAnimation() {
   new TWEEN.Tween(camera.position.set(0, 4, 2.7))
     .to({ x: 0, y: 2.4, z: 8.8 }, 3500)
@@ -209,13 +213,24 @@ function introAnimation() {
     });
 }
 
-// click event listeners
+
+//////////////////////////////////////////////////
+//// CLICK LISTENERS
+let speech = document.getElementById('speechbtn')
+let music = document.getElementById('musicbtn')
+
+
+//////////////////////////////////////////////////
+//// click event listeners
 document.getElementById('question').addEventListener('click', () => {
   document.getElementById('question').classList.add('active');
   document.getElementById('neuroSound').classList.remove('active');
   document.getElementById('cochlearSound').classList.remove('active');
   document.getElementById('content').innerHTML =
     'How does it feel like hearing from a cochlear implant?';
+
+  speech.style.visibility = 'hidden'
+  music.style.visibility = 'hidden'    
 
   fillLight.color.set(0xff00f0)
   
@@ -230,6 +245,9 @@ document.getElementById('cochlearSound').addEventListener('click', () => {
   document.getElementById('content').innerHTML =
     'How does it feel like hearing from a cochlear implant?';
 
+  speech.style.visibility = 'visible'
+  music.style.visibility = 'visible'  
+
   fillLight.color.set(0x3c3c3c)
 
   animateCamera({ x: -1.7, y: 2.2, z: 12.6 },{ y: -0.1 });
@@ -242,6 +260,9 @@ document.getElementById('neuroSound').addEventListener('click', () => {
   document.getElementById('cochlearSound').classList.remove('active');
   document.getElementById('content').innerHTML =
     'Headphones';
+
+  speech.style.visibility = 'visible'
+  music.style.visibility = 'visible'
 
   fillLight.color.set(0xff00f0)
   
