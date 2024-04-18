@@ -24,7 +24,11 @@ import { TextPlugin} from 'gsap/TextPlugin';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, TextPlugin) 
 
+import Stats from 'stats.js';
 
+const stats = new Stats()
+stats.showPanel(0) // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild(stats.dom)
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -67,7 +71,7 @@ ScrollTrigger.create({
   start: 'top center',
   onEnter: () => {
     tl.from(chars, {
-      duration: 1.1,
+      duration: 2,
       opacity: 0,
       scale: 0,
       y: 80,
@@ -158,6 +162,7 @@ const renderer = new WebGLRenderer({
 renderer.autoClear = true;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 renderer.setSize(width, height);
+renderer.gammaFactor = 2.2;
 renderer.outputEncoding = sRGBEncoding;
 container.appendChild(renderer.domElement);
 
@@ -190,7 +195,7 @@ const camera2 = new PerspectiveCamera(
   1,
   100
 );
-camera2.position.set(1.9, 2.7, 2.7);
+camera2.position.set(4.9, 1.7, 5.7);
 camera2.rotation.set(0, 1.1, 0);
 scene.add(camera2);
 
@@ -236,9 +241,12 @@ window.addEventListener('resize', () => {
 ////////////////////////////////////////////////////////////////////////
 //// LIGHTS
 
-const sunLight = new DirectionalLight(0xabadaf, 0.05);
-sunLight.position.set(-100, 0, -100);
-scene.add(sunLight);
+// const sunLight = new DirectionalLight(0xabadaf, 0.05);
+// sunLight.position.set(-100, 0, -100);
+// scene.add(sunLight);
+
+const amb = new THREE.AmbientLight(0xabadaf, 0.05);
+scene.add(amb);
 
 const fillLight = new PointLight(0xff00f0, 2, 3.2, 3);
 fillLight.position.set(30, 3, 1.8);
@@ -273,6 +281,20 @@ function clearScene() {
   renderer.renderLists.dispose();
 }
 
+loader.load('models/gltf/imp.gltf', function (gltf) {
+  gltf.scene.traverse((obj) => {
+    if (obj.isMesh) {
+      oldMaterial = obj.material;
+      obj.material = new THREE.MeshNormalMaterial();
+    }
+
+  });
+  scene.add(gltf.scene);
+  gltf.scene.scale.set(0.03,0.03,0.03)
+  gltf.scene.position.set(0.6, 1.13, 2.2);
+  gltf.scene.rotation.set(0, Math.PI/32, 0);
+  clearScene();
+});
 
 //////////////////////////////////////////////////
 //// AUDIO loaders
@@ -506,7 +528,12 @@ let previousTime = 0;
 
 ////////////////////////////////////////////////////////////////////////
 //// render loop function
-function renderLoop() {
+
+ function renderLoop() {
+
+
+  stats.begin();    
+
   TWEEN.update();
 
   if (secondContainer) {
@@ -542,7 +569,14 @@ function renderLoop() {
     (parallaxX / 3 - cameraGroup.position.x) * 2 * deltaTime;
 
   requestAnimationFrame(renderLoop);
+  stats.end();
 }
+
+// }
+
+// tick()
+
+
 
 renderLoop();
 
