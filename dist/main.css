@@ -7,7 +7,6 @@ body {
   background: #000000;
   scroll-behavior: smooth;
   overflow: hidden;
-  cursor: none;
 }
 
 .loader-roll {
@@ -165,17 +164,13 @@ span {
   z-index: 2;
 }
 
-.cursor:has(.a:hover){
-    transform: translate(-50%, -50%) scale(4); opacity: 0.3;
-} 
-
 .a {
   display: inline-block;
   color: #fff;
   padding: 1rem;
   margin-right: 4rem;
   letter-spacing: 0.4em;
-  font-size: 1.1em;
+  font-size: 1em;
   transition: all 0.3s ease, color 0.3s ease;
 }
 
@@ -213,7 +208,7 @@ nav.header .a:hover ~ .cursor {
   background: radial-gradient(circle at center center, #171717 0, #050505 58%);
 }
 
-#canvas-container-neurophones {
+#canvas-container-goddesses {
   pointer-events: none;
   position: absolute;
   top: 0;
@@ -229,7 +224,7 @@ nav.header .a:hover ~ .cursor {
   overflow: hidden;
 }
 
-#canvas-container-plugin {
+#canvas-container-euphre {
   pointer-events: none;
   position: absolute;
   top: 0;
@@ -278,7 +273,6 @@ nav.header .a:hover ~ .cursor {
   transition: all 1.9s ease-in-out;
   padding: 0;
   margin: 0;
-  
 }
 
 .header.ended {
@@ -308,31 +302,26 @@ nav.header .a:hover ~ .cursor {
   background: #fff;
 }
 
-
-
 .hero {
-    font-family: 'Nanum Myeongjo', serif;
-    color: #fff;
-    visibility: visible;
-    left: 50%;
-    transform: translate3d(-50%,0,0);
-    pointer-events: none;
-    font-size: 2em;
-    letter-spacing: .5em;
-    text-align: center;
-    width: 100%;
-    display: flex;
-    height: 100vh;
-    align-content: center;
-    justify-content: flex-end;
-    align-items: center;
-    flex-direction: column;
-    user-select: none;
-    position: relative;
-    z-index: 1;
-    background: linear-gradient(0deg, rgba(5,5,5,1) 20%, rgba(5,5,5,0) 50%);
-
-  }
+  pointer-events: none;
+  font-size: 2em;
+  letter-spacing: 0.5em;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  height: 110vh;
+  align-content: center;
+  justify-content: flex-end;
+  align-items: center;
+  flex-direction: column;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 0) 50%);
+}
 
 .hero h2 {
   font-size: 1em;
@@ -344,15 +333,15 @@ nav.header .a:hover ~ .cursor {
 }
 
 .hero h1 {
-  
-  
+  margin: 10px 0;
+  font-weight: 100;
   letter-spacing: 0.4em;
 }
 
 .hero h1:after {
   content: '';
   position: absolute;
-  margin-top: 125px;
+  margin-top: 105px;
   left: calc(50% - 25px);
   width: 50px;
   height: 3px;
@@ -363,10 +352,10 @@ nav.header .a:hover ~ .cursor {
   font-size: 16px;
   letter-spacing: 0px;
   font-family: sans-serif;
-  width: 780px;
+  width: 700px;
   line-height: 28px;
   font-weight: lighter;
-  margin-top: 70px;
+  margin-top: 50px;
   margin-bottom: 100px;
   color: #c9c9c996;
   opacity: 0;
@@ -377,7 +366,7 @@ nav.header .a:hover ~ .cursor {
   opacity: 1;
 }
 
-.neurophones {
+.goddesses {
   pointer-events: all;
   font-size: 2em;
   width: 100%;
@@ -390,7 +379,7 @@ nav.header .a:hover ~ .cursor {
   overflow: hidden;
 }
 
-.neurophones-container {
+.goddesses-container {
   pointer-events: all;
   width: 100%;
   display: flex;
@@ -407,7 +396,7 @@ nav.header .a:hover ~ .cursor {
   );
 }
 
-.neurophones-container ul {
+.goddesses-container ul {
   list-style: none;
   display: inline-flex;
   padding: 0px;
@@ -417,7 +406,7 @@ nav.header .a:hover ~ .cursor {
   z-index: 2;
 }
 
-.neurophones-container ul > li.active:after {
+.goddesses-container ul > li.active:after {
   content: '';
   top: 20px;
   width: 50px;
@@ -428,27 +417,27 @@ nav.header .a:hover ~ .cursor {
   display: block;
 }
 
-.neurophones-container ul > li {
+.goddesses-container ul > li {
   padding-right: 20px;
   transition: all 0.8s ease-out;
 }
 
-.neurophones-container ul > li:hover {
+.goddesses-container ul > li:hover {
   color: whitesmoke;
   pointer-events: all;
   cursor: pointer;
 }
 
-.neurophones-container ul > li:hover ~ nav.header.ended.cursor {
+.goddesses-container ul > li:hover ~ nav.header.ended.cursor {
   transform: translate(-50%, -50%) scale(5);
   opacity: 1;
 }
 
-.neurophones-container ul > li.active {
+.goddesses-container ul > li.active {
   color: whitesmoke;
 }
 
-.neurophones-container p {
+.goddesses-container p {
   font-size: 16px;
   font-family: sans-serif;
   line-height: 28px;
@@ -458,7 +447,7 @@ nav.header .a:hover ~ .cursor {
   height: 200px;
 }
 
-.plugin {
+.making {
   pointer-events: all;
   width: 100%;
   height: 100vh;
@@ -473,13 +462,13 @@ nav.header .a:hover ~ .cursor {
   overflow: hidden;
 }
 
-.plugin-container {
+.making-container {
   width: 50%;
   margin-left: 52%;
   z-index: 2;
 }
 
-.plugin-container h1 {
+.making-container h1 {
   font-size: 5vw;
   font-weight: 500;
   letter-spacing: 0.7px;
@@ -488,7 +477,7 @@ nav.header .a:hover ~ .cursor {
   padding: 0;
 }
 
-.plugin-container hr {
+.making-container hr {
   width: 10%;
   height: 3px;
   margin: 0;
@@ -496,7 +485,7 @@ nav.header .a:hover ~ .cursor {
   border: none;
 }
 
-.plugin-container p {
+.making-container p {
   font-size: 16px;
   font-family: sans-serif;
   font-weight: 100;
@@ -529,119 +518,6 @@ nav.header .a:hover ~ .cursor {
   pointer-events: auto;
   color: #d7d7d7;
 }
-
-/* //////////////////////////////////////////////// */
-/* Contact Form */
-
-
-.contact-container{
-	position: relative;
-	width: 100%;
-	height: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	padding-bottom: 100px;
-    border-radius: 10px;
-}
-
-.contact-container:after{
-	content: '';
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	left: 0;
-	top: 0;
-	background: url("contact2.png") no-repeat center;
-	background-size: cover;
-	filter: blur(50px);
-	z-index: -1;
-    border-radius: 10px;
-}
-.contact-box{
-	max-width: 850px;
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	justify-content: center;
-	align-items: center;
-	text-align: center;
-	background-color: #666;
-	box-shadow: 0px 0px 19px 5px rgba(0,0,0,0.19);
-    border-radius: 10px;
-}
-
-.left{
-    padding: 20px;
-	background: url("contact2.png") no-repeat center;
-	background-size: cover;
-	height: 100%;
-}
-
-.right{
-	padding: 25px 40px;
-}
-
-.contact-box h2{
-	position: relative;
-	padding: 0 0 10px;
-	margin-bottom: 10px;
-    color: black;
-    
-}
-
-.contact-box h2:after{
-	content: '';
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%);
-    height: 4px;
-    width: 50px;
-    border-radius: 2px;
-    background-color: #2ecc71;
-}
-
-.field{
-	width: 90%;
-	border: 2px solid rgba(0, 0, 0, 0);
-	outline: none;
-	background-color: rgba(230, 230, 230, 0.6);
-	padding: 0.5rem 1rem;
-	font-size: 1.1rem;
-	margin-bottom: 22px;
-	transition: .3s;
-}
-
-.field:hover{
-	background-color: rgba(0, 0, 0, 0.1);
-}
-
-textarea{
-	min-height: 150px;
-}
-
-.btn{
-	width: 100%;
-	padding: 0.5rem 1rem;
-	background-color: #2ecc71;
-	color: #fff;
-	font-size: 1.1rem;
-	border: none;
-	outline: none;
-	cursor: pointer;
-	transition: .3s;
-}
-
-.btn:hover{
-    background-color: #27ae60;
-}
-
-.field:focus{
-    border: 2px solid rgba(30,85,250,0.47);
-    background-color: #fff;
-}
-
-
 
 @media only screen and (max-width: 660px) {
   .cursor {
@@ -689,57 +565,48 @@ textarea{
     line-height: 22px;
   }
 
-  .neurophones-container {
+  .goddesses-container {
     padding: 0;
     justify-content: flex-end;
   }
 
-  .neurophones-container ul {
+  .goddesses-container ul {
     margin: 0px 0px 30px 30px;
     width: 80%;
   }
 
-  .neurophones-container ul > li {
+  .goddesses-container ul > li {
     padding-right: 20px;
     transition: all 0.8s ease-out;
     font-size: 20px;
   }
 
-  .neurophones-container p {
+  .goddesses-container p {
     width: 85%;
     margin-left: 30px;
     line-height: 21px;
     margin-bottom: 40px;
   }
 
-  .plugin-container {
+  .making-container {
     width: 100%;
     margin-left: 0;
     justify-content: center;
   }
 
-  .plugin-container h1 {
+  .making-container h1 {
     margin: 20px 28px;
   }
 
-  .plugin-container hr {
+  .making-container hr {
     margin: 0 28px;
   }
 
-  .plugin-container p {
+  .making-container p {
     width: 85%;
     margin-left: 28px;
     line-height: 21px;
     margin-bottom: 40px;
   }
-
-  .contact-container{
-        padding: 50px;
-    }
-	.contact-box{
-		grid-template-columns: 1fr;
-	}
-	.left{
-		height: 400px;
-	}
 }
+

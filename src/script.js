@@ -65,8 +65,8 @@ const loader = new GLTFLoader(loadingManager);
 loader.setDRACOLoader(dracoLoader);
 
 const container = document.getElementById('canvas-container-hero');
-const containerDetails = document.getElementById('canvas-container-goddesses');
-const containerFooter = document.getElementById('canvas-container-euphre');
+const containerDetails = document.getElementById('canvas-container-neurophones');
+const containerFooter = document.getElementById('canvas-container-plugin');
 
 let oldMaterial;
 let secondContainer = false;
@@ -187,6 +187,7 @@ loader.load('models/gltf/brain.gltf', function (gltf) {
   scene.add(gltf.scene);
   gltf.scene.scale.set(1.2,1.2,1.2)
   gltf.scene.position.set(0, 1.13, 0);
+  gltf.scene.rotation.set(0, Math.PI/32, 0);
   clearScene();
 });
 
@@ -209,31 +210,43 @@ function introAnimation() {
 }
 
 // click event listeners
-document.getElementById('aglaea').addEventListener('click', () => {
-  document.getElementById('aglaea').classList.add('active');
-  document.getElementById('euphre').classList.remove('active');
-  document.getElementById('thalia').classList.remove('active');
+document.getElementById('question').addEventListener('click', () => {
+  document.getElementById('question').classList.add('active');
+  document.getElementById('neuroSound').classList.remove('active');
+  document.getElementById('cochlearSound').classList.remove('active');
   document.getElementById('content').innerHTML =
     'How does it feel like hearing from a cochlear implant?';
-  animateCamera({ x: 1.9, y: 2.7, z: 2.7 }, { y: 1.1 });
+
+  fillLight.color.set(0xff00f0)
+  
+  animateCamera({ x: 1.9, y: 2.7, z: 2.7 },{ y: 1.1 });
+  // animateCamera({ x: 1.9, y: 2.7, z: 2.7 }, { y: 1.1 });
 });
 
-document.getElementById('thalia').addEventListener('click', () => {
-  document.getElementById('thalia').classList.add('active');
-  document.getElementById('aglaea').classList.remove('active');
-  document.getElementById('euphre').classList.remove('active');
+document.getElementById('cochlearSound').addEventListener('click', () => {
+  document.getElementById('cochlearSound').classList.add('active');
+  document.getElementById('question').classList.remove('active');
+  document.getElementById('neuroSound').classList.remove('active');
   document.getElementById('content').innerHTML =
-    'Buttons';
-  animateCamera({ x: -0.9, y: 3.1, z: 2.6 }, { y: -0.1 });
+    'How does it feel like hearing from a cochlear implant?';
+
+  fillLight.color.set(0x3c3c3c)
+
+  animateCamera({ x: -1.7, y: 2.2, z: 12.6 },{ y: -0.1 });
+  // animateCamera({ x: -0.9, y: 3.1, z: 2.6 }, { y: -0.1 });
 });
 
-document.getElementById('euphre').addEventListener('click', () => {
-  document.getElementById('euphre').classList.add('active');
-  document.getElementById('aglaea').classList.remove('active');
-  document.getElementById('thalia').classList.remove('active');
+document.getElementById('neuroSound').addEventListener('click', () => {
+  document.getElementById('neuroSound').classList.add('active');
+  document.getElementById('question').classList.remove('active');
+  document.getElementById('cochlearSound').classList.remove('active');
   document.getElementById('content').innerHTML =
     'Headphones';
-  animateCamera({ x: -0.4, y: 2.7, z: 1.9 }, { y: -0.6 });
+
+  fillLight.color.set(0xff00f0)
+  
+  animateCamera({ x: 9.0, y: 3.3, z: 0},{ y: 1.6});
+  // animateCamera({ x: -0.4, y: 2.7, z: 1.9 }, { y: -0.6 });
 });
 
 
@@ -316,7 +329,7 @@ document.addEventListener(
 );
 
 // intersection observer
-const watchedSection = document.querySelector('.goddesses');
+const watchedSection = document.querySelector('.neurophones');
 
 function obCallback(payload) {
   if (payload[0].intersectionRatio > 0.05) {
@@ -332,30 +345,34 @@ const ob = new IntersectionObserver(obCallback, {
 
 ob.observe(watchedSection);
 
-// magnet effect
-const btn = document.querySelectorAll('nav > .a');
-const customCursor = document.querySelector('.cursor');
+
+
+
+//////////////////////////////////////////////////
+//// MAGNETIC MENU
+const btn = document.querySelectorAll('nav > .a')
+const customCursor = document.querySelector('.cursor')
 
 function update(e) {
-  const span = this.querySelector('span');
-
-  if (e.type === 'mouseleave') {
-    span.style.cssText = '';
-  } else {
-    const { offsetX: x, offsetY: y } = e,
-      { offsetWidth: width, offsetHeight: height } = this,
-      walk = 20,
-      xWalk = (x / width) * (walk * 2) - walk,
-      yWalk = (y / height) * (walk * 2) - walk;
-    span.style.cssText = `transform: translate(${xWalk}px, ${yWalk}px);`;
-  }
+    const span = this.querySelector('span')
+    
+    if(e.type === 'mouseleave') {
+        span.style.cssText = ''
+    } else {
+        const { offsetX: x, offsetY: y } = e,{ offsetWidth: width, offsetHeight: height } = this,
+        walk = 20, xWalk = (x / width) * (walk * 2) - walk, yWalk = (y / height) * (walk * 2) - walk
+        span.style.cssText = `transform: translate(${xWalk}px, ${yWalk}px);`
+    }
 }
 
 const handleCursor = (e) => {
-  const x = e.clientX;
-  const y = e.clientY;
-  customCursor.style.cssText = `left: ${x}px; top: ${y}px;`;
-};
+    const x = e.clientX
+    const y =  e.clientY
+    customCursor.style.cssText =`left: ${x}px; top: ${y}px;`
+}
 
-btn.forEach((b) => b.addEventListener('mousemove', update));
-btn.forEach((b) => b.addEventListener('mouseleave', update));
+btn.forEach(b => b.addEventListener('mousemove', update))
+btn.forEach(b => b.addEventListener('mouseleave', update))
+
+
+

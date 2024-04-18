@@ -77,7 +77,7 @@ npm run build
 👤 **Puneet Lagoo**
 
 - GitHub: [@lagooneration](https://github.com/lagooneration)
-- LinkedIn: [Shaquille Ndunda](https://www.linkedin.com/in/lagooneration)
+- LinkedIn: [Puneet Lagoo](https://www.linkedin.com/in/lagooneration)
 
 ## Feedback and Contributions
 
