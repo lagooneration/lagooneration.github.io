@@ -21,8 +21,9 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { TextPlugin} from 'gsap/TextPlugin';
+import { CSSPlugin } from 'gsap/CSSPlugin';
 
-gsap.registerPlugin(ScrollTrigger, SplitText, TextPlugin) 
+gsap.registerPlugin(ScrollTrigger, SplitText, TextPlugin, CSSPlugin) 
 
 import Stats from 'stats.js';
 
@@ -63,9 +64,9 @@ var tl = gsap.timeline(),
   mySplitText = new SplitText("#content", { type: "words,chars" }),
   chars = mySplitText.chars; //an array of all the divs that wrap each character
 
-gsap.set("#content", { perspective: 400 });
+// gsap.set("#content", { perspective: 400 });
 
-console.log(chars);
+// console.log(chars);
 ScrollTrigger.create({
   trigger: '.neurophones-container',
   start: 'top center',
@@ -83,7 +84,7 @@ ScrollTrigger.create({
 },
   onLeaveBack: () => {
     gsap.to(mySplitText, {
-      opacity: 0,
+      opacity: 1,
       duration: 1,
       ease: 'power3.out'
     });
@@ -162,7 +163,7 @@ const renderer = new WebGLRenderer({
 renderer.autoClear = true;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 renderer.setSize(width, height);
-renderer.gammaFactor = 2.2;
+renderer.gammaFactor = 1.2;
 renderer.outputEncoding = sRGBEncoding;
 container.appendChild(renderer.domElement);
 
@@ -241,12 +242,17 @@ window.addEventListener('resize', () => {
 ////////////////////////////////////////////////////////////////////////
 //// LIGHTS
 
-// const sunLight = new DirectionalLight(0xabadaf, 0.05);
-// sunLight.position.set(-100, 0, -100);
-// scene.add(sunLight);
+// const sunLight = new DirectionalLight(0xabadaf, 2.05);
+//  sunLight.position.set(-100, 0, -100);
+//  scene.add(sunLight);
 
 const amb = new THREE.AmbientLight(0xabadaf, 0.05);
 scene.add(amb);
+
+const dir = new THREE.SpotLight (0xffffff , 1.5, 0, Math.PI/2, 0.5, 1);
+dir.position.set(10, 15, 10);
+scene.add(dir);
+
 
 const fillLight = new PointLight(0xff00f0, 2, 3.2, 3);
 fillLight.position.set(30, 3, 1.8);
@@ -260,12 +266,13 @@ scene.add(fillLight2)
 
 ////////////////////////////////////////////////////////////////////////
 //// GLTF MODELS 
-
+let brain;
+let brainMaterial = new MeshPhongMaterial({color: 0x3c3c3c});
 loader.load('models/gltf/brain.gltf', function (gltf) {
   gltf.scene.traverse((obj) => {
     if (obj.isMesh) {
       oldMaterial = obj.material;
-      obj.material = new MeshPhongMaterial();
+      obj.material = brainMaterial;
     }
 
   });
@@ -276,25 +283,101 @@ loader.load('models/gltf/brain.gltf', function (gltf) {
   clearScene();
 });
 
+
+
 function clearScene() {
   oldMaterial.dispose();
   renderer.renderLists.dispose();
 }
 
-loader.load('models/gltf/imp.gltf', function (gltf) {
+
+let imp;
+let tempImp;
+let impMaterial = new THREE.MeshStandardMaterial({
+    depthTest: true,
+    depthWrite: true,
+    color: 0xffffff,
+roughness: 0.5,
+metalness: 0.5,
+
+});
+
+
+function load3Dmodel(){
+loader.load('models/gltf/impMat.gltf', function (gltf) {
   gltf.scene.traverse((obj) => {
     if (obj.isMesh) {
       oldMaterial = obj.material;
-      obj.material = new THREE.MeshNormalMaterial();
+      // obj.material = impMaterial;
+      
+      
+    }
+    
+  });
+    imp = gltf.scene;
+    tempImp = gltf.scene;
+    scene.add(imp); 
+    console.log(imp);
+    // imp.scale.set(0,0,0)
+    imp.scale.set(0.73,0.73,0.73)
+    imp.position.set(-0.2, 1.27, 2.2);
+    imp.rotation.set(0, Math.PI, 0);
+    clearScene();
+
+    console.log('3d MODEL LOADING')
+});
+}
+
+// load3Dmodel();
+
+let skinTexture = new THREE.TextureLoader().load('models/skinTextrure.png');
+console.log(skinTexture)
+
+const skinMaterial = new THREE.MeshStandardMaterial({map: skinTexture});
+
+loader.load('models/gltf/earMat.gltf', function (gltf) {
+  gltf.scene.traverse((obj) => {
+    if (obj.isMesh) {
+      oldMaterial = obj.material;
+      // obj.material = impMaterial;
+      obj.material = skinMaterial;
+      
+      
+    }
+    
+  });
+    
+    scene.add(gltf.scene); 
+    // console.log(imp);
+    // imp.scale.set(0,0,0)
+    gltf.scene.scale.set(0.73,0.73,0.73)
+    gltf.scene.position.set(-0.2, 1.27, 2);
+    gltf.scene.rotation.set(0, Math.PI, 0);
+    clearScene();
+
+    console.log('3d MODEL LOADING')
+});
+
+
+/*
+
+
+loader.load('models/gltf/hp_opt.gltf', function (gltf) {
+  gltf.scene.traverse((obj) => {
+    if (obj.isMesh) {
+      oldMaterial = obj.material;
+      obj.material = new THREE.MeshStandardMaterial();
     }
 
   });
   scene.add(gltf.scene);
-  gltf.scene.scale.set(0.03,0.03,0.03)
-  gltf.scene.position.set(0.6, 1.13, 2.2);
+  gltf.scene.scale.set(18,18,18)
+  gltf.scene.position.set(0, 1.3, 0);
   gltf.scene.rotation.set(0, Math.PI/32, 0);
   clearScene();
 });
+
+*/
 
 //////////////////////////////////////////////////
 //// AUDIO loaders
@@ -447,8 +530,11 @@ document.getElementById('question').addEventListener('click', () => {
 
   fillLight.color.set(0xff00f0)
   fillLight2.color.set(0x0f00ff)
+
   
-  animateCamera({ x: 1.9, y: 2.7, z: 2.7 },{ y: 1.1 });
+  brainMaterial.wireframe = false;
+
+  animateCamera({ x: 4.4, y: 1.7, z: 7.7},{ y: 0.7 });
   // animateCamera({ x: 1.9, y: 2.7, z: 2.7 }, { y: 1.1 });
 });
 
@@ -471,6 +557,10 @@ document.getElementById('cochlearSound').addEventListener('click', () => {
             fillLight2.color.set(0x0f00ff)
     })
 
+    
+    brainMaterial.wireframe = true;
+        
+    
   animateCamera({ x: -1.7, y: 2.2, z: 12.6 },{ y: -0.1 });
   // animateCamera({ x: -0.9, y: 3.1, z: 2.6 }, { y: -0.1 });
 });
@@ -491,6 +581,10 @@ document.getElementById('neuroSound').addEventListener('click', () => {
   fillLight.color.set(0xff00f0)
   fillLight2.color.set(0x0f00ff)
   
+  
+  
+  brainMaterial.wireframe = false;
+
   animateCamera({ x: 9.0, y: 3.3, z: 0},{ y: 1.6});
   // animateCamera({ x: -0.4, y: 2.7, z: 1.9 }, { y: -0.6 });
 });
@@ -530,11 +624,11 @@ let previousTime = 0;
 //// render loop function
 
  function renderLoop() {
-
+    TWEEN.update();
 
   stats.begin();    
 
-  TWEEN.update();
+  
 
   if (secondContainer) {
     renderer2.render(scene, camera2);
