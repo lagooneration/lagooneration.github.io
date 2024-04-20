@@ -276,10 +276,11 @@ loader.load('models/gltf/brain.gltf', function (gltf) {
     }
 
   });
-  scene.add(gltf.scene);
-  gltf.scene.scale.set(1.2,1.2,1.2)
-  gltf.scene.position.set(0, 1.13, 0);
-  gltf.scene.rotation.set(0, Math.PI/32, 0);
+  brain = gltf.scene;
+  scene.add(brain);
+  brain.scale.set(1.2,1.2,1.2)
+  brain.position.set(0, 1.13, 0);
+  brain.rotation.set(0, Math.PI/32, 0);
   clearScene();
 });
 
@@ -331,9 +332,12 @@ loader.load('models/gltf/impMat.gltf', function (gltf) {
 // load3Dmodel();
 
 let skinTexture = new THREE.TextureLoader().load('models/skinTextrure.png');
+skinTexture.wrapS = THREE.RepeatWrapping;
+skinTexture.wrapT = THREE.RepeatWrapping;
 console.log(skinTexture)
 
 const skinMaterial = new THREE.MeshStandardMaterial({map: skinTexture});
+let ear;
 
 loader.load('models/gltf/earMat.gltf', function (gltf) {
   gltf.scene.traverse((obj) => {
@@ -346,18 +350,21 @@ loader.load('models/gltf/earMat.gltf', function (gltf) {
     }
     
   });
-    
-    scene.add(gltf.scene); 
+    ear = gltf.scene;
+    scene.add(ear); 
     // console.log(imp);
     // imp.scale.set(0,0,0)
-    gltf.scene.scale.set(0.73,0.73,0.73)
-    gltf.scene.position.set(-0.2, 1.27, 2);
-    gltf.scene.rotation.set(0, Math.PI, 0);
+    ear.scale.set(0.73,0.73,0.73)
+    ear.position.set(-0.2, 1.27, 1.95);
+    ear.rotation.set(0, Math.PI, 0);
     clearScene();
 
     console.log('3d MODEL LOADING')
 });
 
+
+const cube = new THREE.Mesh(new THREE.BoxGeometry(3,3), new THREE.MeshBasicMaterial({color: 0x00ff00}));
+scene.add(cube);
 
 /*
 
@@ -534,7 +541,7 @@ document.getElementById('question').addEventListener('click', () => {
   
   brainMaterial.wireframe = false;
 
-  animateCamera({ x: 4.4, y: 1.7, z: 7.7},{ y: 0.7 });
+  animateCamera({ x: -4.4, y: 1.7, z: 7.7},{ y: -0.7 });
   // animateCamera({ x: 1.9, y: 2.7, z: 2.7 }, { y: 1.1 });
 });
 
@@ -558,7 +565,12 @@ document.getElementById('cochlearSound').addEventListener('click', () => {
     })
 
     
-    brainMaterial.wireframe = true;
+    // brainMaterial.wireframe = true;
+    // ear.rotation.set(0, Math.PI/2, 0)
+    new TWEEN.Tween(ear.rotation.set(0,Math.PI/2,0))
+    .to({ x: 0, y: 2.4, z: 8.8 }, 3500)
+    .easing(TWEEN.Easing.Quadratic.InOut)
+    .start()
         
     
   animateCamera({ x: -1.7, y: 2.2, z: 12.6 },{ y: -0.1 });
@@ -662,6 +674,9 @@ let previousTime = 0;
   cameraGroup.position.x +=
     (parallaxX / 3 - cameraGroup.position.x) * 2 * deltaTime;
 
+     cube.rotation.set(0,Math.PI * elapsedTime,0); 
+   
+
   requestAnimationFrame(renderLoop);
   stats.end();
 }
@@ -682,7 +697,7 @@ document.addEventListener(
 
     cursor.x = event.clientX / window.innerWidth - 0.5;
     cursor.y = event.clientY / window.innerHeight - 0.5;
-
+    
     handleCursor(event);
   },
   false
