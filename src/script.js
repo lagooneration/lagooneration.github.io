@@ -25,6 +25,9 @@ import { CSSPlugin } from 'gsap/CSSPlugin';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, TextPlugin, CSSPlugin) 
 
+import Fsynapsis from './shaders/synapsisFragment.glsl' 
+import Vsynapsis from './shaders/synapsisVertex.glsl'
+
 import Stats from 'stats.js';
 
 const stats = new Stats()
@@ -249,10 +252,13 @@ window.addEventListener('resize', () => {
 // const amb = new THREE.AmbientLight(0xabadaf, 0.05);
 // scene.add(amb);
 
-const dir = new THREE.SpotLight (0xffffff , 1.5, 0, Math.PI/2, 0.5, 1);
-dir.position.set(10, 15, 10);
- scene.add(dir);
+// const dir = new THREE.SpotLight (0xffffff , 1.5, 0, Math.PI/2, 0.5, 1);
+// dir.position.set(10, 15, 10);
+// scene.add(dir);
 
+// const hemilight = new THREE.HemisphereLight(0xffffff, 0x080820, 1);
+// hemilight.position.set(4, 4, 4);
+// scene.add(hemilight);
 
 const fillLight = new PointLight(0xff00f0, 2, 3.2, 3);
 fillLight.position.set(30, 3, 1.8);
@@ -262,17 +268,66 @@ const fillLight2 = new PointLight(0x0f00ff, 2.7, 4, 3)
 fillLight2.position.set(30,3,2.8)
 scene.add(fillLight2)
 
+////////////////////////////////////////////////////////////////////////
+//// TEXTURES
 
+let iTime;
+let iMouse = new THREE.Vector2();
+let iResolution = new THREE.Vector2(width, height);
+
+// get mouse location
+document.addEventListener('mousemove', (event) => {
+	iMouse.x = event.clientX
+	iMouse.y = event.clientY
+})
+
+const sMat = new THREE.ShaderMaterial({
+				uniforms: {
+					iTime: { value: iTime },
+                    iMouse: { value: iMouse },
+					
+				},
+				vertexShader: Vsynapsis,
+				fragmentShader: Fsynapsis,
+				// side: THREE.DoubleSide,
+				 transparent: true,
+				depthTest: true,
+				depthWrite: true,
+				wireframe: false,
+				blending: THREE.AdditiveBlending,
+				// wireframe: true
+			
+            });
 
 ////////////////////////////////////////////////////////////////////////
 //// GLTF MODELS 
+
+loader.load('models/gltf/brain.gltf', function (gltf) {
+  gltf.scene.traverse((obj) => {
+    if (obj.isMesh) {
+      oldMaterial = obj.material;
+      obj.material = sMat;
+    }
+
+  });
+  scene.add(gltf.scene);
+  gltf.scene.scale.set(1.23,1.23,1.23)
+  gltf.scene.position.set(0, 1.13, 0);
+  gltf.scene.rotation.set(0, Math.PI/32, 0);
+  clearScene();
+});
+
+
+
+
+
 let brain;
 let brainMaterial = new MeshPhongMaterial({color: 0x3c3c3c});
 loader.load('models/gltf/brain.gltf', function (gltf) {
   gltf.scene.traverse((obj) => {
     if (obj.isMesh) {
       oldMaterial = obj.material;
-      obj.material = brainMaterial;
+      // obj.material = brainMaterial;
     }
 
   });
@@ -284,7 +339,7 @@ loader.load('models/gltf/brain.gltf', function (gltf) {
   clearScene();
 });
 
-
+console.log(brain)
 
 function clearScene() {
   oldMaterial.dispose();
@@ -320,8 +375,8 @@ loader.load('models/onlyimp.gltf', function (gltf) {
     scene.add(imp); 
     console.log(imp);
     // imp.scale.set(0,0,0)
-    imp.scale.set(0.93,0.93,0.93)
-    imp.position.set(0.2, 1.27, 2.2);
+    imp.scale.set(1.33,1.53,0.93)
+    imp.position.set(-0.2, -0.17, 2.2);
     imp.rotation.set(0, Math.PI, 0);
     clearScene();
 
@@ -339,7 +394,8 @@ console.log(skinTexture)
 const skinMaterial = new THREE.MeshStandardMaterial({map: skinTexture});
 let ear;
 
-const wireMat = new THREE.MeshNormalMaterial({wireframe: true});
+const wireMat = new THREE.MeshNormalMaterial({ wireframe: true});
+wireMat.opacity = 0.5;  
 
 loader.load('models/earMat.gltf', function (gltf) {
   gltf.scene.traverse((obj) => {
@@ -385,7 +441,7 @@ loader.load('models/wireFace.gltf', function (gltf) {
     // console.log(imp);
     // imp.scale.set(0,0,0)
     gltf.scene.scale.set(1,1,0.9)
-    gltf.scene.position.set(-0.2, 1.23, 0);
+    gltf.scene.position.set(-0.3, 1.23, 0);
     // ear.rotation.set(0, Math.PI, 0);
     clearScene();
 
@@ -708,7 +764,7 @@ let previousTime = 0;
     (parallaxX / 3 - cameraGroup.position.x) * 2 * deltaTime;
 
      // cube.rotation.set(0,Math.PI * elapsedTime,0); 
-   
+   sMat.uniforms.iTime.value = elapsedTime;
 
   requestAnimationFrame(renderLoop);
   stats.end();
