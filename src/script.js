@@ -246,12 +246,12 @@ window.addEventListener('resize', () => {
 //  sunLight.position.set(-100, 0, -100);
 //  scene.add(sunLight);
 
-const amb = new THREE.AmbientLight(0xabadaf, 0.05);
-scene.add(amb);
+// const amb = new THREE.AmbientLight(0xabadaf, 0.05);
+// scene.add(amb);
 
 const dir = new THREE.SpotLight (0xffffff , 1.5, 0, Math.PI/2, 0.5, 1);
 dir.position.set(10, 15, 10);
-scene.add(dir);
+ scene.add(dir);
 
 
 const fillLight = new PointLight(0xff00f0, 2, 3.2, 3);
@@ -305,7 +305,7 @@ metalness: 0.5,
 
 
 function load3Dmodel(){
-loader.load('models/gltf/impMat.gltf', function (gltf) {
+loader.load('models/onlyimp.gltf', function (gltf) {
   gltf.scene.traverse((obj) => {
     if (obj.isMesh) {
       oldMaterial = obj.material;
@@ -320,8 +320,8 @@ loader.load('models/gltf/impMat.gltf', function (gltf) {
     scene.add(imp); 
     console.log(imp);
     // imp.scale.set(0,0,0)
-    imp.scale.set(0.73,0.73,0.73)
-    imp.position.set(-0.2, 1.27, 2.2);
+    imp.scale.set(0.93,0.93,0.93)
+    imp.position.set(0.2, 1.27, 2.2);
     imp.rotation.set(0, Math.PI, 0);
     clearScene();
 
@@ -329,9 +329,9 @@ loader.load('models/gltf/impMat.gltf', function (gltf) {
 });
 }
 
-// load3Dmodel();
+load3Dmodel();
 
-let skinTexture = new THREE.TextureLoader().load('models/skinTextrure.png');
+let skinTexture = new THREE.TextureLoader().load('models/earTexture.png');
 skinTexture.wrapS = THREE.RepeatWrapping;
 skinTexture.wrapT = THREE.RepeatWrapping;
 console.log(skinTexture)
@@ -339,7 +339,9 @@ console.log(skinTexture)
 const skinMaterial = new THREE.MeshStandardMaterial({map: skinTexture});
 let ear;
 
-loader.load('models/gltf/earMat.gltf', function (gltf) {
+const wireMat = new THREE.MeshNormalMaterial({wireframe: true});
+
+loader.load('models/earMat.gltf', function (gltf) {
   gltf.scene.traverse((obj) => {
     if (obj.isMesh) {
       oldMaterial = obj.material;
@@ -354,17 +356,42 @@ loader.load('models/gltf/earMat.gltf', function (gltf) {
     scene.add(ear); 
     // console.log(imp);
     // imp.scale.set(0,0,0)
-    ear.scale.set(0.73,0.73,0.73)
-    ear.position.set(-0.2, 1.27, 1.95);
-    ear.rotation.set(0, Math.PI, 0);
+    ear.scale.set(1.1,1.1,1.1)
+    ear.position.set(-0.7, 0.33, 0.27);
+    // ear.rotation.set(0, Math.PI, 0);
     clearScene();
 
     console.log('3d MODEL LOADING')
 });
 
 
-const cube = new THREE.Mesh(new THREE.BoxGeometry(3,3), new THREE.MeshBasicMaterial({color: 0x00ff00}));
-scene.add(cube);
+// const cube = new THREE.Mesh(new THREE.BoxGeometry(3,3), new THREE.MeshBasicMaterial({color: 0x3c3c3c}));
+// scene.add(cube);
+
+
+loader.load('models/wireFace.gltf', function (gltf) {
+  gltf.scene.traverse((obj) => {
+    if (obj.isMesh) {
+      oldMaterial = obj.material;
+      // obj.material = impMaterial;
+      obj.material = wireMat;
+      
+      
+    }
+    
+  });
+    
+    scene.add(gltf.scene); 
+    // console.log(imp);
+    // imp.scale.set(0,0,0)
+    gltf.scene.scale.set(1,1,0.9)
+    gltf.scene.position.set(-0.2, 1.23, 0);
+    // ear.rotation.set(0, Math.PI, 0);
+    clearScene();
+
+    console.log('3d MODEL LOADING')
+});
+
 
 /*
 
@@ -383,6 +410,11 @@ loader.load('models/gltf/hp_opt.gltf', function (gltf) {
   gltf.scene.rotation.set(0, Math.PI/32, 0);
   clearScene();
 });
+
+
+ear.scale.set(0.73,0.73,0.73)
+    ear.position.set(-0.2, 1.27, 1.95);
+    ear.rotation.set(0, Math.PI, 0);
 
 */
 
@@ -541,7 +573,7 @@ document.getElementById('question').addEventListener('click', () => {
   
   brainMaterial.wireframe = false;
 
-  animateCamera({ x: -4.4, y: 1.7, z: 7.7},{ y: -0.7 });
+  animateCamera({ x: -2.2, y: 1.7, z: 7.7},{ y: -0.2 });
   // animateCamera({ x: 1.9, y: 2.7, z: 2.7 }, { y: 1.1 });
 });
 
@@ -565,15 +597,16 @@ document.getElementById('cochlearSound').addEventListener('click', () => {
     })
 
     
-    // brainMaterial.wireframe = true;
+     // brainMaterial.wireframe = true;
+    
     // ear.rotation.set(0, Math.PI/2, 0)
-    new TWEEN.Tween(ear.rotation.set(0,Math.PI/2,0))
-    .to({ x: 0, y: 2.4, z: 8.8 }, 3500)
-    .easing(TWEEN.Easing.Quadratic.InOut)
-    .start()
+    // new TWEEN.Tween(ear.rotation.set(0,Math.PI/2,0))
+    // .to({ x: 0, y: 2.4, z: 8.8 }, 3500)
+    // .easing(TWEEN.Easing.Quadratic.InOut)
+    // .start()
         
     
-  animateCamera({ x: -1.7, y: 2.2, z: 12.6 },{ y: -0.1 });
+  animateCamera({ x: -1.7, y: 1.45, z: 12.6 },{ y: -0.1 });
   // animateCamera({ x: -0.9, y: 3.1, z: 2.6 }, { y: -0.1 });
 });
 
@@ -674,7 +707,7 @@ let previousTime = 0;
   cameraGroup.position.x +=
     (parallaxX / 3 - cameraGroup.position.x) * 2 * deltaTime;
 
-     cube.rotation.set(0,Math.PI * elapsedTime,0); 
+     // cube.rotation.set(0,Math.PI * elapsedTime,0); 
    
 
   requestAnimationFrame(renderLoop);
