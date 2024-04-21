@@ -15,6 +15,10 @@ import * as THREE from 'three';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
+import { LensDistortionShader } from '../static/shaders/LensDistortionShader.js'
 
 
 import { gsap } from 'gsap'; 
@@ -240,7 +244,20 @@ window.addEventListener('resize', () => {
   renderer3.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 });
 
+/////////////////////////////////////////////////////////////////////////
+///// POST PROCESSING EFFECTS
 
+const renderPass = new RenderPass( scene, camera )
+const renderTarget = new THREE.WebGLRenderTarget( width, height,
+    {
+        minFilter: THREE.LinearFilter,
+        magFilter: THREE.LinearFilter,
+        format: THREE.RGBAFormat
+    }
+)
+
+const composer = new EffectComposer(renderer, renderTarget)
+composer.setPixelRatio(Math.min(window.devicePixelRatio, 1))
 
 ////////////////////////////////////////////////////////////////////////
 //// LIGHTS
@@ -585,6 +602,22 @@ soundS.onEnded = function() {
 };
 
 
+/////////////////////////////////////////////////////////////////////////
+///// POST PROCESSING EFFECTS
+
+
+/////DISTORT PASS //////////////////////////////////////////////////////////////
+const distortPass = new ShaderPass( LensDistortionShader )
+distortPass.material.defines.CHROMA_SAMPLES = 4
+distortPass.enabled = true
+distortPass.material.uniforms.baseIor.value = 0.910
+distortPass.material.uniforms.bandOffset.value = 0.0019
+distortPass.material.uniforms.jitterIntensity.value = 6.7
+distortPass.material.defines.BAND_MODE = 2
+
+composer.addPass( renderPass )
+composer.addPass( distortPass )
+
 
 //////////////////////////////////////////////////
 //// INTRO ANIMATION
@@ -765,6 +798,10 @@ let previousTime = 0;
 
      // cube.rotation.set(0,Math.PI * elapsedTime,0); 
    sMat.uniforms.iTime.value = elapsedTime;
+
+   composer.render()
+    // composer2.render() //render the scene with the composer
+    distortPass.material.uniforms.jitterOffset.value += 0.01
 
   requestAnimationFrame(renderLoop);
   stats.end();
