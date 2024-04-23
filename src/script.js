@@ -58,9 +58,9 @@ const gui = new GUI();
 
 // Create parameters object
 const params = {
-    focus: 1.0, // Default focus distance
-    aperture: 0.025, // Default aperture size
-    maxblur: 0.01, // Default maximum blur strength
+    focus: 7.91, // Default focus distance
+    aperture: 0.0004, // Default aperture size
+    maxblur: 0.04, // Default maximum blur strength
     shape: 1 // Default bokeh shape (1 for circular)
 };
 
@@ -616,29 +616,41 @@ loader.load('models/wireFace.gltf', function (gltf) {
 
 const bloomPass = new UnrealBloomPass(new THREE.Vector2(container.clientWidth, container.clientHeight),1, 0.2, 0.1);
 // bloomPass.ignoreMesh(cube);
-const sobelEffect = new ShaderPass(SobelAnimation);
+
+let sobelEffect = new ShaderPass(SobelAnimation);
         sobelEffect.uniforms["resolution"].value.x = container.clientWidth * window.devicePixelRatio;
         sobelEffect.uniforms["resolution"].value.y = container.clientHeight * window.devicePixelRatio;
-
-        // Function to add Sobel effect
+        sobelEffect.uniforms["mixRatio"].value = 0;
+// Function to add Sobel effect
+let Sobel = false;
 function addSobelEffect() {
-    
-    composer2.addPass(sobelEffect);
-     gsap.to(sobelEffect.uniforms["mixRatio"], { value: 1, duration: 1 });
+     
+     composer2.addPass(sobelEffect);
+     gsap.to(sobelEffect.uniforms["mixRatio"], { 
+         value: 0.8,
+         duration: 2.5,
+         onComplete: () => {
+               console.log('Dark life') 
+               Sobel = true;
+                
+            }     
+     });
+     
 }
 
 // Function to remove Sobel effect
 function removeSobelEffect() {
-    if (sobelEffect) {
+    
         gsap.to(sobelEffect.uniforms["mixRatio"], {
             value: 0,
             duration: 1,
             onComplete: () => {
-                composer2.removePass(sobelEffect);
-                
+               console.log('back to colors') 
+               composer2.removePass(sobelEffect);
+               Sobel =  false;
             }
         });
-    }
+    
 }
 
 const dotEffect = new ShaderPass(DotScreenShader);
@@ -673,6 +685,7 @@ composer2.addPass(renderPass2);
 
 // composer.addPass(sobelEffect);
 // composer.addPass(dotEffect);
+composer2.addPass(sobelEffect);
 composer2.addPass(bloomPass);
 composer2.addPass(bokehPass);
 
@@ -712,13 +725,10 @@ const soundM = new THREE.Audio( listener );
 
 // EVENT LISTERNERS
 let checkPlay = document.getElementById('start');
-let checkStop = document.getElementById('stop');
 
-let checkbox = document.querySelector('.containerR .radio-tile-group .input-container input[type="radio"]');
+
 let checkbox2 = document.querySelector('.play-btn .containerP input[type="checkbox"]');
 
-var musicR = document.getElementById('bike');
-var speechR = document.getElementById('walk');
 
 
 audioLoader.load('audio/s2.mp3', function (audioBuffer) {
@@ -901,7 +911,7 @@ document.getElementById('question').addEventListener('click', () => {
   checkbox2.checked = true;
 
   
-
+  
   removeSobelEffect();
 
   brainMaterial.wireframe = false;
@@ -922,14 +932,17 @@ document.getElementById('cochlearSound').addEventListener('click', () => {
 
   document.getElementById('musicbtn').addEventListener('click', () => {
     
-
+            if(!Sobel){
             addSobelEffect();
+            Sobel = true;
+            }
     })
     document.getElementById('speechbtn').addEventListener('click', () => {
     
-            sobelEffect = null;
+            if(Sobel){
             removeSobelEffect();
-            
+            Sobel = false;
+            }
     })
 
     
@@ -986,7 +999,9 @@ document.getElementById('neuroSound').addEventListener('click', () => {
 
   
   
+  
   removeSobelEffect();
+            
   
   brainMaterial.wireframe = false;
 
