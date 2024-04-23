@@ -410,7 +410,7 @@ nav.header .a:hover ~ .cursor {
   justify-content: center;
   z-index: 2;
   background: radial-gradient(
-    circle at 60% center,
+    circle at 80% center,
     rgba(5, 5, 5, 0) 30%,
     #141414 70%
   );

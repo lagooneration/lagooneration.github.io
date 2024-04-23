@@ -25,15 +25,16 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { SobelOperatorShader } from "three/examples/jsm/shaders/SobelOperatorShader.js";
 import { DotScreenShader } from "three/examples/jsm/shaders/DotScreenShader.js";
 import { SobelAnimation } from './animation/SobelAnimation.js'
-
+import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass.js';
 
 import { gsap } from 'gsap'; 
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { TextPlugin} from 'gsap/TextPlugin';
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
 // import { CSSPlugin } from 'gsap/CSSPlugin';
 
-gsap.registerPlugin(ScrollTrigger, SplitText, TextPlugin) 
+gsap.registerPlugin(ScrollTrigger, SplitText, TextPlugin, MotionPathPlugin) 
 
 import Fsynapsis from './shaders/synapsisFragment.glsl' 
 import Vsynapsis from './shaders/synapsisVertex.glsl'
@@ -41,11 +42,27 @@ import Fbloom from './shaders/bloomFragment.glsl'
 import Vbloom from './shaders/bloomVertex.glsl'
 
 
+// DEBUG
+
 import Stats from 'stats.js';
 
 const stats = new Stats()
 stats.showPanel(0) // 0: fps, 1: ms, 2: mb, 3+: custom
 document.body.appendChild(stats.dom)
+
+// GUI
+import GUI from 'lil-gui'
+const gui = new GUI();
+
+
+
+// Create parameters object
+const params = {
+    focus: 1.0, // Default focus distance
+    aperture: 0.025, // Default aperture size
+    maxblur: 0.01, // Default maximum blur strength
+    shape: 1 // Default bokeh shape (1 for circular)
+};
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -203,7 +220,7 @@ const cameraGroup = new Group();
 scene.add(cameraGroup);
 
 const camera = new PerspectiveCamera(35, width / height, 1, 100);
-camera.position.set(19, 1.54, -0.1);
+camera.position.set(19, -1.54, -0.1);
 cameraGroup.add(camera);
 
 const camera2 = new PerspectiveCamera(
@@ -212,8 +229,8 @@ const camera2 = new PerspectiveCamera(
   1,
   100
 );
-camera2.position.set(4.9, 1.7, 5.7);
-camera2.rotation.set(0, 1.1, 0);
+camera2.position.set(6.3, 1.4, 11.7);
+camera2.rotation.set(0, 1.3, 0);
 scene.add(camera2);
 
 const camera3 = new PerspectiveCamera(
@@ -368,9 +385,9 @@ window.addEventListener('resize', () => {
 ////////////////////////////////////////////////////////////////////////
 //// LIGHTS
 
-// const sunLight = new DirectionalLight(0xabadaf, 2.05);
-//  sunLight.position.set(-100, 0, -100);
-//  scene.add(sunLight);
+const sunLight = new THREE.PointLight(0xabadaf, 1.05);
+sunLight.position.set(100, 50, 100);
+scene.add(sunLight);
 
 // const amb = new THREE.AmbientLight(0xabadaf, 0.05);
 // scene.add(amb);
@@ -483,33 +500,53 @@ metalness: 0.5,
 
 
 
-loader.load('models/onlyimp.gltf', function (gltf) {
+loader.load('models/implant.gltf', function (gltf) {
   gltf.scene.traverse((obj) => {
     if (obj.isMesh) {
       oldMaterial = obj.material;
-      obj.material = impMaterial;
-      
-      
+      //obj.material = impMaterial;
     }
     
   });
     imp = gltf.scene;
-    tempImp = gltf.scene;
+    //tempImp = gltf.scene;
     scene.add(imp); 
-    console.log(imp);
+    //console.log(imp);
     // imp.scale.set(0,0,0)
     imp.scale.set(1.33,1.53,0.93)
-    imp.position.set(-0.2, -0.17, 2.2);
-    imp.rotation.set(0, Math.PI, 0);
+    // imp.position.set(-0.2, -0.17, 2.2);
+    imp.position.set(-0.2, -0.17, 9.2);
+    // imp.rotation.set(0, Math.PI + Math.PI/8, 0);
     clearScene();
 
-    console.log('3d MODEL LOADING')
+    console.log('IMPLANT LOADING')
 });
 
 
 
+const flightPathUp = {
+  curviness: 0.5,
+  path: [{ x: -0.2, y: -0.17, z: 9.2  }]
+};
 
-let skinTexture = new THREE.TextureLoader().load('models/earTexture.png');
+const flightPathUp2 = {
+  curviness: 1,
+  path: [{ x: .1, y: .4, z: 6.2 }]
+};
+
+const flightPathUp3 = {
+  curviness: 0.8,
+  path: [{ x: .1, y: .17, z: 4.3 }]
+};
+
+const flightPathUp4 = {
+  curviness: 0.5,
+  path: [{ x: -0.17, y: -0.17, z: 2.2 }]
+};
+
+
+
+let skinTexture = new THREE.TextureLoader(loadingManager).load('models/earTexture.png');
 skinTexture.wrapS = THREE.RepeatWrapping;
 skinTexture.wrapT = THREE.RepeatWrapping;
 console.log(skinTexture)
@@ -517,7 +554,7 @@ console.log(skinTexture)
 const skinMaterial = new THREE.MeshStandardMaterial({map: skinTexture});
 let ear;
 
-const wireMat = new THREE.MeshNormalMaterial({ wireframe: true});
+const wireMat = new THREE.MeshBasicMaterial({ color: 0x3c3c3c, wireframe: true});
 wireMat.opacity = 0.5;  
 
 loader.load('models/earMat.gltf', function (gltf) {
@@ -540,11 +577,11 @@ loader.load('models/earMat.gltf', function (gltf) {
     // ear.rotation.set(0, Math.PI, 0);
     clearScene();
 
-    console.log('3d MODEL LOADING')
+    console.log('Ear LOADING')
 });
 
 
-const cube = new THREE.Mesh(new THREE.BoxGeometry(1,5), new THREE.MeshBasicMaterial({color: 0x3c3c3c}));
+// const cube = new THREE.Mesh(new THREE.BoxGeometry(1,5), new THREE.MeshBasicMaterial({color: 0x3c3c3c}));
 // scene.add(cube);
 
 
@@ -568,15 +605,14 @@ loader.load('models/wireFace.gltf', function (gltf) {
     // ear.rotation.set(0, Math.PI, 0);
     clearScene();
 
-    console.log('3d MODEL LOADING')
+    console.log('Face LOADING')
 });
 
 
 //////////////////////////////////////////////////
 //// POST PROCESSING
 
-// const composer2 = new EffectComposer(renderer2);
-// const renderPass2 = new RenderPass(scene, camera2);
+/// BLOOM  
 
 const bloomPass = new UnrealBloomPass(new THREE.Vector2(container.clientWidth, container.clientHeight),1, 0.2, 0.1);
 // bloomPass.ignoreMesh(cube);
@@ -608,6 +644,29 @@ function removeSobelEffect() {
 const dotEffect = new ShaderPass(DotScreenShader);
         dotEffect.uniforms["scale"]. value = 2;
 
+// Create a BokehPass
+const bokehPass = new BokehPass(scene, camera2, {
+    focus: 5.0, // Focus distance
+    aperture: 0.05, // Aperture size
+    maxblur: 0.005, // Maximum blur strength
+    width: width,
+    height: height
+});
+
+// Add parameters to GUI
+gui.add(params, 'focus', 0, 10).onChange(value => {
+    bokehPass.uniforms['focus'].value = value;
+});
+gui.add(params, 'aperture', 0, 0.1).onChange(value => {
+    bokehPass.uniforms['aperture'].value = value;
+});
+gui.add(params, 'maxblur', 0, 0.1).onChange(value => {
+    bokehPass.uniforms['maxblur'].value = value;
+});
+gui.add(params, 'shape', { Circular: 1, Hexagon: 2, Octagon: 3 }).onChange(value => {
+    bokehPass.uniforms['shape'].value = value;
+});
+    
 
 
 composer2.addPass(renderPass2);
@@ -615,6 +674,7 @@ composer2.addPass(renderPass2);
 // composer.addPass(sobelEffect);
 // composer.addPass(dotEffect);
 composer2.addPass(bloomPass);
+composer2.addPass(bokehPass);
 
 /*
 loader.load('models/gltf/hp_opt.gltf', function (gltf) {
@@ -776,6 +836,53 @@ function introAnimation() {
 let speech = document.getElementById('speechbtn')
 let music = document.getElementById('musicbtn')
 
+function handleMouseMoveR(event) {
+	// Calculate rotation angles based on mouse movement
+    const rotationX = (event.clientY / window.innerHeight - 0.5) * 0.5; // Adjust the factor as needed
+    const rotationY = (Math.PI + Math.PI/4) + (-(event.clientX / window.innerWidth - 0.5) * 0.5); // Adjust the factor as needed
+    
+    // Apply rotation using GSAP
+    gsap.to(imp.rotation, {
+        x: rotationX,
+        y: rotationY,
+        duration: 0.5, // Adjust the duration as needed
+        ease: 'power2.out' // Adjust the easing function as needed
+    });
+  }
+
+// Add the event listener to track mouse movement
+document.addEventListener('mousemove', handleMouseMoveR);
+
+
+// Function to stop rotation when button is pressed
+function stopRotation() {
+    // Remove the event listener
+    document.removeEventListener('mousemove', handleMouseMoveR);
+}
+
+let intro = false;
+function ImplantAnimation(){
+    const tween = gsap.timeline({
+          defaults: {
+            duration: 1,
+            ease: "power1.inOut",
+            onUpdate: () => {
+                // Update the object's position in the 3D scene
+                
+            },
+            onComplete:() => {
+                imp.rotation.set(0, Math.PI , 0);
+                stopRotation()
+            }
+          }
+        });
+
+        tween
+          .to(imp.position, { motionPath: flightPathUp, opacity: 1 })
+          .to(imp.position, { motionPath: flightPathUp2, opacity: 1 })
+          
+          .to(imp.position, { motionPath: flightPathUp4, opacity: 0.1 })
+}
 
 //////////////////////////////////////////////////
 //// click event listeners
@@ -793,14 +900,13 @@ document.getElementById('question').addEventListener('click', () => {
   currentAudio.isPlaying && currentAudio.stop();
   checkbox2.checked = true;
 
-  fillLight.color.set(0xff00f0)
-  fillLight2.color.set(0x0f00ff)
+  
 
   removeSobelEffect();
 
   brainMaterial.wireframe = false;
 
-  animateCamera({ x: -2.2, y: 1.7, z: 7.7},{ y: -0.2 });
+  animateCamera({ x: -2.3, y: 1, z: 7.7},{ y: -0.2 });
   // animateCamera({ x: 1.9, y: 2.7, z: 2.7 }, { y: 1.1 });
 });
 
@@ -821,11 +927,37 @@ document.getElementById('cochlearSound').addEventListener('click', () => {
     })
     document.getElementById('speechbtn').addEventListener('click', () => {
     
-            
+            sobelEffect = null;
             removeSobelEffect();
+            
     })
 
     
+
+    /*
+    // Animate the object along the bezier curve using GSAP
+        gsap.to(imp.position, {
+            bezier: [
+                { x: startPoint.x, y: startPoint.y, z: startPoint.z },
+                { x: controlPoint1.x, y: controlPoint1.y, z: controlPoint1.z },
+                { x: controlPoint2.x, y: controlPoint2.y, z: controlPoint2.z },
+                { x: endPoint.x, y: endPoint.y, z: endPoint.z }
+            ],
+            duration: 2, // Duration of the animation in seconds
+            ease: 'power1.inOut', // Easing function
+            onUpdate: () => {
+                // Update the object's position in the 3D scene
+                imp.position.set(imp.position.x, imp.position.y, imp.position.z);
+            }
+        });
+        */
+        if (!intro){
+            ImplantAnimation();
+            intro = true;
+        }
+
+          
+          
     // brainMaterial.wireframe = true;
     
     // ear.rotation.set(0, Math.PI/2, 0)
