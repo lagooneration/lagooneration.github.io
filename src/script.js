@@ -20,17 +20,26 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
 import { LensDistortionShader } from '../static/shaders/LensDistortionShader.js'
 
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { SobelOperatorShader } from "three/examples/jsm/shaders/SobelOperatorShader.js";
+import { DotScreenShader } from "three/examples/jsm/shaders/DotScreenShader.js";
+import { SobelAnimation } from './animation/SobelAnimation.js'
+
 
 import { gsap } from 'gsap'; 
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { TextPlugin} from 'gsap/TextPlugin';
-import { CSSPlugin } from 'gsap/CSSPlugin';
+// import { CSSPlugin } from 'gsap/CSSPlugin';
 
-gsap.registerPlugin(ScrollTrigger, SplitText, TextPlugin, CSSPlugin) 
+gsap.registerPlugin(ScrollTrigger, SplitText, TextPlugin) 
 
 import Fsynapsis from './shaders/synapsisFragment.glsl' 
 import Vsynapsis from './shaders/synapsisVertex.glsl'
+import Fbloom from './shaders/bloomFragment.glsl' 
+import Vbloom from './shaders/bloomVertex.glsl'
+
 
 import Stats from 'stats.js';
 
@@ -218,6 +227,113 @@ camera3.rotation.set(0, -0.8, 0);
 scene.add(camera3);
 
 
+/////////////////////////////////////////////////////////////////////////
+///// POST PROCESSING EFFECTS
+/////////////////////////////////////////////////////////////////////////
+///// POST PROCESSING EFFECTS
+
+const renderPass = new RenderPass( scene, camera )
+const renderPass2 = new RenderPass( scene, camera2 )
+
+const renderTarget = new THREE.WebGLRenderTarget( width, height,
+    {
+        minFilter: THREE.LinearFilter,
+        magFilter: THREE.LinearFilter,
+        format: THREE.RGBAFormat
+    }
+)
+
+const renderTarget2 = new THREE.WebGLRenderTarget( containerDetails.clientWidth, containerDetails.clientHeight, 
+    {
+        minFilter: THREE.LinearFilter,
+        magFilter: THREE.LinearFilter,
+        format: THREE.RGBAFormat
+    }
+)
+
+const composer = new EffectComposer(renderer, renderTarget)
+composer.setPixelRatio(Math.min(window.devicePixelRatio, 1))
+
+const composer2 = new EffectComposer(renderer2, renderTarget2)
+composer2.setPixelRatio(Math.min(window.devicePixelRatio, 1))
+
+/////DISTORT PASS //////////////////////////////////////////////////////////////
+const distortPass = new ShaderPass( LensDistortionShader )
+distortPass.material.defines.CHROMA_SAMPLES = 4
+distortPass.enabled = true
+distortPass.material.uniforms.baseIor.value = 0.910
+distortPass.material.uniforms.bandOffset.value = 0.0019
+distortPass.material.uniforms.jitterIntensity.value = 6.7
+distortPass.material.defines.BAND_MODE = 2
+
+composer.addPass( renderPass )
+composer2.addPass( distortPass )
+
+
+/*
+/////BLOOM PASS //////////////////////////////////////////////////////////////
+const BLOOM_SCENE = 1;
+
+			const bloomLayer = new THREE.Layers();
+			bloomLayer.set( BLOOM_SCENE );
+
+			const params = {
+				threshold: 0,
+				strength: 1,
+				radius: 0.5,
+				exposure: 1
+			};
+const darkMaterial = new THREE.MeshBasicMaterial( { color: 'black' } );
+			const materials = {};
+
+function nonBloomed(obj) {
+    if (obj.isMesh && bloomLayer.test(obj.layers) === false) {
+		materials[obj.uuid] = obj.material;
+		obj.material = darkMaterial;
+	}
+}
+
+function restoreMaterial(obj) {
+    if(materials[obj.uuid]) {
+        obj.material = materials[obj.uuid];
+        delete materials[obj.uuid];
+    }
+}
+
+
+
+const renderScene = new RenderPass( scene, camera2 );
+const bloomPass = new UnrealBloomPass( new THREE.Vector2( containerDetails.clientWidth, containerDetails.clientHeight ), 1.5, 0.4, 0.85 );
+const bloomComposer = new EffectComposer( renderer2 );
+			bloomComposer.renderToScreen = false;
+			bloomComposer.addPass( renderScene );
+			bloomComposer.addPass( bloomPass );
+
+const mixPass = new ShaderPass(
+				new THREE.ShaderMaterial( {
+					uniforms: {
+						baseTexture: { value: null },
+						bloomTexture: { value: bloomComposer.renderTarget2.texture }
+					},
+					
+					fragmentShader: Fbloom,
+                    vertexShader: Vbloom,
+					defines: {}
+				} ), 'baseTexture'
+			);
+			mixPass.needsSwap = true;
+
+const finalPass = new OutputPass();
+// bloomComposer.addPass( finalPass );
+
+const finalComposer = new EffectComposer( renderer2 );
+			finalComposer.addPass( renderScene );
+			finalComposer.addPass( mixPass );
+			finalComposer.addPass( finalPass );
+
+*/
+
+
 
 ////////////////////////////////////////////////////////////////////////
 //// resize event listener
@@ -242,22 +358,12 @@ window.addEventListener('resize', () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
   renderer2.setPixelRatio(Math.min(window.devicePixelRatio, 1));
   renderer3.setPixelRatio(Math.min(window.devicePixelRatio, 1));
+
+  // composer.setSize(container.clientWidth, container.clientHeight);
+  // composer2.setSize(containerDetails.clientWidth, containerDetails.clientHeight);
+  // bloomComposer.setSize(containerDetails.clientWidth, containerDetails.clientHeight);
 });
 
-/////////////////////////////////////////////////////////////////////////
-///// POST PROCESSING EFFECTS
-
-const renderPass = new RenderPass( scene, camera )
-const renderTarget = new THREE.WebGLRenderTarget( width, height,
-    {
-        minFilter: THREE.LinearFilter,
-        magFilter: THREE.LinearFilter,
-        format: THREE.RGBAFormat
-    }
-)
-
-const composer = new EffectComposer(renderer, renderTarget)
-composer.setPixelRatio(Math.min(window.devicePixelRatio, 1))
 
 ////////////////////////////////////////////////////////////////////////
 //// LIGHTS
@@ -344,7 +450,7 @@ loader.load('models/gltf/brain.gltf', function (gltf) {
   gltf.scene.traverse((obj) => {
     if (obj.isMesh) {
       oldMaterial = obj.material;
-      // obj.material = brainMaterial;
+        obj.material = brainMaterial;
     }
 
   });
@@ -376,12 +482,12 @@ metalness: 0.5,
 });
 
 
-function load3Dmodel(){
+
 loader.load('models/onlyimp.gltf', function (gltf) {
   gltf.scene.traverse((obj) => {
     if (obj.isMesh) {
       oldMaterial = obj.material;
-      // obj.material = impMaterial;
+      obj.material = impMaterial;
       
       
     }
@@ -399,9 +505,9 @@ loader.load('models/onlyimp.gltf', function (gltf) {
 
     console.log('3d MODEL LOADING')
 });
-}
 
-load3Dmodel();
+
+
 
 let skinTexture = new THREE.TextureLoader().load('models/earTexture.png');
 skinTexture.wrapS = THREE.RepeatWrapping;
@@ -438,7 +544,7 @@ loader.load('models/earMat.gltf', function (gltf) {
 });
 
 
-// const cube = new THREE.Mesh(new THREE.BoxGeometry(3,3), new THREE.MeshBasicMaterial({color: 0x3c3c3c}));
+const cube = new THREE.Mesh(new THREE.BoxGeometry(1,5), new THREE.MeshBasicMaterial({color: 0x3c3c3c}));
 // scene.add(cube);
 
 
@@ -466,9 +572,51 @@ loader.load('models/wireFace.gltf', function (gltf) {
 });
 
 
+//////////////////////////////////////////////////
+//// POST PROCESSING
+
+// const composer2 = new EffectComposer(renderer2);
+// const renderPass2 = new RenderPass(scene, camera2);
+
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(container.clientWidth, container.clientHeight),1, 0.2, 0.1);
+// bloomPass.ignoreMesh(cube);
+const sobelEffect = new ShaderPass(SobelAnimation);
+        sobelEffect.uniforms["resolution"].value.x = container.clientWidth * window.devicePixelRatio;
+        sobelEffect.uniforms["resolution"].value.y = container.clientHeight * window.devicePixelRatio;
+
+        // Function to add Sobel effect
+function addSobelEffect() {
+    
+    composer2.addPass(sobelEffect);
+     gsap.to(sobelEffect.uniforms["mixRatio"], { value: 1, duration: 1 });
+}
+
+// Function to remove Sobel effect
+function removeSobelEffect() {
+    if (sobelEffect) {
+        gsap.to(sobelEffect.uniforms["mixRatio"], {
+            value: 0,
+            duration: 1,
+            onComplete: () => {
+                composer2.removePass(sobelEffect);
+                
+            }
+        });
+    }
+}
+
+const dotEffect = new ShaderPass(DotScreenShader);
+        dotEffect.uniforms["scale"]. value = 2;
+
+
+
+composer2.addPass(renderPass2);
+
+// composer.addPass(sobelEffect);
+// composer.addPass(dotEffect);
+composer2.addPass(bloomPass);
+
 /*
-
-
 loader.load('models/gltf/hp_opt.gltf', function (gltf) {
   gltf.scene.traverse((obj) => {
     if (obj.isMesh) {
@@ -602,21 +750,9 @@ soundS.onEnded = function() {
 };
 
 
-/////////////////////////////////////////////////////////////////////////
-///// POST PROCESSING EFFECTS
 
 
-/////DISTORT PASS //////////////////////////////////////////////////////////////
-const distortPass = new ShaderPass( LensDistortionShader )
-distortPass.material.defines.CHROMA_SAMPLES = 4
-distortPass.enabled = true
-distortPass.material.uniforms.baseIor.value = 0.910
-distortPass.material.uniforms.bandOffset.value = 0.0019
-distortPass.material.uniforms.jitterIntensity.value = 6.7
-distortPass.material.defines.BAND_MODE = 2
 
-composer.addPass( renderPass )
-composer.addPass( distortPass )
 
 
 //////////////////////////////////////////////////
@@ -643,6 +779,7 @@ let music = document.getElementById('musicbtn')
 
 //////////////////////////////////////////////////
 //// click event listeners
+
 document.getElementById('question').addEventListener('click', () => {
   document.getElementById('question').classList.add('active');
   document.getElementById('neuroSound').classList.remove('active');
@@ -659,7 +796,8 @@ document.getElementById('question').addEventListener('click', () => {
   fillLight.color.set(0xff00f0)
   fillLight2.color.set(0x0f00ff)
 
-  
+  removeSobelEffect();
+
   brainMaterial.wireframe = false;
 
   animateCamera({ x: -2.2, y: 1.7, z: 7.7},{ y: -0.2 });
@@ -677,16 +815,18 @@ document.getElementById('cochlearSound').addEventListener('click', () => {
   music.style.visibility = 'visible'  
 
   document.getElementById('musicbtn').addEventListener('click', () => {
-    fillLight.color.set(0x3c3c3c)
-            fillLight2.color.set(0x3c3c3c)
+    
+
+            addSobelEffect();
     })
     document.getElementById('speechbtn').addEventListener('click', () => {
-    fillLight.color.set(0xff00f0)
-            fillLight2.color.set(0x0f00ff)
+    
+            
+            removeSobelEffect();
     })
 
     
-     // brainMaterial.wireframe = true;
+    // brainMaterial.wireframe = true;
     
     // ear.rotation.set(0, Math.PI/2, 0)
     // new TWEEN.Tween(ear.rotation.set(0,Math.PI/2,0))
@@ -712,10 +852,9 @@ document.getElementById('neuroSound').addEventListener('click', () => {
   currentAudio.isPlaying && currentAudio.stop();
   checkbox2.checked = true;
 
-  fillLight.color.set(0xff00f0)
-  fillLight2.color.set(0x0f00ff)
   
   
+  removeSobelEffect();
   
   brainMaterial.wireframe = false;
 
@@ -797,11 +936,24 @@ let previousTime = 0;
     (parallaxX / 3 - cameraGroup.position.x) * 2 * deltaTime;
 
      // cube.rotation.set(0,Math.PI * elapsedTime,0); 
-   sMat.uniforms.iTime.value = elapsedTime;
+    sMat.uniforms.iTime.value = elapsedTime;
 
-   composer.render()
+    // composer.render()
     // composer2.render() //render the scene with the composer
+    // 
+
+    // scene.traverse(nonBloomed);
+    // bloomComposer.render();
+    // scene.traverse(restoreMaterial);
+    // finalComposer.render();
+    
+    composer.render();
+    composer2.render();
     distortPass.material.uniforms.jitterOffset.value += 0.01
+    // Render scene without bloom
+    
+
+    
 
   requestAnimationFrame(renderLoop);
   stats.end();
@@ -811,9 +963,25 @@ let previousTime = 0;
 
 // tick()
 
-
-
 renderLoop();
+
+/*
+const rayCaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+function onPointerDown(event) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    rayCaster.setFromCamera(mouse, camera2);
+const intersects = rayCaster.intersectObjects(scene.children, true);
+	if (intersects.length > 0) {
+		const object = intersects[0].object;
+        object.layers.toggle(BLOOM_SCENE);
+	}
+
+}
+window.addEventListener('pointerdown', onPointerDown);
+*/
 
 // mouse move event listener
 document.addEventListener(
@@ -823,6 +991,8 @@ document.addEventListener(
 
     cursor.x = event.clientX / window.innerWidth - 0.5;
     cursor.y = event.clientY / window.innerHeight - 0.5;
+
+
     
     handleCursor(event);
   },
@@ -874,6 +1044,5 @@ const handleCursor = (e) => {
 
 btn.forEach(b => b.addEventListener('mousemove', update))
 btn.forEach(b => b.addEventListener('mouseleave', update))
-
 
 
