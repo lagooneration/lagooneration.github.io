@@ -732,7 +732,7 @@ filter: drop-shadow(0 0 5px var(--color));
 	height: 100%;
 	left: 0;
 	top: 0;
-	background: url("contact2.png") no-repeat center;
+	/* background: url("contact2.png") no-repeat center; */
 	background-size: cover;
 	filter: blur(50px);
 	z-index: -1;
@@ -953,4 +953,19 @@ textarea{
 	.left{
 		height: 400px;
 	}
+}
+
+
+.video-bg {
+  position: fixed;
+
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
+}
+
+#containerV {
+  height: 500vh;
 }

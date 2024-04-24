@@ -12,6 +12,7 @@ import {
   MeshPhongMaterial,
 } from 'three';
 import * as THREE from 'three';
+
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -20,9 +21,9 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
 import { LensDistortionShader } from '../static/shaders/LensDistortionShader.js'
 
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+// import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { SobelOperatorShader } from "three/examples/jsm/shaders/SobelOperatorShader.js";
+// import { SobelOperatorShader } from "three/examples/jsm/shaders/SobelOperatorShader.js";
 import { DotScreenShader } from "three/examples/jsm/shaders/DotScreenShader.js";
 import { SobelAnimation } from './animation/SobelAnimation.js'
 import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass.js';
@@ -30,11 +31,11 @@ import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass.js';
 import { gsap } from 'gsap'; 
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
-import { TextPlugin} from 'gsap/TextPlugin';
+// import { TextPlugin} from 'gsap/TextPlugin';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
 // import { CSSPlugin } from 'gsap/CSSPlugin';
 
-gsap.registerPlugin(ScrollTrigger, SplitText, TextPlugin, MotionPathPlugin) 
+gsap.registerPlugin(ScrollTrigger, SplitText, MotionPathPlugin) 
 
 import Fsynapsis from './shaders/synapsisFragment.glsl' 
 import Vsynapsis from './shaders/synapsisVertex.glsl'
@@ -42,6 +43,7 @@ import Fbloom from './shaders/bloomFragment.glsl'
 import Vbloom from './shaders/bloomVertex.glsl'
 
 
+// renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 // DEBUG
 
 import Stats from 'stats.js';
@@ -56,14 +58,91 @@ const gui = new GUI();
 
 
 
+
 // Create parameters object
 const params = {
     focus: 7.91, // Default focus distance
     aperture: 0.0004, // Default aperture size
     maxblur: 0.04, // Default maximum blur strength
-    shape: 1 // Default bokeh shape (1 for circular)
+    shape: 1, // Default bokeh shape (1 for circular)
+    
 };
 
+
+
+// VIDEO 
+
+// import videoSrc from './videoEncoded.mp4';
+// const videoV = document.createElement('videoEncoded.mp4');
+
+/*   
+const video = document.querySelector('.video-bg');
+let src = video.currentSrc || video.src;
+console.log(video, src);
+
+// Make sure the video is 'activated' on iOS 
+function once(el, event, fn, opts) {
+  var onceFn = function (e) {
+    el.removeEventListener(event, onceFn);
+    fn.apply(this, arguments);
+  };
+  el.addEventListener(event, onceFn, opts);
+  return onceFn;
+}
+
+once(document.documentElement, "touchstart", function (e) {
+  video.play();
+  video.pause();
+});
+
+//---------------------------------- //
+// Scroll Control! //
+
+// gsap.registerPlugin(ScrollTrigger);
+
+let tV = gsap.timeline({
+  defaults: { duration: 1 },
+  scrollTrigger: {
+    trigger: "#containerV",
+    start: "top top",
+    end: "bottom bottom",
+    scrub: true
+  }
+});
+
+once(video, 'loadedmetadata', () => {
+  tV.fromTo(
+    video,
+    {
+      currentTime: 0
+    },
+    {
+      currentTime: video.duration || 1
+    }
+  );
+});
+
+//When first coded, the Blobbing was important to ensure the browser wasn't dropping previously played segments, but it doesn't seem to be a problem now. Possibly based on memory availability?//
+setTimeout(function () {
+  if (window["fetch"]) {
+    fetch(src)
+      .then((response) => response.blob())
+      .then((response) => {
+        var blobURL = URL.createObjectURL(response);
+
+        var t = video.currentTime;
+        once(document.documentElement, "touchstart", function (e) {
+          video.play();
+          video.pause();
+        });
+
+        video.setAttribute('src', blobURL);
+        video.currentTime = t + 0.01;
+      });
+  }
+}, 1000);
+ */
+/* ---------------------------------- */
 
 ////////////////////////////////////////////////////////////////////////
 //// GSAP ANIMATION
@@ -197,19 +276,19 @@ renderer.autoClear = true;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 renderer.setSize(width, height);
 renderer.gammaFactor = 1.2;
-renderer.outputEncoding = sRGBEncoding;
+renderer.outputColorSpace = sRGBEncoding;
 container.appendChild(renderer.domElement);
 
 const renderer2 = new WebGLRenderer({ antialias: false });
 renderer2.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 renderer2.setSize(width, height);
-renderer2.outputEncoding = sRGBEncoding;
+renderer2.outputColorSpace = sRGBEncoding;
 containerDetails.appendChild(renderer2.domElement);
 
 const renderer3 = new WebGLRenderer({ antialias: false });
 renderer3.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 renderer3.setSize(width, height);
-renderer3.outputEncoding = sRGBEncoding;
+renderer3.outputColorSpace = sRGBEncoding;
 containerFooter.appendChild(renderer3.domElement);
 
 
@@ -284,7 +363,7 @@ distortPass.material.uniforms.jitterIntensity.value = 6.7
 distortPass.material.defines.BAND_MODE = 2
 
 composer.addPass( renderPass )
-composer2.addPass( distortPass )
+// composer2.addPass( distortPass )
 
 
 /*
@@ -385,7 +464,7 @@ window.addEventListener('resize', () => {
 ////////////////////////////////////////////////////////////////////////
 //// LIGHTS
 
-const sunLight = new THREE.PointLight(0xabadaf, 1.05);
+const sunLight = new PointLight(0xabadaf, 1.05);
 sunLight.position.set(100, 50, 100);
 scene.add(sunLight);
 
@@ -614,7 +693,7 @@ loader.load('models/wireFace.gltf', function (gltf) {
 
 /// BLOOM  
 
-const bloomPass = new UnrealBloomPass(new THREE.Vector2(container.clientWidth, container.clientHeight),1, 0.2, 0.1);
+// const bloomPass = new UnrealBloomPass(new THREE.Vector2(container.clientWidth, container.clientHeight),1, 0.2, 0.1);
 // bloomPass.ignoreMesh(cube);
 
 let sobelEffect = new ShaderPass(SobelAnimation);
@@ -686,7 +765,7 @@ composer2.addPass(renderPass2);
 // composer.addPass(sobelEffect);
 // composer.addPass(dotEffect);
 composer2.addPass(sobelEffect);
-composer2.addPass(bloomPass);
+// composer2.addPass(bloomPass);
 composer2.addPass(bokehPass);
 
 /*
@@ -1193,3 +1272,26 @@ btn.forEach(b => b.addEventListener('mousemove', update))
 btn.forEach(b => b.addEventListener('mouseleave', update))
 
 
+// // create a function to be called by GUI
+const updateG = function () {
+ 	var colorObj = new THREE.Color( params.color )
+ 	var colorObj4 = new THREE.Color( params.color4 )
+    sunLight.color.set(colorObj)
+ 	fillLight.color.set(colorObj4)
+ }
+
+ params.color4 = fillLight.color.getHex()
+
+ gui.add(camera2.position, 'x').min(-20).max(20).step(0.1).name('Dir X pos')
+gui.add(camera2.position, 'y').min(-20).max(20).step(0.1).name('Dir Y pos')
+gui.add(camera2.position, 'z').min(-20).max(20).step(0.1).name('Dir Z pos')
+gui.add(camera2.rotation, 'x').step(0.1).name('Rot X pos')
+gui.add(camera2.rotation, 'y').step(0.1).name('Rot Y pos')
+ gui.add(camera2.rotation, 'z').step(0.1).name('Rot Z pos')
+
+// // gui.add(fillLight.position, 'x').min(-100).max(100).step(0.00001).name('Dir X pos')
+// // gui.add(fillLight.position, 'y').min(0).max(100).step(0.00001).name('Dir Y pos')
+// // gui.add(fillLight.position, 'z').min(-100).max(100).step(0.00001).name('Dir Z pos')
+
+// gui.addColor(params,'color').name('Dir color').onChange(update)
+gui.addColor(params,'color4').name('FillColor color').onChange(updateG)

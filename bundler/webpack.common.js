@@ -31,10 +31,19 @@ module.exports = {
         [
             // HTML
             {
-                test: /\.(html)$/,
-                use:
-                [
-                    'html-loader'
+                test: /\.html$/,
+                exclude: /node_modules/,
+                use: [
+                    {
+                        loader: 'html-loader',
+                        options: {
+                            
+                                        tag: 'source',
+                                        attribute: 'src',
+                                        type: 'src'
+                                    
+                        }
+                    }
                 ]
             },
 
@@ -81,6 +90,22 @@ module.exports = {
                   },
                 ],
               },
+            
+             // Video
+             {
+                test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[ext]',
+                            outputPath: 'video/' // Output directory for videos
+                        }
+                    }
+                ]
+            },
+
+
 
             // Fonts
             {
@@ -100,7 +125,7 @@ module.exports = {
                 {
                     filename: 'assets/images/[hash][ext]'
                 }
-                }
+             }
         ]
     }
 }
