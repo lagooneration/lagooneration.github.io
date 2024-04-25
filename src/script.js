@@ -72,68 +72,14 @@ const params = {
 
 // VIDEO 
 
-/*
-
-const registerVideo = (bound, video) => {
-	bound = document.querySelector(bound);
-	video = document.querySelector(video);
-	const scrollVideo = ()=>{
-		if(video.duration > 0) {
-			const distanceFromTop = window.scrollY + bound.getBoundingClientRect().top;
-			const rawPercentScrolled = (window.scrollY - distanceFromTop) / (bound.scrollHeight - window.innerHeight);
-			const percentScrolled = Math.min(Math.max(rawPercentScrolled, 0), 1);
-			// console.log(rawPercentScrolled)
-            // const newTime = video.duration * percentScrolled;
-            // video.currentTime += (newTime - video.currentTime) * 0.1;
-			video.currentTime = video.duration * percentScrolled;
-            // console.log(video.duration)
-            // console.log(rawPercentScrolled)
-		}
-		requestAnimationFrame(scrollVideo);
-	}
-	requestAnimationFrame(scrollVideo);
-}
-
-registerVideo("#bound-one", "#bound-one video");
-*/
 
 
-/* 
-// less time but jittery 
-// Listen for the scroll event
-window.addEventListener('scroll', updateVideoPosition);
-
-
-function updateVideoPosition() {
-    const thirdSectionTop = document.querySelector('.scroll-bound').offsetTop; // Get the top position of the third section
-    const scrollPosition = window.scrollY; // Get the current scroll position
-
-    // Check if the scroll position is within the third section
-    if (scrollPosition >= thirdSectionTop) {
-        const distanceFromTop = scrollPosition - thirdSectionTop;
-        const video = document.querySelector('.scroll-bound video'); // Assuming the video is within the third section
-        const videoDuration = video.duration;
-
-        // Calculate the percentage scrolled
-        const percentScrolled = Math.min(Math.max(distanceFromTop / window.innerHeight, 0), 1);
-
-        // Calculate the target time based on the video duration and scroll position
-        const targetTime = videoDuration * percentScrolled;
-
-        // Check if the target time is a finite number
-        if (!isNaN(targetTime) && isFinite(targetTime)) {
-            // Update the video playback position
-            video.currentTime = targetTime;
-        }
-    }
-}
-*/
-
+/* ---------------------------------- 
 const video = document.querySelector(".video-background");
 let src = video.currentSrc || video.src;
 // console.log(video, src);
 
-/* Make sure the video is 'activated' on iOS */
+// Make sure the video is 'activated' on iOS 
 function once(el, event, fn, opts) {
   var onceFn = function (e) {
     el.removeEventListener(event, onceFn);
@@ -148,8 +94,8 @@ once(document.documentElement, "touchstart", function (e) {
   video.pause();
 });
 
-/* ---------------------------------- */
-/* Scroll Control! */
+
+/// /////////// Scroll Control! 
 
 
 
@@ -175,7 +121,6 @@ once(video, "loadedmetadata", () => {
   );
 });
 
-/* When first coded, the Blobbing was important to ensure the browser wasn't dropping previously played segments, but it doesn't seem to be a problem now. Possibly based on memory availability? */
 setTimeout(function () {
   if (window["fetch"]) {
     fetch(src)
@@ -194,6 +139,82 @@ setTimeout(function () {
       });
   }
 }, 1000);
+*/
+
+
+const video = document.querySelector(".video");
+
+let tV = gsap.timeline({
+  scrollTrigger: {
+    trigger: "video",
+    start: "top top",
+    end: "bottom+=200% bottom",
+    scrub: true,
+    markers: true,
+        onUpdate: updateVideoPosition
+    },
+    paused: true // Start the timeline paused 
+});
+
+// wait until video metadata is loaded, so we can grab the proper duration before adding the onscroll animation. Might need to add a loader for loonng videos
+video.onloadedmetadata = function () {
+  tV.to(video, { currentTime: video.duration });
+};
+
+tV.to(video, { duration:video.duration, y: 700}); // Adjust the duration as needed
+
+
+
+// Dealing with devices
+function isTouchDevice() {
+  return (
+    "ontouchstart" in window ||
+    navigator.maxTouchPoints > 0 ||
+    navigator.msMaxTouchPoints > 0
+  );
+}
+
+// Function to update the video position based on the timeline progress
+function updateVideoPosition() {
+    const progress = tV.progress(); // Get the progress of the timeline (value between 0 and 1)
+
+    // Calculate the scroll position based on the progress of the timeline
+    const scrollPosition = progress * (document.body.scrollHeight - window.innerHeight);
+
+    // Check if the video is within the viewport
+    if (progress >= 0 && progress <= 1) {
+        // Set the video position to fixed to make it stay fixed on the viewport
+        video.style.position = "fixed";
+        video.style.top = "0";
+        video.style.left = "0";
+
+        // Calculate the video playback time based on the scroll position and video duration
+        const videoDuration = video.duration;
+
+        // Ensure that the video duration is a valid finite number
+        if (!isNaN(videoDuration) && isFinite(videoDuration)) {
+            const videoPlaybackTime = (scrollPosition / (document.body.scrollHeight - window.innerHeight)) * videoDuration;
+
+            // Check if the calculated playback time is a valid finite number
+            if (!isNaN(videoPlaybackTime) && isFinite(videoPlaybackTime)) {
+                // Set the current playback time of the video
+                video.currentTime = videoPlaybackTime;
+            }
+        }
+    } else {
+        // Remove fixed positioning when the video playback completes
+        video.style.position = "static";
+    }
+}
+
+
+if (isTouchDevice()) {
+  video.play();
+  video.pause();
+}
+
+
+
 
 /* ---------------------------------- */
 

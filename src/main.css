@@ -496,6 +496,7 @@ nav.header .a:hover ~ .cursor {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  top:400vh;
 }
 
 .plugin-container {
@@ -1033,4 +1034,14 @@ textarea{
 
 #containerV {
   height: 500vh;
+  background: none;
+}
+
+
+.video {
+  position: sticky;
+  width: 100vw;
+  height: 80vh;
+  
+  z-index: -1;
 }
