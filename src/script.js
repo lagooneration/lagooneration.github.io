@@ -72,35 +72,7 @@ const params = {
 
 // VIDEO 
 
-// import videoSrc from './videoEncoded.mp4';
-// const videoV = document.createElement('videoEncoded.mp4');
-
-/*    
-// var vc = document.querySelector('.video-bg');
-
-
-var frameNumber = 0, // start video at frame 0
-    // lower numbers = faster playback
-    playbackConst = 500, 
-    // get page height from video duration
-    setHeight = document.getElementById("set-height"), 
-    // select video element         
-    vid = document.getElementById('v0'); 
-
-// dynamically set the page height according to video length
-vid.addEventListener('loadedmetadata', function() {
-  setHeight.style.height = Math.floor(vid.duration) * playbackConst + "px";
-});
-
-// Use requestAnimationFrame for smooth playback
-function scrollPlay(){  
-  var frameNumber  = window.pageYOffset/playbackConst;
-  vid.currentTime  = frameNumber;
-  window.requestAnimationFrame(scrollPlay);
-}
-
-window.requestAnimationFrame(scrollPlay);
-*/
+/*
 
 const registerVideo = (bound, video) => {
 	bound = document.querySelector(bound);
@@ -122,8 +94,108 @@ const registerVideo = (bound, video) => {
 	requestAnimationFrame(scrollVideo);
 }
 
+registerVideo("#bound-one", "#bound-one video");
+*/
 
 
+/* 
+// less time but jittery 
+// Listen for the scroll event
+window.addEventListener('scroll', updateVideoPosition);
+
+
+function updateVideoPosition() {
+    const thirdSectionTop = document.querySelector('.scroll-bound').offsetTop; // Get the top position of the third section
+    const scrollPosition = window.scrollY; // Get the current scroll position
+
+    // Check if the scroll position is within the third section
+    if (scrollPosition >= thirdSectionTop) {
+        const distanceFromTop = scrollPosition - thirdSectionTop;
+        const video = document.querySelector('.scroll-bound video'); // Assuming the video is within the third section
+        const videoDuration = video.duration;
+
+        // Calculate the percentage scrolled
+        const percentScrolled = Math.min(Math.max(distanceFromTop / window.innerHeight, 0), 1);
+
+        // Calculate the target time based on the video duration and scroll position
+        const targetTime = videoDuration * percentScrolled;
+
+        // Check if the target time is a finite number
+        if (!isNaN(targetTime) && isFinite(targetTime)) {
+            // Update the video playback position
+            video.currentTime = targetTime;
+        }
+    }
+}
+*/
+
+const video = document.querySelector(".video-background");
+let src = video.currentSrc || video.src;
+// console.log(video, src);
+
+/* Make sure the video is 'activated' on iOS */
+function once(el, event, fn, opts) {
+  var onceFn = function (e) {
+    el.removeEventListener(event, onceFn);
+    fn.apply(this, arguments);
+  };
+  el.addEventListener(event, onceFn, opts);
+  return onceFn;
+}
+
+once(document.documentElement, "touchstart", function (e) {
+  video.play();
+  video.pause();
+});
+
+/* ---------------------------------- */
+/* Scroll Control! */
+
+
+
+let tV = gsap.timeline({
+  defaults: { duration: 1 },
+  scrollTrigger: {
+    trigger: "#containerV",
+    start: "top top",
+    end: "bottom bottom",
+    scrub: true
+  }
+});
+
+once(video, "loadedmetadata", () => {
+  tV.fromTo(
+    video,
+    {
+      currentTime: 0
+    },
+    {
+      currentTime: video.duration || 1
+    }
+  );
+});
+
+/* When first coded, the Blobbing was important to ensure the browser wasn't dropping previously played segments, but it doesn't seem to be a problem now. Possibly based on memory availability? */
+setTimeout(function () {
+  if (window["fetch"]) {
+    fetch(src)
+      .then((response) => response.blob())
+      .then((response) => {
+        var blobURL = URL.createObjectURL(response);
+
+        var t = video.currentTime;
+        once(document.documentElement, "touchstart", function (e) {
+          video.play();
+          video.pause();
+        });
+
+        video.setAttribute("src", blobURL);
+        video.currentTime = t + 0.01;
+      });
+  }
+}, 1000);
+
+/* ---------------------------------- */
 
 /* ---------------------------------- */
 
@@ -1165,7 +1237,7 @@ let previousTime = 0;
     distortPass.material.uniforms.jitterOffset.value += 0.01
     // Render scene without bloom
     
-    registerVideo("#bound-one", "#bound-one video");
+    
     
 
   requestAnimationFrame(renderLoop);
