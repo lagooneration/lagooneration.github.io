@@ -49,7 +49,7 @@ import Vbloom from './shaders/bloomVertex.glsl'
 import Stats from 'stats.js';
 
 const stats = new Stats()
-stats.showPanel(0) // 0: fps, 1: ms, 2: mb, 3+: custom
+stats.showPanel(0, 1, 2) // 0: fps, 1: ms, 2: mb, 3+: custom
 document.body.appendChild(stats.dom)
 
 // GUI
@@ -75,73 +75,56 @@ const params = {
 // import videoSrc from './videoEncoded.mp4';
 // const videoV = document.createElement('videoEncoded.mp4');
 
-/*   
-const video = document.querySelector('.video-bg');
-let src = video.currentSrc || video.src;
-console.log(video, src);
+/*    
+// var vc = document.querySelector('.video-bg');
 
-// Make sure the video is 'activated' on iOS 
-function once(el, event, fn, opts) {
-  var onceFn = function (e) {
-    el.removeEventListener(event, onceFn);
-    fn.apply(this, arguments);
-  };
-  el.addEventListener(event, onceFn, opts);
-  return onceFn;
+
+var frameNumber = 0, // start video at frame 0
+    // lower numbers = faster playback
+    playbackConst = 500, 
+    // get page height from video duration
+    setHeight = document.getElementById("set-height"), 
+    // select video element         
+    vid = document.getElementById('v0'); 
+
+// dynamically set the page height according to video length
+vid.addEventListener('loadedmetadata', function() {
+  setHeight.style.height = Math.floor(vid.duration) * playbackConst + "px";
+});
+
+// Use requestAnimationFrame for smooth playback
+function scrollPlay(){  
+  var frameNumber  = window.pageYOffset/playbackConst;
+  vid.currentTime  = frameNumber;
+  window.requestAnimationFrame(scrollPlay);
 }
 
-once(document.documentElement, "touchstart", function (e) {
-  video.play();
-  video.pause();
-});
+window.requestAnimationFrame(scrollPlay);
+*/
 
-//---------------------------------- //
-// Scroll Control! //
+const registerVideo = (bound, video) => {
+	bound = document.querySelector(bound);
+	video = document.querySelector(video);
+	const scrollVideo = ()=>{
+		if(video.duration > 0) {
+			const distanceFromTop = window.scrollY + bound.getBoundingClientRect().top;
+			const rawPercentScrolled = (window.scrollY - distanceFromTop) / (bound.scrollHeight - window.innerHeight);
+			const percentScrolled = Math.min(Math.max(rawPercentScrolled, 0), 1);
+			// console.log(rawPercentScrolled)
+            // const newTime = video.duration * percentScrolled;
+            // video.currentTime += (newTime - video.currentTime) * 0.1;
+			video.currentTime = video.duration * percentScrolled;
+            // console.log(video.duration)
+            // console.log(rawPercentScrolled)
+		}
+		requestAnimationFrame(scrollVideo);
+	}
+	requestAnimationFrame(scrollVideo);
+}
 
-// gsap.registerPlugin(ScrollTrigger);
 
-let tV = gsap.timeline({
-  defaults: { duration: 1 },
-  scrollTrigger: {
-    trigger: "#containerV",
-    start: "top top",
-    end: "bottom bottom",
-    scrub: true
-  }
-});
 
-once(video, 'loadedmetadata', () => {
-  tV.fromTo(
-    video,
-    {
-      currentTime: 0
-    },
-    {
-      currentTime: video.duration || 1
-    }
-  );
-});
 
-//When first coded, the Blobbing was important to ensure the browser wasn't dropping previously played segments, but it doesn't seem to be a problem now. Possibly based on memory availability?//
-setTimeout(function () {
-  if (window["fetch"]) {
-    fetch(src)
-      .then((response) => response.blob())
-      .then((response) => {
-        var blobURL = URL.createObjectURL(response);
-
-        var t = video.currentTime;
-        once(document.documentElement, "touchstart", function (e) {
-          video.play();
-          video.pause();
-        });
-
-        video.setAttribute('src', blobURL);
-        video.currentTime = t + 0.01;
-      });
-  }
-}, 1000);
- */
 /* ---------------------------------- */
 
 ////////////////////////////////////////////////////////////////////////
@@ -190,7 +173,7 @@ ScrollTrigger.create({
       y: 80,
       rotationX: 180,
       transformOrigin: "0% 50% -50",
-      ease: "back",
+      ease: 'back',
       stagger: 0.01
     });
 },
@@ -906,7 +889,7 @@ soundS.onEnded = function() {
 
 //////////////////////////////////////////////////
 //// INTRO ANIMATION
-
+let implantRotation = false;
 function introAnimation() {
   new TWEEN.Tween(camera.position.set(0, 4, 2.7))
     .to({ x: 0, y: 2.4, z: 8.8 }, 3500)
@@ -917,6 +900,8 @@ function introAnimation() {
       document.querySelector('.header').classList.add('ended');
       document.querySelector('.hero>p').classList.add('ended');
     });
+
+    implantRotation = true;
 }
 
 
@@ -931,12 +916,14 @@ function handleMouseMoveR(event) {
     const rotationY = (Math.PI + Math.PI/4) + (-(event.clientX / window.innerWidth - 0.5) * 0.5); // Adjust the factor as needed
     
     // Apply rotation using GSAP
+    if(implantRotation) {
     gsap.to(imp.rotation, {
         x: rotationX,
         y: rotationY,
         duration: 0.5, // Adjust the duration as needed
         ease: 'power2.out' // Adjust the easing function as needed
     });
+    }
   }
 
 // Add the event listener to track mouse movement
@@ -1178,7 +1165,7 @@ let previousTime = 0;
     distortPass.material.uniforms.jitterOffset.value += 0.01
     // Render scene without bloom
     
-
+    registerVideo("#bound-one", "#bound-one video");
     
 
   requestAnimationFrame(renderLoop);

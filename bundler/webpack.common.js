@@ -29,23 +29,16 @@ module.exports = {
     {
         rules:
         [
+
             // HTML
             {
-                test: /\.html$/,
-                exclude: /node_modules/,
-                use: [
-                    {
-                        loader: 'html-loader',
-                        options: {
-                            
-                                        tag: 'source',
-                                        attribute: 'src',
-                                        type: 'src'
-                                    
-                        }
-                    }
+                test: /\.(html)$/,
+                use:
+                [
+                    'html-loader'
                 ]
             },
+
 
             // JS
             {
@@ -85,22 +78,22 @@ module.exports = {
                     loader: 'file-loader',
                     options: {
                       name: '[name].[ext]',
-                      outputPath: 'audio/',
-                    },
-                  },
-                ],
+                      outputPath: 'audio/'
+                    }
+                  }
+                ]
               },
             
              // Video
              {
-                test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+                test: /\.(mov|mp4)$/,
                 use: [
                     {
                         loader: 'file-loader',
                         options: {
                             name: '[name].[ext]',
-                            outputPath: 'video/' // Output directory for videos
-                        }
+                            outputPath: 'video/'
+                        }  
                     }
                 ]
             },
