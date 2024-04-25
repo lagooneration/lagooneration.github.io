@@ -32,10 +32,10 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 // import { TextPlugin} from 'gsap/TextPlugin';
-import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
+// import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
 // import { CSSPlugin } from 'gsap/CSSPlugin';
 
-gsap.registerPlugin(ScrollTrigger, SplitText, MotionPathPlugin) 
+gsap.registerPlugin(ScrollTrigger, SplitText) 
 
 import Fsynapsis from './shaders/synapsisFragment.glsl' 
 import Vsynapsis from './shaders/synapsisVertex.glsl'
@@ -74,74 +74,43 @@ const params = {
 
 
 
-/* ---------------------------------- 
-const video = document.querySelector(".video-background");
-let src = video.currentSrc || video.src;
-// console.log(video, src);
-
-// Make sure the video is 'activated' on iOS 
-function once(el, event, fn, opts) {
-  var onceFn = function (e) {
-    el.removeEventListener(event, onceFn);
-    fn.apply(this, arguments);
-  };
-  el.addEventListener(event, onceFn, opts);
-  return onceFn;
-}
-
-once(document.documentElement, "touchstart", function (e) {
-  video.play();
-  video.pause();
-});
 
 
 /// /////////// Scroll Control! 
 
-
+const video = document.querySelector(".video");
 
 let tV = gsap.timeline({
-  defaults: { duration: 1 },
   scrollTrigger: {
-    trigger: "#containerV",
+    trigger: "video",
     start: "top top",
-    end: "bottom bottom",
-    scrub: true
+    end: "bottom+=200% bottom",
+    scrub: true,
+    markers: true
   }
 });
 
-once(video, "loadedmetadata", () => {
-  tV.fromTo(
-    video,
-    {
-      currentTime: 0
-    },
-    {
-      currentTime: video.duration || 1
-    }
+// wait until video metadata is loaded, so we can grab the proper duration before adding the onscroll animation. Might need to add a loader for loonng videos
+video.onloadedmetadata = function () {
+  tV.to(video, { currentTime: video.duration });
+};
+
+// Dealing with devices
+function isTouchDevice() {
+  return (
+    "ontouchstart" in window ||
+    navigator.maxTouchPoints > 0 ||
+    navigator.msMaxTouchPoints > 0
   );
-});
-
-setTimeout(function () {
-  if (window["fetch"]) {
-    fetch(src)
-      .then((response) => response.blob())
-      .then((response) => {
-        var blobURL = URL.createObjectURL(response);
-
-        var t = video.currentTime;
-        once(document.documentElement, "touchstart", function (e) {
-          video.play();
-          video.pause();
-        });
-
-        video.setAttribute("src", blobURL);
-        video.currentTime = t + 0.01;
-      });
-  }
-}, 1000);
-*/
+}
+if (isTouchDevice()) {
+  video.play();
+  video.pause();
+}
 
 
+
+/*
 const video = document.querySelector(".video");
 
 let tV = gsap.timeline({
@@ -213,7 +182,7 @@ if (isTouchDevice()) {
   video.pause();
 }
 
-
+*/
 
 
 /* ---------------------------------- */
@@ -317,6 +286,9 @@ loadingManager.onLoad = function () {
   window.scroll(0, 0);
 };
 
+//loadingManager.onProgress = function (url, itemsLoaded, itemsTotal) {
+//    console.log('Loading file: ' + url + '.\nLoaded  files.');
+//};
 
 ////////////////////////////////////////////////////////////////////////
 //// DRACO LOADER
