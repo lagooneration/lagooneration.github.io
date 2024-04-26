@@ -233,7 +233,7 @@ nav.header .a:hover ~ .cursor {
   pointer-events: none;
   position: absolute;
   top: 0;
-  left: -50%;
+  
   outline: none;
   z-index: 0;
   height: 100%;
@@ -402,6 +402,7 @@ nav.header .a:hover ~ .cursor {
 .neurophones-container {
   pointer-events: all;
   width: 100%;
+  
   display: flex;
   height: 100vh;
   margin: 0;
@@ -483,6 +484,112 @@ nav.header .a:hover ~ .cursor {
   overflow: hidden;
 }
 
+
+.video {
+   position: sticky;
+  
+  top:0;
+  width: 100vw;
+  height: 100vh;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.attention {
+  pointer-events: all;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background: #3b3b3b;
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  top:200vh;
+}
+
+
+.attention-container {
+  pointer-events: all;
+  width: 100%;
+  align-items: center;
+  display: flex;
+  height: 100vh;
+  margin: 0;
+  
+  padding: 0 10%;
+  flex-direction: column;
+  justify-content: flex-end;
+  z-index: 2;
+  background: radial-gradient(
+    circle at 50% center,
+    rgba(5, 5, 5, 0) 30%,
+    #141414 70%
+  );
+}
+
+.attention-container ul {
+  list-style: none;
+  display: inline-flex;
+  padding: 0px;
+  
+  font-family: 'DM Serif Display', serif;
+  color: #ffffff1c;
+  justify-content: center;
+    align-items: center;
+  z-index: 2;
+}
+
+.attention-container ul > li.active:after {
+  content: '';
+  top: 20px;
+  width: 50px;
+  height: 2px;
+  background: #fff;
+  position: relative;
+  left: 0px;
+  display: block;
+}
+
+.attention-container ul > li {
+  padding-right: 20px;
+  transition: all 0.8s ease-out;
+}
+
+.attention-container ul > li:hover {
+  color: whitesmoke;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.attention-container ul > li:hover ~ nav.header.ended.cursor {
+  transform: translate(-50%, -50%) scale(5);
+  opacity: 1;
+}
+
+.attention-container ul > li.active {
+  color: whitesmoke;
+}
+
+.attention-container p {
+  font-size: 24px;
+  font-family: sans-serif;
+  line-height: 28px;
+  
+  justify-content: center;
+    align-items: center;
+  color: #6a6a6a;
+  
+  height: 30px;
+}
+
+
 .plugin {
   pointer-events: all;
   width: 100%;
@@ -500,17 +607,46 @@ nav.header .a:hover ~ .cursor {
 }
 
 .plugin-container {
-  width: 50%;
-  margin-left: 52%;
+  width: 65%;
+  
   z-index: 2;
+}
+
+.plugin-frame {
+  display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	position: relative;
+	width: 100%;
+	height: 100%;
+	
+	justify-content: center;
+	align-items: center;
+	
+    border-radius: 10px;
+
+}
+
+/*.pleft {
+  
+  
+}*/
+
+.pright{
+  
+
+  padding: 20px;
+	background: url("plugin.jpg") no-repeat center;
+	background-size: cover;
+	height: 100%;
+    border-radius: 12px;
 }
 
 .plugin-container h1 {
   font-size: 5vw;
-  font-weight: 500;
+  
   letter-spacing: 0.7px;
   color: whitesmoke;
-  margin: 20px 0;
+  
   padding: 0;
 }
 
@@ -968,6 +1104,13 @@ textarea{
     margin-left: 30px;
   }
 
+  .video {
+    margin: 10px 0;
+    
+    justify-content: center;
+    transform: translate(-50%, -50%);
+  }
+
   .plugin-container {
     width: 100%;
     margin-left: 0;
@@ -1037,17 +1180,80 @@ textarea{
   background: none;
 }
 
-
-.video {
-   position: sticky;
-  
-  top:0;
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  
+.point
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
 }
 
+.point .label
+{
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #00000077;
+    border: 1px solid #ffffff77;
+    color: #ffffff;
+    font-family: Helvetica, Arial, sans-serif;
+    text-align: center;
+    line-height: 40px;
+    font-weight: 100;
+    font-size: 14px;
+    
+    cursor: help;
+    transform: scale(0, 0);
+    transition: transform 0.3s;
+}
+
+.point.visible .label
+{
+    transform: scale(1, 1);
+}
+
+.point .text
+{
+    position: absolute;
+    top: 30px;
+    left: -120px;
+    width: 200px;
+    padding: 20px;
+    border-radius: 8px;
+    background: #00000077;
+    border: 1px solid #ffffff77;
+    color: #ffffff;
+    line-height: 1.3em;
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 100;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.point:hover .text
+{
+    opacity: 1;
+}
+
+
+.box {
+    margin-bottom: 200px;
+    margin-left: 34px;
+    width: 30px; /* Adjust size as per your icon's size */
+    height: 30px; /* Adjust size as per your icon's size */
+    background-image: linear-gradient(45deg, #4a90e2, #9013fe); /* Gradient colors */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); /* Shadow for depth */
+    display: flex; /* Flex display to center content */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    color: white; /* Text color */
+    font-size: 24px; /* Font size */
+    font-weight: bold; /* Font weight */
+    
+
+}
