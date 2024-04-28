@@ -4,10 +4,8 @@ import {
   Scene,
   LoadingManager,
   WebGLRenderer,
-  sRGBEncoding,
   Group,
   PerspectiveCamera,
-  DirectionalLight,
   PointLight,
   MeshPhongMaterial,
 } from "three";
@@ -21,7 +19,7 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { LensDistortionShader } from "../static/shaders/LensDistortionShader.js";
 
-// import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 // import { SobelOperatorShader } from "three/examples/jsm/shaders/SobelOperatorShader.js";
 import { DotScreenShader } from "three/examples/jsm/shaders/DotScreenShader.js";
@@ -39,6 +37,8 @@ gsap.registerPlugin(ScrollTrigger, SplitText, MotionPathPlugin);
 
 import Fsynapsis from "./shaders/synapsisFragment.glsl";
 import Vsynapsis from "./shaders/synapsisVertex.glsl";
+import Flight from "./shaders/neuronsFragment.glsl";
+import Vlight from "./shaders/neuronsVertex.glsl";
 import Fbloom from "./shaders/bloomFragment.glsl";
 import Vbloom from "./shaders/bloomVertex.glsl";
 
@@ -54,6 +54,7 @@ stats.showPanel(0); // Show FPS panel
 
 // GUI
 import GUI from "lil-gui";
+import { ShaderMaterial } from "three";
 const gui = new GUI();
 
 // Create parameters object
@@ -64,96 +65,8 @@ const params = {
   shape: 1, // Default bokeh shape (1 for circular)
 };
 
-// VIDEO
-
-/// /////////// Scroll Control!
 
 
-const video = document.querySelector(".video");
-
-let tV = gsap.timeline({
-  scrollTrigger: {
-    trigger: "video",
-    start: "top top",
-    end: "bottom+=200% bottom",
-    scrub: true,
-    markers: true,
-  },
-});
-
-// wait until video metadata is loaded, so we can grab the proper duration before adding the onscroll animation. Might need to add a loader for loonng videos
-video.onloadedmetadata = function () {
-  tV.to(video, { currentTime: video.duration });
-};
-
-// Dealing with devices
-function isTouchDevice() {
-  return (
-    "ontouchstart" in window ||
-    navigator.msMaxTouchPoints > 0 ||
-    navigator.maxTouchPoints > 0
-  );
-}
-if (isTouchDevice()) {
-  video.play();
-  video.pause();
-}
-
-
-/* ---------------------------------- */
-
-////////////////////////////////////////////////////////////////////////
-//// GSAP ANIMATION
-
-// box animation
-gsap.to(".box", {
-    scrollTrigger: ".box",
-    rotation: 360,
-    x: '30vw',
-    y: '-20vw',
-    
-    yPercent: -10,
-    scale: 1.4,
-    // special properties
-    duration: 1, // how long the animation lasts
-
-    // repeat: -1, // the number of repeats - this will play 3 times
-    // yoyo: true, // this will alternate back and forth on each repeat. Like a yoyo
-});
-
-var tl = gsap.timeline(),
-  mySplitText = new SplitText("#content", { type: "words,chars" }),
-  chars = mySplitText.chars; //an array of all the divs that wrap each character
-
-// gsap.set("#content", { perspective: 400 });
-
-// console.log(chars);
-function init() {
-  ScrollTrigger.create({
-    trigger: ".neurophones-container",
-    start: "top center",
-    onEnter: () => {
-      tl.from(chars, {
-        duration: 2,
-        opacity: 0,
-        scale: 0,
-        y: 80,
-        rotationX: 180,
-        transformOrigin: "0% 50% -50",
-        ease: "back",
-        stagger: 0.01,
-      });
-    },
-    onLeaveBack: () => {
-      gsap.to(mySplitText, {
-        opacity: 1,
-        duration: 1,
-        ease: "power3.out",
-      });
-    },
-  });
-}
-window.addEventListener("load", init);
 
 ////////////////////////////////////////////////////////////////////////
 //// LOADING MANAGER
@@ -191,9 +104,94 @@ loadingManager.onLoad = function () {
   window.scroll(0, 0);
 };
 
-//loadingManager.onProgress = function (url, itemsLoaded, itemsTotal) {
-//    console.log('Loading file: ' + url + '.\nLoaded  files.');
-//};
+////////////////////////////////////////////////////////////////////////
+//// GSAP ANIMATION
+
+/* ---------------------------------- */
+// VIDEO
+
+const video = document.querySelector(".video");
+
+let tV = gsap.timeline({
+    scrollTrigger: {
+        trigger: "video",
+        start: "top top",
+        end: "bottom+=200% bottom",
+        scrub: true,
+        markers: true,
+    },
+});
+
+// wait until video metadata is loaded, so we can grab the proper duration before adding the onscroll animation. Might need to add a loader for loonng videos
+video.onloadedmetadata = function () {
+    tV.to(video, { currentTime: video.duration });
+};
+
+// Dealing with devices
+function isTouchDevice() {
+    return (
+        "ontouchstart" in window ||
+        navigator.msMaxTouchPoints > 0 ||
+        navigator.maxTouchPoints > 0
+    );
+}
+if (isTouchDevice()) {
+    video.play();
+    video.pause();
+}
+
+
+/* ---------------------------------- */
+// box animation
+
+gsap.to(".box", {
+    scrollTrigger: ".box",
+    rotation: 360,
+    x: '30vw',
+    y: '-20vw',
+
+    yPercent: -10,
+    scale: 1.4,
+    // special properties
+    duration: 1, // how long the animation lasts
+
+    // repeat: -1, // the number of repeats - this will play 3 times
+    // yoyo: true, // this will alternate back and forth on each repeat. Like a yoyo
+});
+
+var tl = gsap.timeline(),
+    mySplitText = new SplitText("#content", { type: "words,chars" }),
+    chars = mySplitText.chars; //an array of all the divs that wrap each character
+
+/* ---------------------------------- */
+// Text Revel (Second section)
+
+function init() {
+    ScrollTrigger.create({
+        trigger: ".neurophones-container",
+        start: "top center",
+        onEnter: () => {
+            tl.from(chars, {
+                duration: 2,
+                opacity: 0,
+                scale: 0,
+                y: 80,
+                rotationX: 180,
+                transformOrigin: "0% 50% -50",
+                ease: "back",
+                stagger: 0.01,
+            });
+        },
+        onLeaveBack: () => {
+            gsap.to(mySplitText, {
+                opacity: 1,
+                duration: 1,
+                ease: "power3.out",
+            });
+        },
+    });
+}
+window.addEventListener("load", init);
 
 ////////////////////////////////////////////////////////////////////////
 //// DRACO LOADER
@@ -211,9 +209,15 @@ const containerDetails = document.getElementById(
 const containerFooter = document.getElementById("canvas-container-plugin");
 
 let oldMaterial;
+let cursor = { x: 0, y: 0 };
+let mouse = { x: 0, y: 0 };
 let secondContainer = false;
 let width = container.clientWidth;
 let height = container.clientHeight;
+
+let deltaTime = 0;
+const clock = new Clock();
+let previousTime = 0;
 
 ////////////////////////////////////////////////////////////////////////
 //// RENDERER AND SCENE
@@ -230,20 +234,17 @@ renderer.autoClear = true;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 renderer.setSize(width, height);
 // renderer.gammaFactor = 1.2;
-renderer.outputColorSpace = sRGBEncoding;
+// renderer.outputColorSpace = sRGBEncoding;
 container.appendChild(renderer.domElement);
-console.log(renderer.info);
 
 const renderer2 = new WebGLRenderer({ antialias: false });
 renderer2.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 renderer2.setSize(width, height);
-renderer2.outputColorSpace = sRGBEncoding;
 containerDetails.appendChild(renderer2.domElement);
 
 const renderer3 = new WebGLRenderer({ antialias: false });
 renderer3.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 renderer3.setSize(width, height);
-renderer3.outputColorSpace = sRGBEncoding;
 containerFooter.appendChild(renderer3.domElement);
 
 ////////////////////////////////////////////////////////////////////////
@@ -272,12 +273,10 @@ const camera3 = new PerspectiveCamera(
   1,
   100
 );
-camera3.position.set(-2.2, 2.7, 1.9);
-camera3.rotation.set(0, -0.8, 0);
+camera3.position.set(11, 4.1, -0.65);
+camera3.rotation.set(0, 1.6, 0);
 scene.add(camera3);
 
-/////////////////////////////////////////////////////////////////////////
-///// POST PROCESSING EFFECTS
 /////////////////////////////////////////////////////////////////////////
 ///// POST PROCESSING EFFECTS
 
@@ -316,70 +315,90 @@ distortPass.material.uniforms.jitterIntensity.value = 6.7;
 distortPass.material.defines.BAND_MODE = 2;
 
 composer.addPass(renderPass);
-// composer2.addPass( distortPass )
+composer2.addPass( distortPass )
 
-/*
-/////BLOOM PASS //////////////////////////////////////////////////////////////
-const BLOOM_SCENE = 1;
 
-            const bloomLayer = new THREE.Layers();
-            bloomLayer.set( BLOOM_SCENE );
+//////////////////////////////////////////////////
+//// POST PROCESSING
 
-            const params = {
-                threshold: 0,
-                strength: 1,
-                radius: 0.5,
-                exposure: 1
-            };
-const darkMaterial = new THREE.MeshBasicMaterial( { color: 'black' } );
-            const materials = {};
-
-function nonBloomed(obj) {
-    if (obj.isMesh && bloomLayer.test(obj.layers) === false) {
-        materials[obj.uuid] = obj.material;
-        obj.material = darkMaterial;
-    }
+let sobelEffect = new ShaderPass(SobelAnimation);
+sobelEffect.uniforms["resolution"].value.x =
+    container.clientWidth * window.devicePixelRatio;
+sobelEffect.uniforms["resolution"].value.y =
+    container.clientHeight * window.devicePixelRatio;
+sobelEffect.uniforms["mixRatio"].value = 0;
+// Function to add Sobel effect
+let Sobel = false;
+function addSobelEffect() {
+    composer2.addPass(sobelEffect);
+    gsap.to(sobelEffect.uniforms["mixRatio"], {
+        value: 0.8,
+        duration: 2.5,
+        onComplete: () => {
+            console.log("Dark life");
+            Sobel = true;
+        },
+    });
 }
 
-function restoreMaterial(obj) {
-    if(materials[obj.uuid]) {
-        obj.material = materials[obj.uuid];
-        delete materials[obj.uuid];
-    }
+// Function to remove Sobel effect
+function removeSobelEffect() {
+    gsap.to(sobelEffect.uniforms["mixRatio"], {
+        value: 0,
+        duration: 1,
+        onComplete: () => {
+            console.log("back to colors");
+            composer2.removePass(sobelEffect);
+            Sobel = false;
+        },
+    });
 }
 
+const dotEffect = new ShaderPass(DotScreenShader);
+dotEffect.uniforms["scale"].value = 2;
+
+// Create a BokehPass
+const bokehPass = new BokehPass(scene, camera2, {
+    focus: 5.0, // Focus distance
+    aperture: 0.05, // Aperture size
+    maxblur: 0.005, // Maximum blur strength
+    width: width,
+    height: height,
+});
+
+// Add parameters to GUI
+gui.add(params, "focus", 0, 10).onChange((value) => {
+    bokehPass.uniforms["focus"].value = value;
+});
+gui.add(params, "aperture", 0, 0.1).onChange((value) => {
+    bokehPass.uniforms["aperture"].value = value;
+});
+gui.add(params, "maxblur", 0, 0.1).onChange((value) => {
+    bokehPass.uniforms["maxblur"].value = value;
+});
+gui
+    .add(params, "shape", { Circular: 1, Hexagon: 2, Octagon: 3 })
+    .onChange((value) => {
+        bokehPass.uniforms["shape"].value = value;
+    });
 
 
-const renderScene = new RenderPass( scene, camera2 );
-const bloomPass = new UnrealBloomPass( new THREE.Vector2( containerDetails.clientWidth, containerDetails.clientHeight ), 1.5, 0.4, 0.85 );
-const bloomComposer = new EffectComposer( renderer2 );
-            bloomComposer.renderToScreen = false;
-            bloomComposer.addPass( renderScene );
-            bloomComposer.addPass( bloomPass );
+// Create a BloomPass
+const bloomPass = new UnrealBloomPass(
+    new THREE.Vector2(containerDetails.clientWidth, containerDetails.clientHeight),
+    1.5,
+    0.4,
+    0.85
+);
 
-const mixPass = new ShaderPass(
-                new THREE.ShaderMaterial( {
-                    uniforms: {
-                        baseTexture: { value: null },
-                        bloomTexture: { value: bloomComposer.renderTarget2.texture }
-                    },
-                	
-                    fragmentShader: Fbloom,
-                    vertexShader: Vbloom,
-                    defines: {}
-                } ), 'baseTexture'
-            );
-            mixPass.needsSwap = true;
+composer2.addPass(renderPass2);
 
-const finalPass = new OutputPass();
-// bloomComposer.addPass( finalPass );
+// composer.addPass(sobelEffect);
+// composer.addPass(dotEffect);
+composer2.addPass(sobelEffect);
+// composer2.addPass(bloomPass);
+composer2.addPass(bokehPass);
 
-const finalComposer = new EffectComposer( renderer2 );
-            finalComposer.addPass( renderScene );
-            finalComposer.addPass( mixPass );
-            finalComposer.addPass( finalPass );
-
-*/
 
 ////////////////////////////////////////////////////////////////////////
 //// resize event listener
@@ -413,12 +432,13 @@ window.addEventListener("resize", () => {
 ////////////////////////////////////////////////////////////////////////
 //// LIGHTS
 
-//const sunLight = new PointLight(0xabadaf, 1.05);
-//sunLight.position.set(100, 50, 100);
+//const sunLight = new THREE.SpotLight(0x3c3c3c, 20, 10, 0.3, 1, 0.4);
+//sunLight.position.set(2, 2, 17.4);
+
 //scene.add(sunLight);
 
-// const amb = new THREE.AmbientLight(0xabadaf, 0.05);
-// scene.add(amb);
+ //const amb = new THREE.AmbientLight(0xabadaf, 0.05);
+ //scene.add(amb);
 
 // const dir = new THREE.SpotLight (0xffffff , 1.5, 0, Math.PI/2, 0.5, 1);
 // dir.position.set(10, 15, 10);
@@ -428,78 +448,117 @@ window.addEventListener("resize", () => {
 // hemilight.position.set(4, 4, 4);
 // scene.add(hemilight);
 
-const fillLight = new PointLight(0xff00f0, 2, 3.2, 3);
-fillLight.position.set(30, 3, 1.8);
-scene.add(fillLight);
+//const fillLight = new PointLight(0xff00f0, 2, 3.2, 3);
+//fillLight.position.set(30, 3, 1.8);
+//scene.add(fillLight);
 
-const fillLight2 = new PointLight(0x0f00ff, 2.7, 4, 3);
-fillLight2.position.set(30, 3, 2.8);
-scene.add(fillLight2);
+//const sphereSize = 1;
+//const pointLightHelper = new THREE.PointLightHelper(fillLight, sphereSize);
+//scene.add(pointLightHelper);
+
+//const fillLight2 = new PointLight(0x0f00ff, 2.7, 4, 3);
+//fillLight2.position.set(30, 3, 2.8);
+//scene.add(fillLight2);
+
+
+const newShader = new THREE.ShaderMaterial({
+    uniforms: {
+        iTime: { value: 0 },
+        iResolution: { value: new THREE.Vector2(width, height) },
+        iMouse: { value: mouse },
+        //deltaTime: { value: deltaTime },
+    },
+    
+    vertexShader: Vlight,
+    fragmentShader: Flight,
+    
+    
+    
+    // wireframe: true
+});
+
+
 
 ////////////////////////////////////////////////////////////////////////
 //// TEXTURES
 
 let iTime;
-let iMouse = new THREE.Vector2();
-let iResolution = new THREE.Vector2(width, height);
+// let iResolution = new THREE.Vector2(width, height);
 
-// get mouse location
-document.addEventListener("mousemove", (event) => {
-  iMouse.x = event.clientX;
-  iMouse.y = event.clientY;
-});
-
-const sMat = new THREE.ShaderMaterial({
-  uniforms: {
-    iTime: { value: iTime },
-    iMouse: { value: iMouse },
-  },
-  vertexShader: Vsynapsis,
-  fragmentShader: Fsynapsis,
-  // side: THREE.DoubleSide,
-  transparent: true,
-  depthTest: true,
-  depthWrite: true,
-  wireframe: false,
-  blending: THREE.AdditiveBlending,
-  // wireframe: true
-});
+//const sMat = new THREE.ShaderMaterial({
+//  uniforms: {
+//        iTime: { value: iTime },
+//        iMouse: { value: cursor },
+//  },
+//  fragmentShader: Fsynapsis,
+//  vertexShader: Vsynapsis,
+//  // side: THREE.DoubleSide,
+//  transparent: true,
+//  depthTest: true,
+//  depthWrite: true,
+//  wireframe: false,
+//  blending: THREE.AdditiveBlending,
+//  // wireframe: true
+//});
 
 ////////////////////////////////////////////////////////////////////////
 //// GLTF MODELS
 
+/* ---------------------------------- */
+// BRAIN MODEL
+
+let brain; 
+let brainShader;
+
+let brainMaterial = new THREE.MeshToonMaterial({ color: 0x3c3c3c });
+//loader.load("models/gltf/brain.gltf", function (gltf) {
+//  gltf.scene.traverse((obj) => {
+//    if (obj.isMesh) {
+//        oldMaterial = obj.material;
+//        obj.material = sMat;
+//      // obj.material = sMat;
+//    }
+//  });
+//    brainShader = gltf.scene;
+//    scene.add(brainShader);
+//    brainShader.scale.set(1.23, 1.23, 1.23);
+//    brainShader.position.set(0, 1.13, 0);
+//    brainShader.rotation.set(0, Math.PI / 32, 0);
+
+//    //brain = gltf.scene;
+//    //scene.add(brain);
+//    //  brain.scale.set(1.2, 1.2, 1.2);
+//    //  brain.position.set(0, 1.13, 0);
+//    //  brain.rotation.set(0, Math.PI / 32, 0);
+//  clearScene();
+//});
+
 loader.load("models/gltf/brain.gltf", function (gltf) {
-  gltf.scene.traverse((obj) => {
-    if (obj.isMesh) {
-      oldMaterial = obj.material;
-      obj.material = sMat;
-    }
-  });
-  scene.add(gltf.scene);
-  gltf.scene.scale.set(1.23, 1.23, 1.23);
-  gltf.scene.position.set(0, 1.13, 0);
-  gltf.scene.rotation.set(0, Math.PI / 32, 0);
-  clearScene();
+    gltf.scene.traverse((obj) => {
+        if (obj.isMesh) {
+            oldMaterial = obj.material;
+            obj.material = newShader;
+            // obj.material = brainMaterial;
+        }
+    });
+    console.log(gltf.scene.children[0]);
+    brain = gltf.scene;
+    scene.add(brain);
+    brain.scale.set(1.2, 1.2, 1.2);
+    // brain.scale.set(4.2, 4.2, 4.2);
+      brain.position.set(0, 1.13, 0);
+      brain.rotation.set(0, Math.PI / 32, 0);
+    clearScene();
 });
 
-let brain;
-let brainMaterial = new MeshPhongMaterial({ color: 0x3c3c3c });
-loader.load("models/gltf/brain.gltf", function (gltf) {
-  gltf.scene.traverse((obj) => {
-    if (obj.isMesh) {
-      oldMaterial = obj.material;
-      obj.material = brainMaterial;
-    }
-  });
-  brain = gltf.scene;
-  scene.add(brain);
-  brain.scale.set(1.2, 1.2, 1.2);
-  brain.position.set(0, 1.13, 0);
-  brain.rotation.set(0, Math.PI / 32, 0);
-  clearScene();
-});
 
-console.log(brain);
+
+
+
+
+
+
+
 
 function clearScene() {
   oldMaterial.dispose();
@@ -507,20 +566,11 @@ function clearScene() {
 }
 
 let imp;
-let tempImp;
-let impMaterial = new THREE.MeshStandardMaterial({
-  depthTest: true,
-  depthWrite: true,
-  color: 0xffffff,
-  roughness: 0.5,
-  metalness: 0.5,
-});
-
-loader.load("models/implant.gltf", function (gltf) {
+loader.load("models/gltf/implant.gltf", function (gltf) {
   gltf.scene.traverse((obj) => {
     if (obj.isMesh) {
       oldMaterial = obj.material;
-      //obj.material = impMaterial;
+        obj.material = newShader;
     }
   });
   imp = gltf.scene;
@@ -572,7 +622,7 @@ const wireMat = new THREE.MeshBasicMaterial({
 });
 wireMat.opacity = 0.5;
 
-loader.load("models/earMat.gltf", function (gltf) {
+loader.load("models/gltf/earMat.gltf", function (gltf) {
   gltf.scene.traverse((obj) => {
     if (obj.isMesh) {
       oldMaterial = obj.material;
@@ -592,10 +642,8 @@ loader.load("models/earMat.gltf", function (gltf) {
   console.log("Ear LOADING");
 });
 
-// const cube = new THREE.Mesh(new THREE.BoxGeometry(1,5), new THREE.MeshBasicMaterial({color: 0x3c3c3c}));
-// scene.add(cube);
 
-loader.load("models/wireFace.gltf", function (gltf) {
+loader.load("models/gltf/wireFace.gltf", function (gltf) {
   gltf.scene.traverse((obj) => {
     if (obj.isMesh) {
       oldMaterial = obj.material;
@@ -615,110 +663,13 @@ loader.load("models/wireFace.gltf", function (gltf) {
   console.log("Face LOADING");
 });
 
-//////////////////////////////////////////////////
-//// POST PROCESSING
-
-/// BLOOM
-
-// const bloomPass = new UnrealBloomPass(new THREE.Vector2(container.clientWidth, container.clientHeight),1, 0.2, 0.1);
-// bloomPass.ignoreMesh(cube);
-
-let sobelEffect = new ShaderPass(SobelAnimation);
-sobelEffect.uniforms["resolution"].value.x =
-  container.clientWidth * window.devicePixelRatio;
-sobelEffect.uniforms["resolution"].value.y =
-  container.clientHeight * window.devicePixelRatio;
-sobelEffect.uniforms["mixRatio"].value = 0;
-// Function to add Sobel effect
-let Sobel = false;
-function addSobelEffect() {
-  composer2.addPass(sobelEffect);
-  gsap.to(sobelEffect.uniforms["mixRatio"], {
-    value: 0.8,
-    duration: 2.5,
-    onComplete: () => {
-      console.log("Dark life");
-      Sobel = true;
-    },
-  });
-}
-
-// Function to remove Sobel effect
-function removeSobelEffect() {
-  gsap.to(sobelEffect.uniforms["mixRatio"], {
-    value: 0,
-    duration: 1,
-    onComplete: () => {
-      console.log("back to colors");
-      composer2.removePass(sobelEffect);
-      Sobel = false;
-    },
-  });
-}
-
-const dotEffect = new ShaderPass(DotScreenShader);
-dotEffect.uniforms["scale"].value = 2;
-
-// Create a BokehPass
-const bokehPass = new BokehPass(scene, camera2, {
-  focus: 5.0, // Focus distance
-  aperture: 0.05, // Aperture size
-  maxblur: 0.005, // Maximum blur strength
-  width: width,
-  height: height,
-});
-
-// Add parameters to GUI
-gui.add(params, "focus", 0, 10).onChange((value) => {
-  bokehPass.uniforms["focus"].value = value;
-});
-gui.add(params, "aperture", 0, 0.1).onChange((value) => {
-  bokehPass.uniforms["aperture"].value = value;
-});
-gui.add(params, "maxblur", 0, 0.1).onChange((value) => {
-  bokehPass.uniforms["maxblur"].value = value;
-});
-gui
-  .add(params, "shape", { Circular: 1, Hexagon: 2, Octagon: 3 })
-  .onChange((value) => {
-    bokehPass.uniforms["shape"].value = value;
-  });
-
-composer2.addPass(renderPass2);
-
-// composer.addPass(sobelEffect);
-// composer.addPass(dotEffect);
-composer2.addPass(sobelEffect);
-// composer2.addPass(bloomPass);
-composer2.addPass(bokehPass);
-
-/*
-loader.load('models/gltf/hp_opt.gltf', function (gltf) {
-  gltf.scene.traverse((obj) => {
-    if (obj.isMesh) {
-      oldMaterial = obj.material;
-      obj.material = new THREE.MeshStandardMaterial();
-    }
-
-  });
-  scene.add(gltf.scene);
-  gltf.scene.scale.set(18,18,18)
-  gltf.scene.position.set(0, 1.3, 0);
-  gltf.scene.rotation.set(0, Math.PI/32, 0);
-  clearScene();
-});
 
 
-ear.scale.set(0.73,0.73,0.73)
-    ear.position.set(-0.2, 1.27, 1.95);
-    ear.rotation.set(0, Math.PI, 0);
-
-*/
 
 //////////////////////////////////////////////////
 //// AUDIO loaders
 
-let audioLoader = new THREE.AudioLoader();
+let audioLoader = new THREE.AudioLoader(loadingManager);
 let listener = new THREE.AudioListener();
 camera.add(listener);
 
@@ -849,6 +800,7 @@ function handleMouseMoveR(event) {
       duration: 0.5, // Adjust the duration as needed
       ease: "power2.out", // Adjust the easing function as needed
     });
+    
   }
 }
 
@@ -980,9 +932,8 @@ function animateCamera(position, rotation) {
 }
 
 // parallax config
-const cursor = { x: 0, y: 0 };
-const clock = new Clock();
-let previousTime = 0;
+
+
 
 ////////////////////////////////////////////////////////////////////////
 //// render loop function
@@ -1000,22 +951,24 @@ function renderLoop() {
   renderer3.render(scene, camera3);
 
   const elapsedTime = clock.getElapsedTime();
-  const deltaTime = elapsedTime - previousTime;
+  deltaTime = elapsedTime - previousTime;
   previousTime = elapsedTime;
 
   const parallaxY = cursor.y;
-  fillLight.position.y -=
-    (parallaxY * 9 + fillLight.position.y - 2) * deltaTime;
+  //fillLight.position.y -=
+  //  (parallaxY * 9 + fillLight.position.y - 2) * deltaTime;
 
-  fillLight2.position.y -=
-    (-parallaxY * 9 + fillLight2.position.y - 2) * deltaTime;
+  //fillLight2.position.y -=
+  //  (-parallaxY * 9 + fillLight2.position.y - 2) * deltaTime;
 
   const parallaxX = cursor.x;
-  fillLight.position.x +=
-    (parallaxX * 8 - fillLight.position.x) * 2 * deltaTime;
+  //fillLight.position.x +=
+  //  (parallaxX * 8 - fillLight.position.x) * 2 * deltaTime;
 
-  fillLight2.position.x +=
-    (-parallaxX * 8 - fillLight2.position.x) * 2 * deltaTime;
+  //fillLight2.position.x +=
+  //      (-parallaxX * 8 - fillLight2.position.x) * 2 * deltaTime;
+
+   // fillLight.position.z += (parallaxX * 0.1 - fillLight.position.x) * 2 * deltaTime;
 
   cameraGroup.position.z -=
     (parallaxY / 3 + cameraGroup.position.z) * 2 * deltaTime;
@@ -1024,7 +977,9 @@ function renderLoop() {
 
   // cube.rotation.set(0,Math.PI * elapsedTime,0);
 
-  sMat.uniforms.iTime.value = elapsedTime;
+    // sMat.uniforms.iTime.value = elapsedTime;
+
+    // newShader.uniforms.deltaTime.value = deltaTime;
 
   // composer.render()
   // composer2.render() //render the scene with the composer
@@ -1050,23 +1005,7 @@ function renderLoop() {
 
 renderLoop();
 
-/*
-const rayCaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
-function onPointerDown(event) {
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    rayCaster.setFromCamera(mouse, camera2);
-const intersects = rayCaster.intersectObjects(scene.children, true);
-    if (intersects.length > 0) {
-        const object = intersects[0].object;
-        object.layers.toggle(BLOOM_SCENE);
-    }
-
-}
-window.addEventListener('pointerdown', onPointerDown);
-*/
 
 // mouse move event listener
 document.addEventListener(
@@ -1077,6 +1016,9 @@ document.addEventListener(
     cursor.x = event.clientX / window.innerWidth - 0.5;
     cursor.y = event.clientY / window.innerHeight - 0.5;
 
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
+        
     handleCursor(event);
   },
   false
@@ -1136,20 +1078,32 @@ const updateG = function () {
   fillLight.color.set(colorObj4);
 };
 
-params.color4 = fillLight.color.getHex();
+// params.color4 = fillLight.color.getHex();
 
-gui.add(camera2.position, "x").min(-20).max(20).step(0.1).name("Dir X pos");
-gui.add(camera2.position, "y").min(-20).max(20).step(0.1).name("Dir Y pos");
-gui.add(camera2.position, "z").min(-20).max(20).step(0.1).name("Dir Z pos");
-gui.add(camera2.rotation, "x").step(0.1).name("Rot X pos");
-gui.add(camera2.rotation, "y").step(0.1).name("Rot Y pos");
-gui.add(camera2.rotation, "z").step(0.1).name("Rot Z pos");
+//gui.add(camera2.position, "x").min(-20).max(20).step(0.1).name("Dir X pos");
+//gui.add(camera2.position, "y").min(-20).max(20).step(0.1).name("Dir Y pos");
+//gui.add(camera2.position, "z").min(-20).max(20).step(0.1).name("Dir Z pos");
+//gui.add(camera2.rotation, "x").step(0.1).name("Rot X pos");
+//gui.add(camera2.rotation, "y").step(0.1).name("Rot Y pos");
+//gui.add(camera2.rotation, "z").step(0.1).name("Rot Z pos");
 
 // // gui.add(fillLight.position, 'x').min(-100).max(100).step(0.00001).name('Dir X pos')
 // // gui.add(fillLight.position, 'y').min(0).max(100).step(0.00001).name('Dir Y pos')
 // // gui.add(fillLight.position, 'z').min(-100).max(100).step(0.00001).name('Dir Z pos')
 
 // gui.addColor(params,'color').name('Dir color').onChange(update)
-gui.addColor(params, "color4").name("FillColor color").onChange(updateG);
+//gui.addColor(params, "color4").name("FillColor color").onChange(updateG);
+//gui.add(fillLight.position, "x").min(-20).max(20).step(0.1).name("X light");
+//gui.add(fillLight.position, "y").min(-20).max(20).step(0.1).name("Y light");
+//gui.add(fillLight.position, "z").min(-20).max(20).step(0.1).name("Z light");
 
 
+
+
+
+gui.add(camera3.position, "y").min(-20).max(20).step(0.1).name("Y Camera3");
+gui.add(camera3.position, "z").min(-20).max(20).step(0.1).name("Z Camera3");
+gui.add(camera3.position, "x").min(-20).max(20).step(0.1).name("X Camera3");
+gui.add(camera3.rotation, "x").step(0.1).name("Rot X Cam3");
+gui.add(camera3.rotation, "y").step(0.1).name("Rot Y Cam3");
+gui.add(camera3.rotation, "z").step(0.1).name("Rot Z Cam3");
