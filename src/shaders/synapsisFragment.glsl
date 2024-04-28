@@ -24,7 +24,7 @@ void main()
     vec2 N = vec2(0);
     vec2 p = uv + sin(t*0.1)/10.;
     float S = 10.;
-    mat2 m = rotate2D(1. - iMouse.x * 0.0001);
+    mat2 m = rotate2D(1. - iMouse.x * 0.01);
 
     for(float j=0.;j++<30.;){
       p*=m;
@@ -42,6 +42,6 @@ void main()
     
     
     // Output to screen
-    gl_FragColor = vec4(col,0.33);
+    gl_FragColor = vec4(col,0.23);
 }
 
