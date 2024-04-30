@@ -7,7 +7,6 @@ import {
     sRGBEncoding,
     Group,
     PerspectiveCamera,
-    DirectionalLight,
     PointLight,
     MeshPhongMaterial,
 } from "three";
@@ -21,7 +20,7 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { LensDistortionShader } from "../static/shaders/LensDistortionShader.js";
 
-// import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 // import { SobelOperatorShader } from "three/examples/jsm/shaders/SobelOperatorShader.js";
 import { DotScreenShader } from "three/examples/jsm/shaders/DotScreenShader.js";
@@ -99,7 +98,7 @@ if (isTouchDevice()) {
     video.pause();
 }
 
-
+console.log(video)
 /* ---------------------------------- */
 
 ////////////////////////////////////////////////////////////////////////
@@ -355,19 +354,19 @@ window.addEventListener("resize", () => {
 //// LIGHTS
 
 
-const spotLight = new THREE.SpotLight(0xffffff, 1,0, .6,1);
-spotLight.position.set(2.5, 2, 10);
+const spotLight = new THREE.SpotLight(0xffffff, 2,0, .3,1);
+spotLight.position.set(0.7, 2.1, 10);
 scene.add(spotLight);
 
 const spotLightHelper = new THREE.SpotLightHelper(spotLight);
 scene.add(spotLightHelper);
 
 
-const fillLight = new PointLight(0xff00f0, 2, 5.2, 3);
+const fillLight = new PointLight(0xff00f0, 5, 5.2, 3);
 fillLight.position.set(30, 3, 1.8);
 scene.add(fillLight);
 
-const fillLight2 = new PointLight(0x0f00ff, 2.7, 4, 3);
+const fillLight2 = new PointLight(0x0f00ff, 4.7, 4, 3);
 fillLight2.position.set(30, 3, 2.8);
 scene.add(fillLight2);
 
@@ -411,7 +410,14 @@ loader.load("models/gltf/brain.gltf", function (gltf) {
 });
 
 let brain;
-let brainMaterial = new MeshPhongMaterial({ color: 0x3c3c3c });
+let brainMaterial = new THREE.MeshToonMaterial({ color: 0x3c3c3c });
+let imptext = new THREE.TextureLoader().load("textures/asdd.jpg");
+imptext.flipY = false;
+// imptext.encoding = THREE.sRGBEncoding;
+let impMaterials = new THREE.MeshBasicMaterial({ map: imptext, side: THREE.DoubleSide });
+
+
+
 loader.load("models/gltf/brain.gltf", function (gltf) {
     gltf.scene.traverse((obj) => {
         if (obj.isMesh) {
@@ -435,20 +441,20 @@ function clearScene() {
 }
 
 let imp;
-let tempImp;
-let impMaterial = new THREE.MeshStandardMaterial({
-    depthTest: true,
-    depthWrite: true,
-    color: 0xffffff,
-    roughness: 0.5,
-    metalness: 0.5,
-});
+//let tempImp;
+//let impMaterial = new THREE.MeshStandardMaterial({
+//    depthTest: true,
+//    depthWrite: true,
+//    color: 0xffffff,
+//    roughness: 0.5,
+//    metalness: 0.5,
+//});
 
-loader.load("models/gltf/implant.gltf", function (gltf) {
+loader.load("models/gltf/implant_scene.glb", function (gltf) {
     gltf.scene.traverse((obj) => {
         if (obj.isMesh) {
             oldMaterial = obj.material;
-            //obj.material = impMaterial;
+            obj.material = impMaterials;
         }
     });
     imp = gltf.scene;
@@ -458,7 +464,7 @@ loader.load("models/gltf/implant.gltf", function (gltf) {
     // imp.scale.set(0,0,0)
     imp.scale.set(1.33, 1.53, 0.93);
     // imp.position.set(-0.2, -0.17, 2.2);
-    imp.position.set(-0.2, -0.17, 9.2);
+    imp.position.set(-0.2, 1.17, 9.2);
     // imp.rotation.set(0, Math.PI + Math.PI/8, 0);
     clearScene();
 
@@ -482,7 +488,7 @@ const flightPathUp3 = {
 
 const flightPathUp4 = {
     curviness: 0.5,
-    path: [{ x: -0.17, y: -0.17, z: 2.2 }],
+    path: [{ x: -0.49, y: 0.85, z: 0.6 }],
 };
 
 let skinTexture = new THREE.TextureLoader(loadingManager).load(
@@ -548,7 +554,7 @@ loader.load("models/gltf/wireFace.gltf", function (gltf) {
 
 /// BLOOM
 
-// const bloomPass = new UnrealBloomPass(new THREE.Vector2(container.clientWidth, container.clientHeight),1, 0.2, 0.1);
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(container.clientWidth, container.clientHeight),1, 0.2, 0.1);
 // bloomPass.ignoreMesh(cube);
 
 let sobelEffect = new ShaderPass(SobelAnimation);
@@ -617,7 +623,7 @@ composer2.addPass(renderPass2);
 // composer.addPass(sobelEffect);
 // composer.addPass(dotEffect);
 composer2.addPass(sobelEffect);
-// composer2.addPass(bloomPass);
+ // composer2.addPass(bloomPass);
 composer2.addPass(bokehPass);
 
 
@@ -746,7 +752,7 @@ function handleMouseMoveR(event) {
     // Calculate rotation angles based on mouse movement
     const rotationX = (event.clientY / window.innerHeight - 0.5) * 0.5; // Adjust the factor as needed
     const rotationY =
-        Math.PI + Math.PI / 4 + -(event.clientX / window.innerWidth - 0.5) * 0.5; // Adjust the factor as needed
+        Math.PI / 4 + -(event.clientX / window.innerWidth - 0.5) * 0.5; // Adjust the factor as needed
 
     // Apply rotation using GSAP
     if (implantRotation) {
@@ -778,7 +784,7 @@ function ImplantAnimation() {
                 // Update the object's position in the 3D scene
             },
             onComplete: () => {
-                imp.rotation.set(0, Math.PI, 0);
+                imp.rotation.set(0, 0, 0);
                 stopRotation();
             },
         },
@@ -808,7 +814,7 @@ document.getElementById("question").addEventListener("click", () => {
 
     removeSobelEffect();
 
-    brainMaterial.wireframe = false;
+    
 
     animateCamera({ x: -2.3, y: 1, z: 7.7 }, { y: -0.2 });
     // animateCamera({ x: 1.9, y: 2.7, z: 2.7 }, { y: 1.1 });
@@ -1040,9 +1046,9 @@ gui.addColor(params, "color4").name("FillColor color").onChange(updateG);
 
 
 
-gui.add(camera3.position, "y").min(-20).max(20).step(0.1).name("Y Camera3");
-gui.add(camera3.position, "z").min(-20).max(20).step(0.1).name("Z Camera3");
-gui.add(camera3.position, "x").min(-20).max(20).step(0.1).name("X Camera3");
+gui.add(spotLight.position, "y").min(-20).max(20).step(0.1).name("Y Camera3");
+gui.add(spotLight.position, "z").min(-20).max(20).step(0.1).name("Z Camera3");
+gui.add(spotLight.position, "x").min(-20).max(20).step(0.1).name("X Camera3");
 gui.add(camera3.rotation, "x").step(0.1).name("Rot X Cam3");
 gui.add(camera3.rotation, "y").step(0.1).name("Rot Y Cam3");
 gui.add(camera3.rotation, "z").step(0.1).name("Rot Z Cam3");

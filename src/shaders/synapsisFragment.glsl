@@ -42,6 +42,6 @@ void main()
     
     
     // Output to screen
-    gl_FragColor = vec4(col,0.23);
+    gl_FragColor = vec4(col,0.2);
 }
 
