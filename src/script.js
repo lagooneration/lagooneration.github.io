@@ -67,7 +67,7 @@ const params = {
 
 /// /////////// Scroll Control!
 
-
+/*
 const video = document.querySelector(".video");
 
 let tV = gsap.timeline({
@@ -99,7 +99,60 @@ if (isTouchDevice()) {
 }
 
 console.log(video)
-/* ---------------------------------- */
+ ---------------------------------- */
+
+const canvas = document.getElementById("hero-lightpass");
+const context = canvas.getContext("2d");
+
+canvas.width = 1920;
+canvas.height = 1080;
+
+// if view port is smaller than 600px, change canvas size
+if (window.innerWidth < 600) {
+    canvas.width = 600;
+    canvas.height = 400;
+}
+
+const frameCount = 75;
+const currentFrame = (index) =>
+    `../hp_sequence/${(
+        index + 1
+    )
+        .toString()
+        .padStart(4, "0")}.jpg`;
+
+const images = [];
+const airpods = {
+    frame: 0
+};
+
+for (let i = 0; i < frameCount; i++) {
+    const img = new Image();
+    img.src = currentFrame(i);
+    images.push(img);
+}
+
+gsap.to(airpods, {
+    frame: frameCount - 1,
+    snap: "frame",
+    ease: "none",
+    scrollTrigger: {
+        trigger: ".canvas-containerV",
+        start: "top top",
+        end: "+=3500",
+        markers: true,
+        pin: true,
+        scrub: 0.5
+    },
+    onUpdate: render // use animation onUpdate instead of scrollTrigger's onUpdate
+});
+
+images[0].onload = render;
+
+function render() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(images[airpods.frame], 0, 0);
+}
 
 ////////////////////////////////////////////////////////////////////////
 //// GSAP ANIMATION
@@ -492,7 +545,7 @@ const flightPathUp4 = {
 };
 
 let skinTexture = new THREE.TextureLoader(loadingManager).load(
-    "models/earTexture.png"
+    "textures/earTexture.png"
 );
 skinTexture.wrapS = THREE.RepeatWrapping;
 skinTexture.wrapT = THREE.RepeatWrapping;
@@ -750,9 +803,9 @@ let music = document.getElementById("musicbtn");
 
 function handleMouseMoveR(event) {
     // Calculate rotation angles based on mouse movement
-    const rotationX = (event.clientY / window.innerHeight - 0.5) * 0.5; // Adjust the factor as needed
+    const rotationX = (event.clientY / window.innerHeight - 0.5) * 0.1; // Adjust the factor as needed
     const rotationY =
-        Math.PI / 4 + -(event.clientX / window.innerWidth - 0.5) * 0.5; // Adjust the factor as needed
+        Math.PI / 4 + -(event.clientX / window.innerWidth - 0.5) * 0.1; // Adjust the factor as needed
 
     // Apply rotation using GSAP
     if (implantRotation) {
