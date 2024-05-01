@@ -4,7 +4,6 @@ import {
     Scene,
     LoadingManager,
     WebGLRenderer,
-    sRGBEncoding,
     Group,
     PerspectiveCamera,
     PointLight,
@@ -38,8 +37,8 @@ gsap.registerPlugin(ScrollTrigger, SplitText, MotionPathPlugin);
 
 import Fsynapsis from "./shaders/synapsisFragment.glsl";
 import Vsynapsis from "./shaders/synapsisVertex.glsl";
-import Fbloom from "./shaders/bloomFragment.glsl";
-import Vbloom from "./shaders/bloomVertex.glsl";
+import Fneuron from "./shaders/neuronsFragment.glsl";
+import Vneuron from "./shaders/neuronsVertex.glsl";
 
 // renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 // DEBUG
@@ -227,12 +226,11 @@ const container = document.getElementById("canvas-container-hero");
 const containerDetails = document.getElementById(
     "canvas-container-neurophones"
 );
-const containerFooter = document.getElementById("canvas-container-plugin");
+
 
 let oldMaterial;
 let secondContainer = false;
 const cursor = { x: 0, y: 0 };
-let pointer = { x: 0, y: 0 };
 let width = container.clientWidth;
 let height = container.clientHeight;
 
@@ -252,17 +250,13 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 renderer.setSize(width, height);
 // renderer.gammaFactor = 1.2;
 container.appendChild(renderer.domElement);
-console.log(renderer.info);
+
 
 const renderer2 = new WebGLRenderer({ antialias: false });
 renderer2.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 renderer2.setSize(width, height);
 containerDetails.appendChild(renderer2.domElement);
 
-const renderer3 = new WebGLRenderer({ antialias: false });
-renderer3.setPixelRatio(Math.min(window.devicePixelRatio, 1));
-renderer3.setSize(width, height);
-containerFooter.appendChild(renderer3.domElement);
 
 ////////////////////////////////////////////////////////////////////////
 //// CMAERA
@@ -284,15 +278,6 @@ camera2.position.set(6.3, 1.4, 11.7);
 camera2.rotation.set(0, 1.3, 0);
 scene.add(camera2);
 
-const camera3 = new PerspectiveCamera(
-    35,
-    containerFooter.clientWidth / containerFooter.clientHeight,
-    1,
-    100
-);
-camera3.position.set(-20, 0.7, 10);
-camera3.rotation.set(0, 0, 0);
-scene.add(camera3);
 
 /////////////////////////////////////////////////////////////////////////
 ///// POST PROCESSING EFFECTS
@@ -346,23 +331,20 @@ window.addEventListener("resize", () => {
     camera2.aspect = containerDetails.clientWidth / containerDetails.clientHeight;
     camera2.updateProjectionMatrix();
 
-    camera3.aspect = containerFooter.clientWidth / containerFooter.clientHeight;
-    camera3.updateProjectionMatrix();
 
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer2.setSize(
         containerDetails.clientWidth,
         containerDetails.clientHeight
     );
-    renderer3.setSize(containerFooter.clientWidth, containerFooter.clientHeight);
+    
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
     renderer2.setPixelRatio(Math.min(window.devicePixelRatio, 1));
-    renderer3.setPixelRatio(Math.min(window.devicePixelRatio, 1));
+
 
     // composer.setSize(container.clientWidth, container.clientHeight);
     // composer2.setSize(containerDetails.clientWidth, containerDetails.clientHeight);
-    // bloomComposer.setSize(containerDetails.clientWidth, containerDetails.clientHeight);
 });
 
 
@@ -414,102 +396,12 @@ const sMat = new THREE.ShaderMaterial({
 
 ////////////////////////////////////////////////////////////////////////
 //// OBJECTS
-const basicMaterial = new THREE.MeshBasicMaterial();
-// let drum;
-let guitar;
-// let bass;
-
-
-/**
- * Icons
- */
-const iconGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-const bassTexture = new THREE.TextureLoader().load('textures/b.jpg')
-const drumTexture = new THREE.TextureLoader().load('textures/d.jpg')
-const guitarTexture = new THREE.TextureLoader().load('textures/p.jpg')
-
-// const iconMaterial = new THREE.MeshStandardMaterial({ color: 0x3c3c3c });
-
-const drum = new THREE.Mesh(iconGeometry, new THREE.MeshStandardMaterial({ map: drumTexture }));
-drum.position.set(-20, 1.13, 0);
-drum.rotation.set(Math.PI / 2, 0, 0);
-scene.add(drum);    
-
-
-
-const bass = new THREE.Mesh(iconGeometry, new THREE.MeshStandardMaterial({ map: bassTexture }));
-bass.position.set(-21.5 , 1.13, 0);
-bass.rotation.set(Math.PI / 2, Math.PI / 2, 0);
-scene.add(bass);
-
-
-const piano = new THREE.Mesh(iconGeometry, new THREE.MeshStandardMaterial({ map: guitarTexture }));
-piano.position.set(-18.5, 1.13, 0);;
-piano.rotation.set(Math.PI / 2, Math.PI / 2, -Math.PI/2);
-scene.add(piano);
-
-// Add event listeners for mouse hover
-drum.userData.originalColor = drum.material.color.clone();
-bass.userData.originalColor = bass.material.color.clone();
-piano.userData.originalColor = piano.material.color.clone();
-
-const objects = [drum, bass, piano];
 
 
 ////////////////////////////////////////////////////////////////////////
 //// GLTF MODELS
 
 
-//let hoveredObject = null;
-//loader.load("models/gltf/drums.glb", function (gltf) {
-//    gltf.scene.traverse((obj) => {
-//        if (obj.isMesh) {
-//            oldMaterial = obj.material;
-//            obj.material = basicMaterial;
-//        }
-//    });
-//    drum = gltf.scene;
-//    drum.userData.id = 'model1';
-//    scene.add(drum);
-//    drum.scale.set(0.7, 0.7, 0.7);
-//    drum.position.set(-20, 1.13, 0);
-//    drum.rotation.set(Math.PI/12, Math.PI / 32, 0);
-//    clearScene();
-
-   
-//});
-
-//loader.load("models/gltf/bass.glb", function (gltf) {
-//    gltf.scene.traverse((obj) => {
-//        if (obj.isMesh) {
-//            oldMaterial = obj.material;
-//            obj.material = basicMaterial;
-//        }
-//    });
-//    bass = gltf.scene;
-//    bass.userData.id = 'model2';
-//    scene.add(bass);
-//    bass.scale.set(.08, .08, .08);
-//    bass.position.set(-22, 1.13, 1);
-//    bass.rotation.set(Math.PI / 24, Math.PI / 32, 0);
-//    clearScene();
-//});
-
-//loader.load("models/gltf/guitar.glb", function (gltf) {
-//    gltf.scene.traverse((obj) => {
-//        if (obj.isMesh) {
-//            oldMaterial = obj.material;
-//            obj.material = basicMaterial;
-//        }
-//    });
-//    guitar = gltf.scene;
-//    guitar.userData.id = 'model3';
-//    scene.add(guitar);
-//    // gltf.scene.scale.set(.08, .08, .08);
-//    guitar.position.set(-18, 1.13, 3);
-//    guitar.rotation.set(Math.PI / 2, Math.PI / 32, 0);
-//    clearScene();
-//});
 
 
 loader.load("models/gltf/brain.gltf", function (gltf) {
@@ -743,7 +635,7 @@ composer2.addPass(bokehPass);
 
 let audioLoader = new THREE.AudioLoader();
 let listener = new THREE.AudioListener();
-camera.add(listener);
+camera2.add(listener);
 
 // SPEACH and MUSIC
 const soundS = new THREE.Audio(listener);
@@ -961,27 +853,7 @@ document.getElementById("cochlearSound").addEventListener("click", () => {
     // animateCamera({ x: -0.9, y: 3.1, z: 2.6 }, { y: -0.1 });
 });
 
-document.getElementById("question2").addEventListener("click", () => {
-    document.getElementById("question2").classList.add("active");
-    document.getElementById("speech2").classList.remove("active");
-    document.getElementById("music2").classList.remove("active");
-    document.getElementById("content2").innerHTML =
-        "Move your cursor to shift your attention!";
-});
 
-document.getElementById("speech2").addEventListener("click", () => {
-    document.getElementById("speech2").classList.add("active");
-    document.getElementById("question2").classList.remove("active");
-    document.getElementById("music2").classList.remove("active");
-    document.getElementById("content2").innerHTML = "testing";
-});
-
-document.getElementById("music2").addEventListener("click", () => {
-    document.getElementById("music2").classList.add("active");
-    document.getElementById("question2").classList.remove("active");
-    document.getElementById("speech2").classList.remove("active");
-    document.getElementById("content2").innerHTML = "testing";
-});
 
 ////////////////////////////////////////////////////////////////////////
 //// camera animation function
@@ -1010,7 +882,7 @@ let previousTime = 0;
 
 ////////////////////////////////////////////////////////////////////////
 //// render loop function
-let raycaster = new THREE.Raycaster();
+
 function renderLoop() {
   TWEEN.update();
 
@@ -1021,7 +893,7 @@ function renderLoop() {
   } else {
     renderer.render(scene, camera);
   }
-  renderer3.render(scene, camera3);
+  
 
   const elapsedTime = clock.getElapsedTime();
   const deltaTime = elapsedTime - previousTime;
@@ -1052,7 +924,7 @@ function renderLoop() {
 
     ///////////////////////////////////////////////////////////
 
-    
+    // planeShader.uniforms.iTime.value = elapsedTime;  
   
 
   composer.render();
@@ -1082,29 +954,7 @@ document.addEventListener(
     cursor.x = event.clientX / window.innerWidth - 0.5;
     cursor.y = event.clientY / window.innerHeight - 0.5;
 
-      const rect = renderer3.domElement.getBoundingClientRect();
-
-      // Calculate normalized device coordinates (NDC) from mouse coordinates
-
-      pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-      // Perform raycasting from the camera through the mouse position
-      raycaster.setFromCamera(pointer, camera3);
-
-      // Intersect objects in the scene
-      const intersects = raycaster.intersectObjects(objects);
-
-      // Reset color of previously hovered objects
-      objects.forEach(obj => {
-          obj.material.color.copy(obj.userData.originalColor);
-      });
-
-      if (intersects.length > 0) {
-          // Change color of intersected object on hover
-          const intersectedObject = intersects[0].object;
-          intersectedObject.material.color.set(0xff00f0); // Set hover color
-      }  
+      
 
     handleCursor(event);
   },
