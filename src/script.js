@@ -67,39 +67,6 @@ const params = {
 
 /// /////////// Scroll Control!
 
-/*
-const video = document.querySelector(".video");
-
-let tV = gsap.timeline({
-    scrollTrigger: {
-        trigger: "video",
-        start: "top top",
-        end: "bottom+=200% bottom",
-        scrub: true,
-        markers: true,
-    },
-});
-
-// wait until video metadata is loaded, so we can grab the proper duration before adding the onscroll animation. Might need to add a loader for loonng videos
-video.onloadedmetadata = function () {
-    tV.to(video, { currentTime: video.duration });
-};
-
-// Dealing with devices
-function isTouchDevice() {
-    return (
-        "ontouchstart" in window ||
-        navigator.msMaxTouchPoints > 0 ||
-        navigator.maxTouchPoints > 0
-    );
-}
-if (isTouchDevice()) {
-    video.play();
-    video.pause();
-}
-
-console.log(video)
- ---------------------------------- */
 
 const canvas = document.getElementById("hero-lightpass");
 const context = canvas.getContext("2d");
@@ -265,6 +232,7 @@ const containerFooter = document.getElementById("canvas-container-plugin");
 let oldMaterial;
 let secondContainer = false;
 const cursor = { x: 0, y: 0 };
+let pointer = { x: 0, y: 0 };
 let width = container.clientWidth;
 let height = container.clientHeight;
 
@@ -283,20 +251,17 @@ renderer.autoClear = true;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 renderer.setSize(width, height);
 // renderer.gammaFactor = 1.2;
-renderer.outputColorSpace = sRGBEncoding;
 container.appendChild(renderer.domElement);
 console.log(renderer.info);
 
 const renderer2 = new WebGLRenderer({ antialias: false });
 renderer2.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 renderer2.setSize(width, height);
-renderer2.outputColorSpace = sRGBEncoding;
 containerDetails.appendChild(renderer2.domElement);
 
 const renderer3 = new WebGLRenderer({ antialias: false });
 renderer3.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 renderer3.setSize(width, height);
-renderer3.outputColorSpace = sRGBEncoding;
 containerFooter.appendChild(renderer3.domElement);
 
 ////////////////////////////////////////////////////////////////////////
@@ -325,12 +290,10 @@ const camera3 = new PerspectiveCamera(
     1,
     100
 );
-camera3.position.set(-2.2, 2.7, 1.9);
-camera3.rotation.set(0, -0.8, 0);
+camera3.position.set(-20, 0.7, 10);
+camera3.rotation.set(0, 0, 0);
 scene.add(camera3);
 
-/////////////////////////////////////////////////////////////////////////
-///// POST PROCESSING EFFECTS
 /////////////////////////////////////////////////////////////////////////
 ///// POST PROCESSING EFFECTS
 
@@ -411,8 +374,12 @@ const spotLight = new THREE.SpotLight(0xffffff, 2,0, .3,1);
 spotLight.position.set(0.7, 2.1, 10);
 scene.add(spotLight);
 
-const spotLightHelper = new THREE.SpotLightHelper(spotLight);
-scene.add(spotLightHelper);
+const DirectionalLight = new THREE.DirectionalLight(0xffffff, 1);
+DirectionalLight.position.set(25, 2, 0);
+scene.add(DirectionalLight);
+
+const lighthelper = new THREE.DirectionalLightHelper(DirectionalLight);
+scene.add(lighthelper);
 
 
 const fillLight = new PointLight(0xff00f0, 5, 5.2, 3);
@@ -446,7 +413,104 @@ const sMat = new THREE.ShaderMaterial({
 });
 
 ////////////////////////////////////////////////////////////////////////
+//// OBJECTS
+const basicMaterial = new THREE.MeshBasicMaterial();
+// let drum;
+let guitar;
+// let bass;
+
+
+/**
+ * Icons
+ */
+const iconGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+const bassTexture = new THREE.TextureLoader().load('textures/b.jpg')
+const drumTexture = new THREE.TextureLoader().load('textures/d.jpg')
+const guitarTexture = new THREE.TextureLoader().load('textures/p.jpg')
+
+// const iconMaterial = new THREE.MeshStandardMaterial({ color: 0x3c3c3c });
+
+const drum = new THREE.Mesh(iconGeometry, new THREE.MeshStandardMaterial({ map: drumTexture }));
+drum.position.set(-20, 1.13, 0);
+drum.rotation.set(Math.PI / 2, 0, 0);
+scene.add(drum);    
+
+
+
+const bass = new THREE.Mesh(iconGeometry, new THREE.MeshStandardMaterial({ map: bassTexture }));
+bass.position.set(-21.5 , 1.13, 0);
+bass.rotation.set(Math.PI / 2, Math.PI / 2, 0);
+scene.add(bass);
+
+
+const piano = new THREE.Mesh(iconGeometry, new THREE.MeshStandardMaterial({ map: guitarTexture }));
+piano.position.set(-18.5, 1.13, 0);;
+piano.rotation.set(Math.PI / 2, Math.PI / 2, -Math.PI/2);
+scene.add(piano);
+
+// Add event listeners for mouse hover
+drum.userData.originalColor = drum.material.color.clone();
+bass.userData.originalColor = bass.material.color.clone();
+piano.userData.originalColor = piano.material.color.clone();
+
+const objects = [drum, bass, piano];
+
+
+////////////////////////////////////////////////////////////////////////
 //// GLTF MODELS
+
+
+//let hoveredObject = null;
+//loader.load("models/gltf/drums.glb", function (gltf) {
+//    gltf.scene.traverse((obj) => {
+//        if (obj.isMesh) {
+//            oldMaterial = obj.material;
+//            obj.material = basicMaterial;
+//        }
+//    });
+//    drum = gltf.scene;
+//    drum.userData.id = 'model1';
+//    scene.add(drum);
+//    drum.scale.set(0.7, 0.7, 0.7);
+//    drum.position.set(-20, 1.13, 0);
+//    drum.rotation.set(Math.PI/12, Math.PI / 32, 0);
+//    clearScene();
+
+   
+//});
+
+//loader.load("models/gltf/bass.glb", function (gltf) {
+//    gltf.scene.traverse((obj) => {
+//        if (obj.isMesh) {
+//            oldMaterial = obj.material;
+//            obj.material = basicMaterial;
+//        }
+//    });
+//    bass = gltf.scene;
+//    bass.userData.id = 'model2';
+//    scene.add(bass);
+//    bass.scale.set(.08, .08, .08);
+//    bass.position.set(-22, 1.13, 1);
+//    bass.rotation.set(Math.PI / 24, Math.PI / 32, 0);
+//    clearScene();
+//});
+
+//loader.load("models/gltf/guitar.glb", function (gltf) {
+//    gltf.scene.traverse((obj) => {
+//        if (obj.isMesh) {
+//            oldMaterial = obj.material;
+//            obj.material = basicMaterial;
+//        }
+//    });
+//    guitar = gltf.scene;
+//    guitar.userData.id = 'model3';
+//    scene.add(guitar);
+//    // gltf.scene.scale.set(.08, .08, .08);
+//    guitar.position.set(-18, 1.13, 3);
+//    guitar.rotation.set(Math.PI / 2, Math.PI / 32, 0);
+//    clearScene();
+//});
+
 
 loader.load("models/gltf/brain.gltf", function (gltf) {
     gltf.scene.traverse((obj) => {
@@ -461,9 +525,11 @@ loader.load("models/gltf/brain.gltf", function (gltf) {
     gltf.scene.rotation.set(0, Math.PI / 32, 0);
     clearScene();
 });
-
+const fiveTone = new THREE.TextureLoader().load('textures/fourTone.jpg')
+fiveTone.minFilter = THREE.NearestFilter
+fiveTone.magFilter = THREE.NearestFilter
 let brain;
-let brainMaterial = new THREE.MeshToonMaterial({ color: 0x3c3c3c });
+let brainMaterial = new THREE.MeshToonMaterial({ color: 0x3c3c3c, gradientMap: fiveTone });
 let imptext = new THREE.TextureLoader().load("textures/asdd.jpg");
 imptext.flipY = false;
 // imptext.encoding = THREE.sRGBEncoding;
@@ -494,15 +560,6 @@ function clearScene() {
 }
 
 let imp;
-//let tempImp;
-//let impMaterial = new THREE.MeshStandardMaterial({
-//    depthTest: true,
-//    depthWrite: true,
-//    color: 0xffffff,
-//    roughness: 0.5,
-//    metalness: 0.5,
-//});
-
 loader.load("models/gltf/implant_scene.glb", function (gltf) {
     gltf.scene.traverse((obj) => {
         if (obj.isMesh) {
@@ -953,7 +1010,7 @@ let previousTime = 0;
 
 ////////////////////////////////////////////////////////////////////////
 //// render loop function
-
+let raycaster = new THREE.Raycaster();
 function renderLoop() {
   TWEEN.update();
 
@@ -991,8 +1048,11 @@ function renderLoop() {
 
   // cube.rotation.set(0,Math.PI * elapsedTime,0);
 
-  sMat.uniforms.iTime.value = elapsedTime;
+    sMat.uniforms.iTime.value = elapsedTime;
 
+    ///////////////////////////////////////////////////////////
+
+    
   
 
   composer.render();
@@ -1012,6 +1072,7 @@ renderLoop();
 
 
 
+
 // mouse move event listener
 document.addEventListener(
   "mousemove",
@@ -1020,6 +1081,30 @@ document.addEventListener(
 
     cursor.x = event.clientX / window.innerWidth - 0.5;
     cursor.y = event.clientY / window.innerHeight - 0.5;
+
+      const rect = renderer3.domElement.getBoundingClientRect();
+
+      // Calculate normalized device coordinates (NDC) from mouse coordinates
+
+      pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      // Perform raycasting from the camera through the mouse position
+      raycaster.setFromCamera(pointer, camera3);
+
+      // Intersect objects in the scene
+      const intersects = raycaster.intersectObjects(objects);
+
+      // Reset color of previously hovered objects
+      objects.forEach(obj => {
+          obj.material.color.copy(obj.userData.originalColor);
+      });
+
+      if (intersects.length > 0) {
+          // Change color of intersected object on hover
+          const intersectedObject = intersects[0].object;
+          intersectedObject.material.color.set(0xff00f0); // Set hover color
+      }  
 
     handleCursor(event);
   },
@@ -1099,9 +1184,12 @@ gui.addColor(params, "color4").name("FillColor color").onChange(updateG);
 
 
 
-gui.add(spotLight.position, "y").min(-20).max(20).step(0.1).name("Y Camera3");
-gui.add(spotLight.position, "z").min(-20).max(20).step(0.1).name("Z Camera3");
-gui.add(spotLight.position, "x").min(-20).max(20).step(0.1).name("X Camera3");
-gui.add(camera3.rotation, "x").step(0.1).name("Rot X Cam3");
-gui.add(camera3.rotation, "y").step(0.1).name("Rot Y Cam3");
-gui.add(camera3.rotation, "z").step(0.1).name("Rot Z Cam3");
+gui.add(DirectionalLight.position, "y").min(-20).max(20).step(0.1).name("Y Camera3");
+gui.add(DirectionalLight.position, "z").min(-20).max(20).step(0.1).name("Z Camera3");
+gui.add(DirectionalLight.position, "x").min(-20).max(20).step(0.1).name("X Camera3");
+gui.add(DirectionalLight.rotation, "x").step(0.1).name("Rot X Cam3");
+gui.add(DirectionalLight.rotation, "y").step(0.1).name("Rot Y Cam3");
+gui.add(DirectionalLight.rotation, "z").step(0.1).name("Rot Z Cam3");
+
+
+
