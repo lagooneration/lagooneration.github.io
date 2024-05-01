@@ -62,6 +62,38 @@ const params = {
     shape: 1, // Default bokeh shape (1 for circular)
 };
 
+
+
+// Get all navigation links
+const navLinks = document.querySelectorAll('.header a');
+
+// Iterate over each navigation link
+navLinks.forEach(link => {
+    // Add click event listener to each link
+    link.addEventListener('click', function (event) {
+        // Prevent default link behavior (e.g., page reload)
+        event.preventDefault();
+
+        // Get the target section id from the link's href attribute
+        const targetId = this.getAttribute('href').substring(1);
+
+        // Find the target section element
+        const targetSection = document.getElementById(targetId);
+
+        if (targetSection) {
+            // Calculate the target offset relative to the top of the document
+            const offsetTop = targetSection.offsetTop;
+
+            // Smoothly scroll to the target section
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
+///////////////////////////////////////////////////////////////////////
 // VIDEO
 
 /// /////////// Scroll Control!
