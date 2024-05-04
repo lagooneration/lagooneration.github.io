@@ -43,12 +43,12 @@ import Vneuron from "./shaders/neuronsVertex.glsl";
 // renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 // DEBUG
 
-import Stats from "stats.js";
+//import Stats from "stats.js";
 
-const stats = new Stats();
-document.body.appendChild(stats.dom);
+//const stats = new Stats();
+//document.body.appendChild(stats.dom);
 // Show specific panels using showPanel method
-stats.showPanel(0); // Show FPS panel
+// stats.showPanel(0); // Show FPS panel
 
 // GUI
 import GUI from "lil-gui";
@@ -64,34 +64,47 @@ const params = {
 
 
 
-// Get all navigation links
-const navLinks = document.querySelectorAll('.header a');
+////////////////////////////////////////////////////////////////////////
+//// LOADING MANAGER
 
-// Iterate over each navigation link
-navLinks.forEach(link => {
-    // Add click event listener to each link
-    link.addEventListener('click', function (event) {
-        // Prevent default link behavior (e.g., page reload)
-        event.preventDefault();
+const ftsLoader = document.querySelector(".loader-roll");
+const looadingCover = document.getElementById("loading-text-intro");
+const loadingManager = new LoadingManager();
 
-        // Get the target section id from the link's href attribute
-        const targetId = this.getAttribute('href').substring(1);
+loadingManager.onLoad = function () {
+    document.querySelector(".main-container").style.visibility = "visible";
+    document.querySelector("body").style.overflowY = "auto";
 
-        // Find the target section element
-        const targetSection = document.getElementById(targetId);
+    const yPosition = { y: 0 };
 
-        if (targetSection) {
-            // Calculate the target offset relative to the top of the document
-            const offsetTop = targetSection.offsetTop;
+    new TWEEN.Tween(yPosition)
+        .to({ y: 100 }, 900)
+        .easing(TWEEN.Easing.Quadratic.InOut)
+        .start()
+        .onUpdate(function () {
+            looadingCover.style.setProperty(
+                "transform",
+                `translate( 0, ${yPosition.y}%)`
+            );
+        })
+        .onComplete(function () {
+            looadingCover.parentNode.removeChild(
+                document.getElementById("loading-text-intro")
+            );
+            TWEEN.remove(this);
+        });
 
-            // Smoothly scroll to the target section
-            window.scrollTo({
-                top: offsetTop,
-                behavior: 'smooth'
-            });
-        }
-    });
-});
+    introAnimation();
+    ftsLoader.parentNode.removeChild(ftsLoader);
+
+    window.scroll(0, 0);
+};
+
+//loadingManager.onProgress = function (url, itemsLoaded, itemsTotal) {
+//    console.log('Loading file: ' + url + '.\nLoaded  files.');
+//};
+
+
 
 ///////////////////////////////////////////////////////////////////////
 // VIDEO
@@ -205,45 +218,7 @@ function init() {
 }
 window.addEventListener("load", init);
 
-////////////////////////////////////////////////////////////////////////
-//// LOADING MANAGER
 
-const ftsLoader = document.querySelector(".loader-roll");
-const looadingCover = document.getElementById("loading-text-intro");
-const loadingManager = new LoadingManager();
-
-loadingManager.onLoad = function () {
-    document.querySelector(".main-container").style.visibility = "visible";
-    document.querySelector("body").style.overflowY = "auto";
-
-    const yPosition = { y: 0 };
-
-    new TWEEN.Tween(yPosition)
-        .to({ y: 100 }, 900)
-        .easing(TWEEN.Easing.Quadratic.InOut)
-        .start()
-        .onUpdate(function () {
-            looadingCover.style.setProperty(
-                "transform",
-                `translate( 0, ${yPosition.y}%)`
-            );
-        })
-        .onComplete(function () {
-            looadingCover.parentNode.removeChild(
-                document.getElementById("loading-text-intro")
-            );
-            TWEEN.remove(this);
-        });
-
-    introAnimation();
-    ftsLoader.parentNode.removeChild(ftsLoader);
-
-    window.scroll(0, 0);
-};
-
-//loadingManager.onProgress = function (url, itemsLoaded, itemsTotal) {
-//    console.log('Loading file: ' + url + '.\nLoaded  files.');
-//};
 
 ////////////////////////////////////////////////////////////////////////
 //// DRACO LOADER
@@ -918,7 +893,7 @@ let previousTime = 0;
 function renderLoop() {
   TWEEN.update();
 
-  stats.begin();
+  
 
   if (secondContainer) {
     renderer2.render(scene, camera2);
@@ -965,7 +940,7 @@ function renderLoop() {
   // Render scene without bloom
 
   requestAnimationFrame(renderLoop);
-  stats.end();
+  
 }
 
 // }
