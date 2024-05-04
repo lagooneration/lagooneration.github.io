@@ -190,6 +190,9 @@ var tl = gsap.timeline(),
 
 // gsap.set("#content", { perspective: 400 });
 
+
+
+
 // console.log(chars);
 function init() {
     ScrollTrigger.create({
@@ -218,7 +221,71 @@ function init() {
 }
 window.addEventListener("load", init);
 
+//// Video text
 
+/* --- Split the text, Burrowing Owl --- */
+function setupSplits() {
+
+    var tlSplitBurrowing = gsap.timeline(),
+        SplitBurrowing = new SplitText(".titleBurrowing", { type: "words,chars" }),
+        chars = SplitBurrowing.chars; //an array of all the divs that wrap each character
+
+
+    tlSplitBurrowing.from(chars, {
+        duration: 0.8,
+        opacity: 0,
+        y: 10,
+        ease: "circ.out",
+        stagger: 0.02,
+        delay: 1,
+        scrollTrigger: {
+            trigger: ".titleBurrowing",
+            //markers:true,
+            start: "top 75%",
+            end: "bottom center",
+            scrub: 1
+        }
+        //,   onComplete: () => {SplitBurrowing.revert()}
+    }, "+=0");
+
+    // window.addEventListener('resize', function() {
+    // SplitBurrowing.revert();
+    // });
+
+};
+
+/*
+ScrollTrigger.addEventListener("scrollEnd", function() {
+    SplitBurrowing.revert();
+});
+*/
+
+ScrollTrigger.addEventListener("refresh", setupSplits);
+//ScrollTrigger.addEventListener("scrollEnd", () => SplitBurrowing.revert());
+setupSplits();
+
+gsap.to(".hero__headline", {
+    scrollTrigger: {
+        trigger: ".hero__content",
+        scrub: true,
+        pin: true,
+        start: "top 15%",
+        end: "bottom -20%",
+        toggleClass: "active",
+        ease: "power2"
+    }
+});
+
+const section = document.querySelector('.demo-text'); // Replace '#neurophones' with the specific section ID you want to target
+const w = document.querySelector('.wrapper');
+const xEnd = (w.scrollWidth - section.offsetWidth) * -1;
+gsap.fromTo(w, { x: '100%' }, {
+    x: xEnd,
+    scrollTrigger: {
+        trigger: section,
+        scrub: 0.5
+    }
+});
 
 ////////////////////////////////////////////////////////////////////////
 //// DRACO LOADER
