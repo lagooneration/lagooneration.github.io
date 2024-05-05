@@ -223,53 +223,14 @@ window.addEventListener("load", init);
 
 //// Video text
 
-/* --- Split the text, Burrowing Owl --- */
-function setupSplits() {
 
-    var tlSplitBurrowing = gsap.timeline(),
-        SplitBurrowing = new SplitText(".titleBurrowing", { type: "words,chars" }),
-        chars = SplitBurrowing.chars; //an array of all the divs that wrap each character
-
-
-    tlSplitBurrowing.from(chars, {
-        duration: 0.8,
-        opacity: 0,
-        y: 10,
-        ease: "circ.out",
-        stagger: 0.02,
-        delay: 1,
-        scrollTrigger: {
-            trigger: ".titleBurrowing",
-            //markers:true,
-            start: "top 75%",
-            end: "bottom center",
-            scrub: 1
-        }
-        //,   onComplete: () => {SplitBurrowing.revert()}
-    }, "+=0");
-
-    // window.addEventListener('resize', function() {
-    // SplitBurrowing.revert();
-    // });
-
-};
-
-/*
-ScrollTrigger.addEventListener("scrollEnd", function() {
-    SplitBurrowing.revert();
-});
-*/
-
-ScrollTrigger.addEventListener("refresh", setupSplits);
-//ScrollTrigger.addEventListener("scrollEnd", () => SplitBurrowing.revert());
-setupSplits();
 
 gsap.to(".hero__headline", {
     scrollTrigger: {
         trigger: ".hero__content",
         scrub: true,
         pin: true,
-        start: "top 15%",
+        start: "top 38%",
         end: "bottom -20%",
         toggleClass: "active",
         ease: "power2"
@@ -286,6 +247,10 @@ gsap.fromTo(w, { x: '100%' }, {
         scrub: 0.5
     }
 });
+
+
+/// gsap testing
+
 
 ////////////////////////////////////////////////////////////////////////
 //// DRACO LOADER
@@ -443,7 +408,7 @@ fillLight.position.set(30, 3, 1.8);
 scene.add(fillLight);
 
 const fillLight2 = new PointLight(0x0f00ff, 4.7, 4, 3);
-fillLight2.position.set(30, 3, 2.8);
+fillLight2.position.set(30, 3, 1.8);
 scene.add(fillLight2);
 
 ////////////////////////////////////////////////////////////////////////
@@ -679,20 +644,20 @@ const bokehPass = new BokehPass(scene, camera2, {
 });
 
 // Add parameters to GUI
-gui.add(params, "focus", 0, 10).onChange((value) => {
-    bokehPass.uniforms["focus"].value = value;
-});
-gui.add(params, "aperture", 0, 0.1).onChange((value) => {
-    bokehPass.uniforms["aperture"].value = value;
-});
-gui.add(params, "maxblur", 0, 0.1).onChange((value) => {
-    bokehPass.uniforms["maxblur"].value = value;
-});
-gui
-    .add(params, "shape", { Circular: 1, Hexagon: 2, Octagon: 3 })
-    .onChange((value) => {
-        bokehPass.uniforms["shape"].value = value;
-    });
+//gui.add(params, "focus", 0, 10).onChange((value) => {
+//    bokehPass.uniforms["focus"].value = value;
+//});
+//gui.add(params, "aperture", 0, 0.1).onChange((value) => {
+//    bokehPass.uniforms["aperture"].value = value;
+//});
+//gui.add(params, "maxblur", 0, 0.1).onChange((value) => {
+//    bokehPass.uniforms["maxblur"].value = value;
+//});
+//gui
+//    .add(params, "shape", { Circular: 1, Hexagon: 2, Octagon: 3 })
+//    .onChange((value) => {
+//        bokehPass.uniforms["shape"].value = value;
+//    });
 
 composer2.addPass(renderPass2);
 
@@ -700,7 +665,7 @@ composer2.addPass(renderPass2);
 // composer.addPass(dotEffect);
 composer2.addPass(sobelEffect);
  // composer2.addPass(bloomPass);
-composer2.addPass(bokehPass);
+// composer2.addPass(bokehPass);
 
 
 
@@ -783,6 +748,7 @@ checkPlay.addEventListener("click", function () {
         currentAudio.stop();
         console.log("function checking");
         currentAudio.currentTime = 0;
+        removeSobelEffect();
     } else {
         // Stop the current audio
         currentAudio.play();
@@ -795,6 +761,7 @@ checkPlay.addEventListener("click", function () {
 currentAudio.onEnded = function () {
     checkbox2.checked = true;
     console.log("?????????");
+
 };
 
 soundS.onEnded = function () {
@@ -923,7 +890,7 @@ document.getElementById("cochlearSound").addEventListener("click", () => {
         intro = true;
     }
 
-    animateCamera({ x: -1.7, y: 1.45, z: 12.6 }, { y: -0.1 });
+    animateCamera({ x: -2.8, y: 1.45, z: 12.6 }, { y: -0.1 });
     // animateCamera({ x: -0.9, y: 3.1, z: 2.6 }, { y: -0.1 });
 });
 
