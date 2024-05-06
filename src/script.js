@@ -224,19 +224,8 @@ window.addEventListener("load", init);
 
 //// Video text
 
-
-
-gsap.to(".hero__headline", {
-    scrollTrigger: {
-        trigger: ".hero__content",
-        scrub: true,
-        pin: true,
-        start: "top 38%",
-        end: "bottom -20%",
-        toggleClass: "active",
-        ease: "power2"
-    }
-});
+/////////////////////////////
+//// HORIZONTAL SCROLL
 
 const section = document.querySelector('.demo-text'); // Replace '#neurophones' with the specific section ID you want to target
 const w = document.querySelector('.wrapper');
@@ -249,32 +238,59 @@ gsap.fromTo(w, { x: '100%' }, {
     }
 });
 
+/////////////////////////////////////
+//// OPACITY SCROLL
+
+gsap.to(".hero__headline", {
+    scrollTrigger: {
+        trigger: ".hero__content",
+        scrub: true,
+        pin: true,
+        start: "top 38%",
+        end: "bottom -10%",
+        toggleClass: "active",
+        ease: "power2"
+    }
+});
+
+
+
 
 /// gsap testing
-// SVG MORPH
+// DEMO BUTTON VISIBILITY
+// Select the button element
+const scrollButton = document.getElementById('scrollButton');
 
-//const toggleButton = document.getElementById('checkbox_toggle');
-//const svg1 = document.getElementById('svgS').querySelector('path');;
-//const svg2 = document.getElementById('svgM').querySelector('path');;
+// Calculate the scroll percentage of the section
+function getScrollPercentage(section) {
+    const scrollPosition = window.scrollY;
+    const sectionTop = section.offsetTop;
+    const sectionHeight = section.offsetHeight;
+    const distance = scrollPosition - sectionTop;
+    const percentage = distance / sectionHeight * 100;
 
-//// Create a timeline for morphing animation
-//const morphTimeline = gsap.timeline({ paused: true });
+    return Math.max(0, Math.min(100, percentage));
+}
 
-//// Define morph animation
-//morphTimeline
-//    .to(svg1, { morphSVG: svg2, duration: 1 })
-//    .to(svg1, { morphSVG: svg2, duration: 1 });
+// Show or hide the button based on scroll percentage
+function updateButtonVisibility() {
+    const scrollSection = document.getElementById('main-c');
+    const scrollPercentage = getScrollPercentage(scrollSection);
+    
+    if (scrollPercentage >= 60) { // Adjust this value as needed
+        // Show the button with animation
+        gsap.to(scrollButton, { duration: 0.5, opacity: 1,scale:1, y: 0, ease: 'power2.out' });
+    } else {
+        // Hide the button with animation
+        gsap.to(scrollButton, { duration: 0.5, opacity: 0, scale: 0, y: 50, ease: 'power2.in' });
+    }
+}
 
-//// Listen for toggle button change
-//toggleButton.addEventListener('change', () => {
-//    if (toggleButton.checked) {
-//        // If toggle is checked, play the morph animation forward
-//        morphTimeline.play();
-//    } else {
-//        // If toggle is unchecked, play the morph animation in reverse
-//        morphTimeline.reverse();
-//    }
-//});
+// Update button visibility when scrolling
+window.addEventListener('scroll', updateButtonVisibility);
+
+// Update button visibility on page load
+updateButtonVisibility();
 
 ////////////////////////////////////////////////////////////////////////
 //// DRACO LOADER
