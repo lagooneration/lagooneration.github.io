@@ -31,9 +31,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 // import { TextPlugin} from 'gsap/TextPlugin';
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
+import { MorphSVGPlugin } from "gsap/MorphSVGPlugin"; 
 // import { CSSPlugin } from 'gsap/CSSPlugin';
 
-gsap.registerPlugin(ScrollTrigger, SplitText, MotionPathPlugin);
+gsap.registerPlugin(ScrollTrigger, SplitText, MotionPathPlugin, MorphSVGPlugin);
 
 import Fsynapsis from "./shaders/synapsisFragment.glsl";
 import Vsynapsis from "./shaders/synapsisVertex.glsl";
@@ -250,7 +251,30 @@ gsap.fromTo(w, { x: '100%' }, {
 
 
 /// gsap testing
+// SVG MORPH
 
+//const toggleButton = document.getElementById('checkbox_toggle');
+//const svg1 = document.getElementById('svgS').querySelector('path');;
+//const svg2 = document.getElementById('svgM').querySelector('path');;
+
+//// Create a timeline for morphing animation
+//const morphTimeline = gsap.timeline({ paused: true });
+
+//// Define morph animation
+//morphTimeline
+//    .to(svg1, { morphSVG: svg2, duration: 1 })
+//    .to(svg1, { morphSVG: svg2, duration: 1 });
+
+//// Listen for toggle button change
+//toggleButton.addEventListener('change', () => {
+//    if (toggleButton.checked) {
+//        // If toggle is checked, play the morph animation forward
+//        morphTimeline.play();
+//    } else {
+//        // If toggle is unchecked, play the morph animation in reverse
+//        morphTimeline.reverse();
+//    }
+//});
 
 ////////////////////////////////////////////////////////////////////////
 //// DRACO LOADER
@@ -723,22 +747,54 @@ audioLoader.load(
 
 var currentAudio = soundS;
 
-// RADIO BUTTONS FOR SELECTING sound
-document.getElementById("musicbtn").addEventListener("click", () => {
-    soundS.isPlaying && soundS.stop();
-    console.log("music playing");
-    currentAudio = soundM;
-    currentAudio.play();
-    checkbox2.checked = false;
-});
 
-document.getElementById("speechbtn").addEventListener("click", () => {
-    soundM.isPlaying && soundM.stop();
-    console.log("speech playing");
-    currentAudio = soundS;
-    currentAudio.play();
-    checkbox2.checked = false;
+//////////////////////////////////////////////////
+//// CLICK LISTENERS
+let isChecked = false;
+const toggleButton = document.getElementById("checkbox_toggle");
+
+// Add event listener to the toggle switch
+toggleButton.addEventListener('change', () => {
+    // Update the variable based on the toggle switch state
+    isChecked = toggleButton.checked;
+
+    // Call functions or perform calculations based on the toggle switch state
+    if (isChecked) {
+        // Toggle switch is checked, execute functions or calculations accordingly
+        console.log('Toggle switch is checked');
+        soundS.isPlaying && soundS.stop();
+        console.log("music playing");
+        currentAudio = soundM;
+        currentAudio.play();
+        checkbox2.checked = false;
+
+
+    } else {
+        // Toggle switch is unchecked, execute functions or calculations accordingly
+        console.log('Toggle switch is unchecked');
+        soundM.isPlaying && soundM.stop();
+        console.log("speech playing");
+        currentAudio = soundS;
+        currentAudio.play();
+        checkbox2.checked = false;
+    }
 });
+// RADIO BUTTONS FOR SELECTING sound
+//document.getElementById("musicbtn").addEventListener("click", () => {
+//    soundS.isPlaying && soundS.stop();
+//    console.log("music playing");
+//    currentAudio = soundM;
+//    currentAudio.play();
+//    checkbox2.checked = false;
+//});
+
+//document.getElementById("speechbtn").addEventListener("click", () => {
+//    soundM.isPlaying && soundM.stop();
+//    console.log("speech playing");
+//    currentAudio = soundS;
+//    currentAudio.play();
+//    checkbox2.checked = false;
+//});
 
 // PLAY BUTTON
 
@@ -788,8 +844,9 @@ function introAnimation() {
 
 //////////////////////////////////////////////////
 //// CLICK LISTENERS
-let speech = document.getElementById("speechbtn");
-let music = document.getElementById("musicbtn");
+// let isChecked = false;
+// const toggleButton = document.getElementById("checkbox_toggle");
+let radioBtns = document.getElementById("optionR");
 
 function handleMouseMoveR(event) {
     // Calculate rotation angles based on mouse movement
@@ -849,8 +906,8 @@ document.getElementById("question").addEventListener("click", () => {
     document.getElementById("content").innerHTML =
         "How does it feel like hearing from a cochlear implant?";
 
-    speech.style.visibility = "hidden";
-    music.style.visibility = "hidden";
+    radioBtns.style.visibility = "hidden";
+    
 
     currentAudio.isPlaying && currentAudio.stop();
     checkbox2.checked = true;
@@ -869,19 +926,44 @@ document.getElementById("cochlearSound").addEventListener("click", () => {
     document.getElementById("content").innerHTML =
         "How does it feel like hearing from a cochlear implant?";
 
-    speech.style.visibility = "visible";
-    music.style.visibility = "visible";
+    radioBtns.style.visibility = "visible";
 
-    document.getElementById("musicbtn").addEventListener("click", () => {
-        if (!Sobel) {
-            addSobelEffect();
-            Sobel = true;
-        }
-    });
-    document.getElementById("speechbtn").addEventListener("click", () => {
-        if (Sobel) {
-            removeSobelEffect();
-            Sobel = false;
+    //document.getElementById("musicbtn").addEventListener("click", () => {
+    //    if (!Sobel) {
+    //        addSobelEffect();
+    //        Sobel = true;
+    //    }
+    //});
+    //document.getElementById("speechbtn").addEventListener("click", () => {
+    //    if (Sobel) {
+    //        removeSobelEffect();
+    //        Sobel = false;
+    //    }
+    //});
+
+
+    // Add event listener to the toggle switch
+    toggleButton.addEventListener('change', () => {
+        // Update the variable based on the toggle switch state
+        isChecked = toggleButton.checked;
+
+        // Call functions or perform calculations based on the toggle switch state
+        if (isChecked) {
+            // Toggle switch is checked, execute functions or calculations accordingly
+            console.log('Toggle switch is checked');
+                if (!Sobel) {
+                    addSobelEffect();
+                    Sobel = true;
+                }
+
+
+        } else {
+            // Toggle switch is unchecked, execute functions or calculations accordingly
+            console.log('Toggle switch is unchecked');
+            if (Sobel) {
+                removeSobelEffect();
+                Sobel = false;
+            }
         }
     });
 
