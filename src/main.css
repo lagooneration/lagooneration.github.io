@@ -696,7 +696,6 @@ align-content: center;
     background: #444444;
     transition: all 0.3s ease-in-out 0s;
     box-shadow: rgba(193, 244, 246, 0.698) 0px 0px 0px 0px;
-    animation: 1.2s cubic-bezier(0.8, 0, 0, 1) 0s infinite normal none running pulse;
     border: 0;
     border-radius: 50%;
     display: flex;
@@ -715,6 +714,7 @@ align-content: center;
         box-shadow: 0 0 0 45px rgba(193,244,246,0);
     }
 }
+
 
 
     .containerP .play {

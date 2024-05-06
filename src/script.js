@@ -752,33 +752,25 @@ var currentAudio = soundS;
 //// CLICK LISTENERS
 let isChecked = false;
 const toggleButton = document.getElementById("checkbox_toggle");
+const divElement = document.getElementById('cochlearSound');
+divElement.style.animation = '1.2s cubic-bezier(0.8, 0, 0, 1) 0s infinite normal none running pulse';
 
 // Add event listener to the toggle switch
-toggleButton.addEventListener('change', () => {
-    // Update the variable based on the toggle switch state
-    isChecked = toggleButton.checked;
+//toggleButton.addEventListener('change', () => {
+//    // Update the variable based on the toggle switch state
+//    isChecked = toggleButton.checked;
 
-    // Call functions or perform calculations based on the toggle switch state
-    if (isChecked) {
-        // Toggle switch is checked, execute functions or calculations accordingly
-        console.log('Toggle switch is checked');
-        soundS.isPlaying && soundS.stop();
-        console.log("music playing");
-        currentAudio = soundM;
-        currentAudio.play();
-        checkbox2.checked = false;
-
-
-    } else {
-        // Toggle switch is unchecked, execute functions or calculations accordingly
-        console.log('Toggle switch is unchecked');
-        soundM.isPlaying && soundM.stop();
-        console.log("speech playing");
-        currentAudio = soundS;
-        currentAudio.play();
-        checkbox2.checked = false;
-    }
-});
+//    // Call functions or perform calculations based on the toggle switch state
+//    if (isChecked) {
+//        // Toggle switch is checked, execute functions or calculations accordingly
+//        console.log('Toggle switch is checked');
+        
+//    } else {
+//        // Toggle switch is unchecked, execute functions or calculations accordingly
+//        console.log('Toggle switch is unchecked');
+        
+//    }
+//});
 // RADIO BUTTONS FOR SELECTING sound
 //document.getElementById("musicbtn").addEventListener("click", () => {
 //    soundS.isPlaying && soundS.stop();
@@ -805,9 +797,12 @@ checkPlay.addEventListener("click", function () {
         console.log("function checking");
         currentAudio.currentTime = 0;
         removeSobelEffect();
+        divElement.style.animation = '1.2s cubic-bezier(0.8, 0, 0, 1) 0s infinite normal none running pulse';
+
     } else {
         // Stop the current audio
         currentAudio.play();
+        divElement.style.animation = 'none';
 
         // checkbox2.checked = false;
     }
@@ -928,25 +923,14 @@ document.getElementById("cochlearSound").addEventListener("click", () => {
 
     radioBtns.style.visibility = "visible";
 
-    //document.getElementById("musicbtn").addEventListener("click", () => {
-    //    if (!Sobel) {
-    //        addSobelEffect();
-    //        Sobel = true;
-    //    }
-    //});
-    //document.getElementById("speechbtn").addEventListener("click", () => {
-    //    if (Sobel) {
-    //        removeSobelEffect();
-    //        Sobel = false;
-    //    }
-    //});
+    
 
 
     // Add event listener to the toggle switch
     toggleButton.addEventListener('change', () => {
         // Update the variable based on the toggle switch state
         isChecked = toggleButton.checked;
-
+        console.log(toggleButton.checked);
         // Call functions or perform calculations based on the toggle switch state
         if (isChecked) {
             // Toggle switch is checked, execute functions or calculations accordingly
@@ -955,6 +939,12 @@ document.getElementById("cochlearSound").addEventListener("click", () => {
                     addSobelEffect();
                     Sobel = true;
                 }
+            soundS.isPlaying && soundS.stop();
+            console.log("music playing");
+            currentAudio = soundM;
+            currentAudio.play();
+            checkbox2.checked = false;
+            divElement.style.animation = 'none';
 
 
         } else {
@@ -964,6 +954,12 @@ document.getElementById("cochlearSound").addEventListener("click", () => {
                 removeSobelEffect();
                 Sobel = false;
             }
+            soundM.isPlaying && soundM.stop();
+            console.log("speech playing");
+            currentAudio = soundS;
+            currentAudio.play();
+            checkbox2.checked = false;
+            divElement.style.animation = 'none';
         }
     });
 
