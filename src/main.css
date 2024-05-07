@@ -1281,64 +1281,212 @@ align-content: center;
   background: none;
 }
 
-.point
-{
+
+
+/*/////////////////////////////////////////////////////////////*/
+.tooltip-container {
     position: absolute;
-    top: 50%;
+    top: 44%;
     left: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 17px;
+    border-radius: 10px;
 }
 
-.point .label
-{
+.tooltip-container2 {
     position: absolute;
-    top: -20px;
-    left: -20px;
-    width: 40px;
-    height: 40px;
+    top: 20%;
+    left: 72%;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 17px;
+    border-radius: 10px;
+}
+
+.tooltip {
+    position: absolute;
+    top: 0;
+    width: 180px;
+    left: 50%;
+    transform: translateY(-50%);
+    padding: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s;
+    border-radius: 15px;
+    box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.2), inset -5px -5px 15px rgba(255, 255, 255, 0.1), 5px 5px 15px rgba(0, 0, 0, 0.3), -5px -5px 15px rgba(255, 255, 255, 0.1);
+}
+.tooltip2 {
+    position: absolute;
+    top: 0;
+    width: 160px;
+    left: 80%;
+    transform: translateY(50%);
+    padding: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s;
+    border-radius: 15px;
+    box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.2), inset -5px -5px 15px rgba(255, 255, 255, 0.1), 5px 5px 15px rgba(0, 0, 0, 0.3), -5px -5px 15px rgba(255, 255, 255, 0.1);
+}
+
+
+
+.profile {
+    background: #2a2b2f;
+    border-radius: 10px 15px;
+    padding: 10px;
+    border: 1px solid rgba(11, 63, 95, 1);
+}
+
+.tooltip-container:hover .tooltip {
+    left: 100px;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+.tooltip-container2:hover .tooltip2 {
+    left: -150px;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.icon {
+    text-decoration: none;
+    color: #fff;
+    display: block;
+    position: relative;
+}
+
+.layer {
+    width: 55px;
+    height: 55px;
     border-radius: 50%;
-    background: #00000077;
-    border: 1px solid #ffffff77;
-    color: #ffffff;
-    font-family: Helvetica, Arial, sans-serif;
-    text-align: center;
-    line-height: 40px;
-    font-weight: 100;
-    font-size: 14px;
-    
-    cursor: help;
-    transform: scale(0, 0);
     transition: transform 0.3s;
 }
 
-.point.visible .label
-{
-    transform: scale(1, 1);
+.icon:hover .layer {
+    transform: rotate(-35deg) skew(20deg);
+    border-radius: 50%;
 }
 
-.point .text
-{
+.layer span {
     position: absolute;
-    top: 30px;
-    left: -120px;
-    width: 200px;
-    padding: 20px;
-    border-radius: 8px;
-    background: #00000077;
-    border: 1px solid #ffffff77;
-    color: #ffffff;
-    line-height: 1.3em;
-    font-family: Helvetica, Arial, sans-serif;
-    font-weight: 100;
-    font-size: 14px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    border: 1px solid #fff;
+    
+    transition: all 0.3s;
+    border-radius: 50%;
 }
 
-.point:hover .text
-{
+.layer span,
+.text {
+    color: #1da1f2;
+    border-color: #1da1f2;
+}
+
+.icon:hover.layer span {
+    box-shadow: -1px 1px 3px #1da1f2;
+}
+
+.icon .text {
+    position: absolute;
+    left: 50%;
+    bottom: -5px;
+    opacity: 0;
+    font-weight: 500;
+    transform: translateX(-50%);
+    transition: bottom 0.3s ease, opacity 0.3s ease;
+}
+
+.icon:hover .text {
+    bottom: -35px;
     opacity: 1;
 }
+
+.icon:hover .layer span:nth-child(1) {
+    opacity: 0.2;
+}
+
+.icon:hover .layer span:nth-child(2) {
+    opacity: 0.4;
+    transform: translate(5px, -5px);
+}
+
+.icon:hover .layer span:nth-child(3) {
+    opacity: 0.6;
+    transform: translate(10px, -10px);
+}
+
+.icon:hover .layer span:nth-child(4) {
+    opacity: 0.8;
+    transform: translate(15px, -15px);
+}
+
+.icon:hover .layer span:nth-child(5) {
+    opacity: 1;
+    transform: translate(20px, -20px);
+}
+
+.layer span.fab {
+    font-size: 30px;
+    line-height: 64px;
+    text-align: center;
+    fill: #1da1f2;
+    background: #000;
+}
+
+.user {
+    display: flex;
+    gap: 10px;
+}
+
+.img {
+    width: 50px;
+    height: 50px;
+    font-size: 25px;
+    font-weight: 700;
+    border: 1px solid #1da1f2;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+}
+
+.name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1da1f2;
+}
+
+.details {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    color: #fff;
+}
+
+.about {
+    color: #ccc;
+    padding-top: 5px;
+    width: 180px;
+    font-family: 'Sans Serif Collection', sans-serif;
+    line-height: 1;
+}
+
+.about2 {
+    color: #ccc;
+    padding-top: 5px;
+    width: 180px;
+    font-family: 'Sans Serif Collection', sans-serif;
+    line-height: 1;
+    }
 
 
 .box {
