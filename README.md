@@ -69,6 +69,8 @@ npm run build
 
 - [Ektogamat ThreeJS Boilerplate](https://github.com/ektogamat/threejs-andy-boilerplate)
 - [Shaquille Ndunda Concept](https://github.com/shaqdeff/The-Three-Graces)
+- Neural Interface by [OpenTechLab](https://www.printables.com/@OpenTechLab_85377)
+- (https://twitter.com/doublejdesign) (favicon)
 
 ## Authors
 

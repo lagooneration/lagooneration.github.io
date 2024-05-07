@@ -7,41 +7,47 @@ import {
     Group,
     PerspectiveCamera,
     PointLight,
-    MeshPhongMaterial,
+    SpotLight,
+    WebGLRenderTarget,
+    TextureLoader,
+    MeshToonMaterial,
+    MeshBasicMaterial,
+    MeshStandardMaterial,
+    ShaderMaterial,
+    AudioLoader,
+    AudioListener,
+    Audio,
+    LinearFilter,
+    RGBAFormat,
+    NearestFilter,
+    RepeatWrapping,
+    AdditiveBlending,
 } from "three";
-import * as THREE from "three";
 
+import { animationGSAP, ImplantAnimation } from "./animation.js";
+// import  from "./animation.js";
 import { TWEEN } from "three/examples/jsm/libs/tween.module.min.js";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
-import { LensDistortionShader } from "../static/shaders/LensDistortionShader.js";
-
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
-// import { SobelOperatorShader } from "three/examples/jsm/shaders/SobelOperatorShader.js";
-import { DotScreenShader } from "three/examples/jsm/shaders/DotScreenShader.js";
+import { LensDistortionShader } from "./shaders/LensDistortionShader.js";
 import { SobelAnimation } from "./animation/SobelAnimation.js";
-import { BokehPass } from "three/examples/jsm/postprocessing/BokehPass.js";
+
 
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
-import { MotionPathPlugin } from "gsap/MotionPathPlugin";
-import { MorphSVGPlugin } from "gsap/MorphSVGPlugin"; 
 
-gsap.registerPlugin(ScrollTrigger, SplitText, MotionPathPlugin, MorphSVGPlugin);
 
 import Fsynapsis from "./shaders/synapsisFragment.glsl";
 import Vsynapsis from "./shaders/synapsisVertex.glsl";
 
-
-
+import gradientMap from "../static/textures/fourTone.jpg";
+import impTextureMap from "../static/textures/asdd.jpg"
+import earTextureMap from "../static/textures/earTexture.png";
 
 // GUI
-import GUI from "lil-gui";
+// import GUI from "lil-gui";
 
 
 
@@ -82,227 +88,6 @@ loadingManager.onLoad = function () {
 };
 
 
-///////////////////////////////////////////////////////////////////////
-// IMAGE SEQUENCER
-
-const canvas = document.getElementById("hero-lightpass");
-const context = canvas.getContext("2d");
-
-canvas.width = 1920;
-canvas.height = 1080;
-
-// if view port is smaller than 600px, change canvas size
-if (window.innerWidth < 600) {
-    canvas.width = 600;
-    canvas.height = 400;
-}
-
-const frameCount = 75;
-const currentFrame = (index) =>
-    `../hp_sequence/${(
-        index + 1
-    )
-        .toString()
-        .padStart(4, "0")}.jpg`;
-
-const images = [];
-const airpods = {
-    frame: 0
-};
-
-for (let i = 0; i < frameCount; i++) {
-    const img = new Image();
-    img.src = currentFrame(i);
-    images.push(img);
-}
-
-gsap.to(airpods, {
-    frame: frameCount - 1,
-    snap: "frame",
-    ease: "none",
-    scrollTrigger: {
-        trigger: ".canvas-containerV",
-        start: "top top",
-        end: "+=3500",
-        pin: true,
-        scrub: 0.5
-    },
-    onUpdate: render // use animation onUpdate instead of scrollTrigger's onUpdate
-});
-
-images[0].onload = render;
-
-function render() {
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.drawImage(images[airpods.frame], 0, 0);
-}
-
-////////////////////////////////////////////////////////////////////////
-//// GSAP ANIMATION
-
-// box animation
-//gsap.to(".box", {
-//    scrollTrigger: ".box",
-//    rotation: 360,
-//    x: '30vw',
-//    y: '-20vw',
-//    yPercent: -10,
-//    scale: 1.4,
-//    duration: 1,
-//});
-
-
-/// FIRST TEXT
-const repeatCount = 4;
-const tlc = gsap.timeline({ paused: true });
-const split = new SplitText("h1", { type: "chars" });
-
-// Calculate the total duration for the animation
-let totalDuration = 0;
-
-// Iterate through each character in the split text
-split.chars.forEach((obj, i) => {
-    // Extract the text content of the character
-    let txt = obj.innerText;
-
-    // Create a clone of the character for animation
-    let clone = `<div class="cloneText">${txt}</div>`;
-
-    // Wrap the original character and its clone in HTML structure
-    let newHTML = `<div class="originalText">${txt}</div>${clone}`;
-    obj.innerHTML = newHTML;
-
-    // Set initial position for each character
-    gsap.set(obj.childNodes[1], {
-        yPercent: i % 2 === 0 ? -100 : 100
-    });
-
-    // Calculate the delay for each character to stop rolling
-    let delay = i * 0.01;
-
-    // Create animation to roll the character
-    let tween = gsap.to(obj.childNodes, {
-        repeat: repeatCount,
-        ease: "none",
-        yPercent: i % 2 === 0 ? "+=100" : "-=100"
-    });
-
-    // Add animation to the timeline with a delay
-    tlc.add(tween, totalDuration + delay);
-
-    // Update total duration for the animation
-    totalDuration += delay;
-});
-
-// Start the timeline animation
-gsap.to(tlc, { progress: 1, duration: totalDuration + 4, ease: "power4.inOut" });
-
-
-
-//// COCHLEAR SOUND TEXT
-var tl = gsap.timeline(),
-    mySplitText = new SplitText("#content", { type: "words,chars" }),
-    chars = mySplitText.chars; //an array of all the divs that wrap each character
-
-function init() {
-    ScrollTrigger.create({
-        trigger: ".neurophones-container",
-        start: "top center",
-        onEnter: () => {
-            tl.from(chars, {
-                duration: 2,
-                opacity: 0,
-                scale: 0,
-                y: 80,
-                rotationX: 180,
-                transformOrigin: "0% 50% -50",
-                ease: "back",
-                stagger: 0.01,
-            });
-        },
-        onLeaveBack: () => {
-            gsap.to(mySplitText, {
-                opacity: 1,
-                duration: 1,
-                ease: "power3.out",
-            });
-        },
-    });
-}
-window.addEventListener("load", init);
-
-//// Video text
-
-/////////////////////////////
-//// HORIZONTAL SCROLL
-
-const section = document.querySelector('.demo-text'); // Replace '#neurophones' with the specific section ID you want to target
-const w = document.querySelector('.wrapper');
-const xEnd = (w.scrollWidth - section.offsetWidth) * -1;
-gsap.fromTo(w, { x: '100%' }, {
-    x: xEnd,
-    scrollTrigger: {
-        trigger: section,
-        scrub: 0.5
-    }
-});
-
-/////////////////////////////////////
-//// OPACITY SCROLL
-
-gsap.to(".hero__headline", {
-    scrollTrigger: {
-        trigger: ".hero__content",
-        scrub: true,
-        pin: true,
-        start: "top 38%",
-        end: "bottom -10%",
-        toggleClass: "active",
-        ease: "power2"
-    }
-});
-
-
-
-
-
-// DEMO BUTTON VISIBILITY
-
-const scrollButton = document.getElementById('scrollButton');
-
-// Calculate the scroll percentage of the section
-function getScrollPercentage(section) {
-    const scrollPosition = window.scrollY;
-    const sectionTop = section.offsetTop;
-    const sectionHeight = section.offsetHeight;
-    const distance = scrollPosition - sectionTop;
-    const percentage = distance / sectionHeight * 100;
-
-    return Math.max(0, Math.min(100, percentage));
-}
-
-// Show or hide the button based on scroll percentage
-function updateButtonVisibility() {
-    const scrollSection = document.getElementById('main-c');
-    const scrollPercentage = getScrollPercentage(scrollSection);
-    
-    if (scrollPercentage >= 60) { // Adjust this value as needed
-        // Show the button with animation
-        gsap.to(scrollButton, { duration: 0.5, opacity: 1,scale:1, y: 0, ease: 'power2.out' });
-    } else {
-        // Hide the button with animation
-        gsap.to(scrollButton, { duration: 0.5, opacity: 0, scale: 0, y: 50, ease: 'power2.in' });
-    }
-}
-
-// Update button visibility when scrolling
-window.addEventListener('scroll', updateButtonVisibility);
-
-// Update button visibility on page load
-updateButtonVisibility();
-
-
- 
 
 ////////////////////////////////////////////////////////////////////////
 //// DRACO LOADER
@@ -336,6 +121,10 @@ let implantRotation = false;
 // parallax config
 const clock = new Clock();
 let previousTime = 0;
+
+
+///// GSAP ANIMATION 
+animationGSAP();
 
 ////////////////////////////////////////////////////////////////////////
 //// RENDERER AND SCENE
@@ -388,19 +177,19 @@ scene.add(camera2);
 const renderPass = new RenderPass(scene, camera);
 const renderPass2 = new RenderPass(scene, camera2);
 
-const renderTarget = new THREE.WebGLRenderTarget(width, height, {
-    minFilter: THREE.LinearFilter,
-    magFilter: THREE.LinearFilter,
-    format: THREE.RGBAFormat,
+const renderTarget = new WebGLRenderTarget(width, height, {
+    minFilter: LinearFilter,
+    magFilter: LinearFilter,
+    format: RGBAFormat,
 });
 
-const renderTarget2 = new THREE.WebGLRenderTarget(
+const renderTarget2 = new WebGLRenderTarget(
     containerDetails.clientWidth,
     containerDetails.clientHeight,
     {
-        minFilter: THREE.LinearFilter,
-        magFilter: THREE.LinearFilter,
-        format: THREE.RGBAFormat,
+        minFilter: LinearFilter,
+        magFilter: LinearFilter,
+        format: RGBAFormat,
     }
 );
 
@@ -456,13 +245,9 @@ window.addEventListener("resize", () => {
 //// LIGHTS
 
 
-const spotLight = new THREE.SpotLight(0xffffff, 2,0, .3,1);
+const spotLight = new SpotLight(0xffffff, 2,0, .3,1);
 spotLight.position.set(0.7, 2.1, 10);
 scene.add(spotLight);
-
-const DirectionalLight = new THREE.DirectionalLight(0xffffff, 1);
-DirectionalLight.position.set(25, 2, 0);
-scene.add(DirectionalLight);
 
 const fillLight = new PointLight(0xff00f0, 5, 5.2, 3);
 fillLight.position.set(30, 3, 1.8);
@@ -476,35 +261,33 @@ scene.add(fillLight2);
 
 ////////////////////////////////////////////////////////////////////////
 //// TEXTURES
-const textureLoader = new THREE.TextureLoader(loadingManager);
-const fiveTone = textureLoader.load('textures/fourTone.jpg')
-fiveTone.minFilter = THREE.NearestFilter
-fiveTone.magFilter = THREE.NearestFilter
+const textureLoader = new TextureLoader(loadingManager);
+const fiveTone = textureLoader.load(gradientMap)
+fiveTone.minFilter = NearestFilter
+fiveTone.magFilter = NearestFilter
 
-const imptext = textureLoader.load("textures/asdd.jpg");
+const imptext = textureLoader.load(impTextureMap);
 imptext.flipY = false;
 
-const skinTexture = textureLoader.load(
-    "textures/earTexture.png"
-);
-skinTexture.wrapS = THREE.RepeatWrapping;
-skinTexture.wrapT = THREE.RepeatWrapping;
+const skinTexture = textureLoader.load(earTextureMap);
+skinTexture.wrapS = RepeatWrapping;
+skinTexture.wrapT = RepeatWrapping;
 
 ////////////////////////////////////////////////////////////////////////
 //// MATERIALS
 
-const brainMaterial = new THREE.MeshToonMaterial({ color: 0x3c3c3c, gradientMap: fiveTone });
-const impMaterials = new THREE.MeshBasicMaterial({ map: imptext, side: THREE.DoubleSide });
-const skinMaterial = new THREE.MeshStandardMaterial({ map: skinTexture });
+const brainMaterial = new MeshToonMaterial({ color: 0x3c3c3c, gradientMap: fiveTone });
+const impMaterials = new MeshBasicMaterial({ map: imptext });
+const skinMaterial = new MeshStandardMaterial({ map: skinTexture });
 
-const wireMat = new THREE.MeshBasicMaterial({
+const wireMat = new MeshBasicMaterial({
     color: 0x3c3c3c,
     wireframe: true,
 });
 wireMat.opacity = 0.5;
 
 // BRAIN SHADER
-const sMat = new THREE.ShaderMaterial({
+const sMat = new ShaderMaterial({
     uniforms: {
         iTime: { value: iTime },
         iMouse: { value: cursor },
@@ -516,7 +299,7 @@ const sMat = new THREE.ShaderMaterial({
     depthTest: true,
     depthWrite: true,
     
-    blending: THREE.AdditiveBlending,
+    blending: AdditiveBlending,
     wireframe: true
 });
 
@@ -555,10 +338,6 @@ loader.load("models/gltf/brain.gltf", function (gltf) {
 });
 
 
-function clearScene() {
-    oldMaterial.dispose();
-    renderer.renderLists.dispose();
-}
 
 
 loader.load("models/gltf/implant_scene.glb", function (gltf) {
@@ -575,25 +354,7 @@ loader.load("models/gltf/implant_scene.glb", function (gltf) {
     clearScene();
 });
 
-const flightPathUp = {
-    curviness: 0.5,
-    path: [{ x: -0.2, y: -0.17, z: 9.2 }],
-};
 
-const flightPathUp2 = {
-    curviness: 1,
-    path: [{ x: 0.1, y: 0.4, z: 6.2 }],
-};
-
-const flightPathUp3 = {
-    curviness: 0.8,
-    path: [{ x: 0.1, y: 0.17, z: 4.3 }],
-};
-
-const flightPathUp4 = {
-    curviness: 0.5,
-    path: [{ x: -0.49, y: 0.85, z: 0.6 }],
-};
 
 
 loader.load("models/gltf/earMat.gltf", function (gltf) {
@@ -624,13 +385,15 @@ loader.load("models/gltf/wireFace.gltf", function (gltf) {
     clearScene();
 });
 
+function clearScene() {
+    oldMaterial.dispose();
+    renderer.renderLists.dispose();
+}
+
 //////////////////////////////////////////////////
 //// POST PROCESSING
 
-/// BLOOM
-
-const bloomPass = new UnrealBloomPass(new THREE.Vector2(container.clientWidth, container.clientHeight),1, 0.2, 0.1);
-// bloomPass.ignoreMesh(cube);
+/// SOBEL
 
 let sobelEffect = new ShaderPass(SobelAnimation);
 sobelEffect.uniforms["resolution"].value.x =
@@ -665,39 +428,20 @@ function removeSobelEffect() {
     });
 }
 
-const dotEffect = new ShaderPass(DotScreenShader);
-dotEffect.uniforms["scale"].value = 2;
-
-// Create a BokehPass
-const bokehPass = new BokehPass(scene, camera2, {
-    focus: 5.0, // Focus distance
-    aperture: 0.05, // Aperture size
-    maxblur: 0.005, // Maximum blur strength
-    width: width,
-    height: height,
-});
-
-
-
-// composer.addPass(sobelEffect);
-// composer.addPass(dotEffect);
 composer2.addPass(sobelEffect);
-// composer.addPass(bloomPass);
-// composer2.addPass(bokehPass);
-// composer.addPass(bokehPass);
 
 
 
 //////////////////////////////////////////////////
 //// AUDIO loaders
 
-let audioLoader = new THREE.AudioLoader(loadingManager);
-let listener = new THREE.AudioListener();
+let audioLoader = new AudioLoader(loadingManager);
+let listener = new AudioListener();
 camera2.add(listener);
 
 // SPEACH and MUSIC
-const soundS = new THREE.Audio(listener);
-const soundM = new THREE.Audio(listener);
+const soundS = new Audio(listener);
+const soundM = new Audio(listener);
 
 // EVENT LISTERNERS
 let checkPlay = document.getElementById("start");
@@ -799,6 +543,16 @@ let radioBtns = document.getElementById("optionR");
 let tooltip = document.getElementById("q1");
 let tooltip2 = document.getElementById("q2");
 
+document.getElementById('scrollButton').addEventListener('click', function () {
+    // Get the link element
+    var link = document.createElement('a');
+    link.href = 'https://neurophones.netlify.app/'; // Replace with the URL you want to open in a new tab
+    link.target = '_blank'; // Set the target attribute to open in a new tab
+
+    // Simulate clicking the link to open it in a new tab
+    link.click();
+})
+
 function handleMouseMoveR(event) {
     const rotationX = (event.clientY / window.innerHeight - 0.5) * 0.1; // Adjust the factor as needed
     const rotationY =
@@ -825,27 +579,7 @@ function stopRotation() {
 }
 
 
-function ImplantAnimation() {
-    const tween = gsap.timeline({
-        defaults: {
-            duration: 1,
-            ease: "power1.inOut",
-            onUpdate: () => {
-                // Update the object's position in the 3D scene
-            },
-            onComplete: () => {
-                imp.rotation.set(0, 0, 0);
-                stopRotation();
-            },
-        },
-    });
-
-    tween
-        .to(imp.position, { motionPath: flightPathUp, opacity: 1 })
-        .to(imp.position, { motionPath: flightPathUp2, opacity: 1 })
-
-        .to(imp.position, { motionPath: flightPathUp4, opacity: 0.1 });
-}
+// ImplantAnimation();
 
 //////////////////////////////////////////////////
 //// click event listeners
@@ -889,6 +623,7 @@ document.getElementById("cochlearSound").addEventListener("click", () => {
                 }
             soundS.isPlaying && soundS.stop();
             console.log("music playing");
+            // currentAudio.stop();
             currentAudio = soundM;
             currentAudio.play();
             checkbox2.checked = false;
@@ -903,6 +638,7 @@ document.getElementById("cochlearSound").addEventListener("click", () => {
             }
             soundM.isPlaying && soundM.stop();
             console.log("speech playing");
+            // currentAudio.stop();
             currentAudio = soundS;
             currentAudio.play();
             checkbox2.checked = false;
@@ -911,7 +647,8 @@ document.getElementById("cochlearSound").addEventListener("click", () => {
     });
 
     if (!intro) {
-        ImplantAnimation();
+        ImplantAnimation(imp);
+        stopRotation();
         intro = true;
     }
 

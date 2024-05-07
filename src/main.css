@@ -493,6 +493,7 @@ nav.header .a:hover ~ .cursor {
 
 .text-container {
   text-align: left;
+  overflow: hidden;
 }
 
 .textQ {
@@ -587,6 +588,7 @@ nav.header .a:hover ~ .cursor {
 
 
 
+
 .plugin {
   pointer-events: all;
   width: 95%;
@@ -632,7 +634,7 @@ align-content: center;
   
 
   padding: 20px;
-	background: url("plugin3.jpg") no-repeat center;
+	background: url("plugin2.jpg") no-repeat center;
 	background-size: cover;
 	height: 100%;
     border-radius: 12px;
