@@ -52,7 +52,6 @@ import GUI from "lil-gui";
 const ftsLoader = document.querySelector(".loader-roll");
 const looadingCover = document.getElementById("loading-text-intro");
 const loadingManager = new LoadingManager();
-
 loadingManager.onLoad = function () {
     document.querySelector(".main-container").style.visibility = "visible";
     document.querySelector("body").style.overflowY = "auto";
@@ -78,10 +77,9 @@ loadingManager.onLoad = function () {
 
     introAnimation();
     ftsLoader.parentNode.removeChild(ftsLoader);
-
+    
     window.scroll(0, 0);
 };
-
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -150,8 +148,55 @@ function render() {
 //    y: '-20vw',
 //    yPercent: -10,
 //    scale: 1.4,
-//    duration: 1, 
+//    duration: 1,
 //});
+
+
+/// FIRST TEXT
+const repeatCount = 4;
+const tlc = gsap.timeline({ paused: true });
+const split = new SplitText("h1", { type: "chars" });
+
+// Calculate the total duration for the animation
+let totalDuration = 0;
+
+// Iterate through each character in the split text
+split.chars.forEach((obj, i) => {
+    // Extract the text content of the character
+    let txt = obj.innerText;
+
+    // Create a clone of the character for animation
+    let clone = `<div class="cloneText">${txt}</div>`;
+
+    // Wrap the original character and its clone in HTML structure
+    let newHTML = `<div class="originalText">${txt}</div>${clone}`;
+    obj.innerHTML = newHTML;
+
+    // Set initial position for each character
+    gsap.set(obj.childNodes[1], {
+        yPercent: i % 2 === 0 ? -100 : 100
+    });
+
+    // Calculate the delay for each character to stop rolling
+    let delay = i * 0.01;
+
+    // Create animation to roll the character
+    let tween = gsap.to(obj.childNodes, {
+        repeat: repeatCount,
+        ease: "none",
+        yPercent: i % 2 === 0 ? "+=100" : "-=100"
+    });
+
+    // Add animation to the timeline with a delay
+    tlc.add(tween, totalDuration + delay);
+
+    // Update total duration for the animation
+    totalDuration += delay;
+});
+
+// Start the timeline animation
+gsap.to(tlc, { progress: 1, duration: totalDuration + 4, ease: "power4.inOut" });
+
 
 
 //// COCHLEAR SOUND TEXT
