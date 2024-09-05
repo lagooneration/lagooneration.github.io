@@ -3,6 +3,7 @@ import { useGSAP } from '@gsap/react';
 import { heroVideo, smallHeroVideo } from '../utils/index.ts';
 import { useEffect, useState } from 'react';
 import { Brain } from '../components/brain/brain.tsx';
+import { Button } from './ui/button.tsx';
 
 const Hero = () => {
   const [videoSrc, setVideoSrc] = useState(window.innerWidth < 760 ? smallHeroVideo : heroVideo)
@@ -31,21 +32,22 @@ const Hero = () => {
   return (
     <section className="w-full nav-height bg-black relative">
       <div className="h-5/6 w-full flex-center flex-col">
-        <p id="hero" className="hero-title">The Cocktail Party Problem</p>
-        <div className="md:w-10/12 w-9/12">
+        <p id="hero" className="hero-title z-10 mb-40">The Cocktail Party Problem</p>
+        <div className="md:w-10/12 w-10/12">
           {/* <video className="pointer-events-none" autoPlay muted playsInline={true} key={videoSrc}>
             <source src={videoSrc} type="video/mp4" />
           </video> */}
-
-          <Brain />
+          <div className="absolute inset-0 w-full h-full">
+            <Brain />
+          </div>
         </div>
       </div>
-
+      
       <div
         id="cta"
         className="flex flex-col items-center opacity-0 translate-y-20"
       >
-        <a href="#highlights" className="btn">KNOW MORE</a>
+        <Button><a href="#highlights" className='btn'>KNOW MORE</a></Button>
         <p className="font-normal text-xl">Ability to focus on the sound of your interest</p>
       </div>
     </section>

@@ -3,7 +3,8 @@ import { Html, OrbitControls, PerspectiveCamera, View } from "@react-three/drei"
 import * as THREE from 'three'
 import Lights from './Lights';
 import Loader from './Loader';
-import IPhone from './IPhone.tsx';
+// import IPhone from './IPhone.tsx';
+import Neuroxones from './Neuroxones.tsx';
 import { Suspense } from "react";
 
 const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, size, item }: any) => {
@@ -30,12 +31,12 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
         onEnd={() => setRotationState(controlRef.current.getAzimuthalAngle())}
       /> 
 
-      <group ref={groupRef} name={`${index === 1} ? 'small' : 'large`} position={[0, 0 ,0]}>
+      <group ref={groupRef} name={`${index === 1} ? 'small' : 'large`} position={[0, -1 ,0]}>
         <Suspense fallback={<Loader />}>
-          <IPhone 
-            scale={index === 1 ? [15, 15, 15] : [17, 17, 17]}
-            item={item}
-            size={size}
+          <Neuroxones
+          scale={index === 1 ? [12, 12, 12] : [15, 15, 15]}
+          item={item}
+          size={size} 
           />
         </Suspense>
       </group>

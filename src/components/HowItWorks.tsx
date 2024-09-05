@@ -3,6 +3,7 @@ import { chipImg, frameImg, frameVideo } from '../utils/index.ts'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap';
 import { animateWithGsap } from '../utils/animations.ts';
+import { Githubstar } from './ui/githubstar.tsx';
 
 const HowItWorks = () => {
   const videoRef = useRef();
@@ -36,13 +37,16 @@ const HowItWorks = () => {
 
         <div className="flex flex-col items-center">
           <h2 className="hiw-title">
-            A17 Pro chip.
-            <br /> A monster win for gaming.
+            Audio Plugin.
+            
           </h2>
 
           <p className="hiw-subtitle">
-            It's here. The biggest redesign in the history of Apple GPUs.
+            Get early access to muilti-channel audio mixing plugin.
           </p>
+          <div>
+            <Githubstar />
+          </div>
         </div>
 
         <div className="mt-10 md:mt-20 mb-14">
