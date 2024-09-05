@@ -3,7 +3,7 @@ import { useGSAP } from '@gsap/react';
 import { heroVideo, smallHeroVideo } from '../utils/index.ts';
 import { useEffect, useState } from 'react';
 import { Brain } from '../components/brain/brain.tsx';
-import { Button } from './ui/button.tsx';
+import { Button } from './ui/Button.tsx';
 
 const Hero = () => {
   const [videoSrc, setVideoSrc] = useState(window.innerWidth < 760 ? smallHeroVideo : heroVideo)

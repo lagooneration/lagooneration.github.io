@@ -29,6 +29,15 @@ import explore2 from "/assets/videos/midi.gif";
 import chip from "/assets/images/plugin.jpg";
 import frame from "/assets/images/frame.png";
 
+import roadmapIMG1 from "/assets/images/image-1.png";
+import roadmapIMG2 from "/assets/images/image-2.png";
+import roadmapIMG3 from "/assets/images/image-3.png";
+import roadmapIMG4 from "/assets/images/image-4.png";
+
+import checkimg from "/assets/images/check-02.svg";
+import gridimg from "/assets/images/grid.png";
+import loadingimg from "/assets/images/loading-01.svg";
+
 export const heroVideo = hmv;
 export const smallHeroVideo = smallmv;
 export const highlightFirstVideo = highlightFirstmv;
@@ -55,3 +64,12 @@ export const explore1Img = explore1;
 export const explore2Img = explore2;
 export const chipImg = chip;
 export const frameImg = frame;
+
+export const roadmap1 = roadmapIMG1;
+export const roadmap2 = roadmapIMG2;
+export const roadmap3 = roadmapIMG3;
+export const roadmap4 = roadmapIMG4;
+
+export const check2 = checkimg;
+export const grid = gridimg;
+export const loading1 = loadingimg;
