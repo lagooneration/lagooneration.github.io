@@ -17,7 +17,7 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
       {/* Ambient Light */}
       <ambientLight intensity={0.3} />
 
-      <PerspectiveCamera makeDefault position={[0, 0, 4]} />
+      <PerspectiveCamera makeDefault position={[0, 0, 5]} />
 
       <Lights />
 
@@ -37,6 +37,7 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
           scale={index === 1 ? [12, 12, 12] : [15, 15, 15]}
           item={item}
           size={size} 
+          rotation={[0, Math.PI/1.9,0]}
           />
         </Suspense>
       </group>

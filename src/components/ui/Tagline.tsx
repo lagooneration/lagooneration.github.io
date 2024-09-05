@@ -1,6 +1,6 @@
 import brackets from "../../assets/Brackets.tsx";
 
-const TagLine = ({ className, children }) => {
+const TagLine = ({ className, children }: { className?: string; children: React.ReactNode }) => {
   return (
     <div className={`tagline flex items-center ${className || ""}`}>
       {brackets("left")}

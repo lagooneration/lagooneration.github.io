@@ -13,7 +13,7 @@ import { animateWithGsapTimeline } from "../utils/animations.ts";
 const Model = () => {
   const [size, setSize] = useState('small');
   const [model, setModel] = useState({
-    title: 'iPhone 15 Pro in Natural Titanium',
+    title: 'Active Auditory Attention Detection',
     color: ['#8F8A81', '#FFE7B9', '#6F6C64'],
     img: yellowImg,
   })
@@ -101,12 +101,13 @@ const Model = () => {
             <p className="text-sm font-light text-center mb-5">{model.title}</p>
 
             <div className="flex-center">
-              <ul className="color-container">
+             
+            {/* <ul className="color-container">
                 {models.map((item, i) => (
                   <li key={i} className="w-6 h-6 rounded-full mx-2 cursor-pointer" style={{ backgroundColor: item.color[0] }} onClick={() => setModel(item)} />
                 ))}
-              </ul>
-
+              </ul> */}
+              
               <button className="size-btn-container">
                 {sizes.map(({ label, value }) => (
                   <span key={label} className="size-btn" style={{ backgroundColor: size === value ? 'white' : 'transparent', color: size === value ? 'black' : 'white'}} onClick={() => setSize(value)}>

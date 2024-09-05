@@ -1,9 +1,13 @@
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { Tubes } from './brain-tubes.tsx';
 import { BrainParticles } from './brain-particles.tsx';
 import { data } from './data.ts';
+// import Experience from '../Experience.tsx';
+import { Brainmodel } from './Brainmodel.tsx';
+
+
 
 function createBrainCurvesFromPaths(): THREE.CatmullRomCurve3[] {
   const paths = data.economics[0].paths;
@@ -23,16 +27,35 @@ function createBrainCurvesFromPaths(): THREE.CatmullRomCurve3[] {
 
 const curves = createBrainCurvesFromPaths();
 
+
+
 export function Brain() {
+
+  
+
+  
+
+
   return (
-    <Canvas camera={{ position: [0, 0, 0.3], near: 0.001, far: 5 }}>
+    <Canvas camera={{ position: [0, 0, 0.2], near: 0.001, far: 5 }}>
       <color attach="background" args={['black']} />
       <ambientLight />
       <pointLight position={[10, 10, 10]} />
+      <pointLight decay={0} color='hotpink' intensity={Math.PI} position={[0, 0.8, 0.8]} />
+      <pointLight decay={0} color={new THREE.Color(0x0000ff)} intensity={10} position={[0, -0.8, 0.8]} />
+      <directionalLight intensity={0.5} position={[0, 0, 1]} />
       <Tubes curves={curves} />
       <BrainParticles curves={curves} />
       <OrbitControls />
+      <Brainmodel 
+        scale={[0.042, 0.045, 0.045]}
+        position={[0, 0, -.01]}
+        rotation={[0, Math.PI/3.8, 0]}
+      />
+      
+
     </Canvas>
   );
 }
 
+useGLTF.preload('/models/brain.glb');

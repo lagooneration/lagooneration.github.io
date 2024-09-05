@@ -39,7 +39,7 @@ const Features = () => {
         </div>
         
         <div className="flex flex-col justify-center items-center overflow-hidden">
-          <div className="mt-32 mb-24 pl-24">
+          <div className="mt-12 mb-14 flex-center">
             <h2 className="text-5xl lg:text-5xl font-semibold">Neuro-steered Auditory Attention Detection</h2>
           </div>
 
@@ -53,31 +53,35 @@ const Features = () => {
             <div className="flex flex-col w-full relative">
               <div className="feature-video-container">
                 <div className="overflow-hidden flex-1 h-[50vh]">
-                  <img src={explore1Img} alt="titanium" className="feature-video g_grow" />
+                  <img src={explore2Img} alt="titanium" className="feature-video g_grow" />
                 </div>
                 <div className="overflow-hidden flex-1 h-[50vh]">
-                  <img src={explore2Img} alt="titanium 2" className="feature-video g_grow" />
+                  <img src={explore1Img} alt="titanium 2" className="feature-video g_grow" />
                 </div>
               </div>
 
               <div className="feature-text-container">
                 <div className="flex-1 flex-center">
                   <p className="feature-text g_text">
-                    iPhone 15 Pro is {' '}
+                    Almost every song is made in {' '}
                     <span className="text-white">
-                      the first iPhone to feature an aerospace-grade titanium design
+                      DAW (Digital Audio Workstation)
                     </span>,
-                    using the same alloy that spacecrafts use for missions to Mars.
+                    and all the sound layers are composed by {' '}
+                    <span className="text-white">
+                      MIDI 
+                    </span>
+                    {' '} data (Musical Instrument Digital Interface).
                   </p>
                 </div>
 
                 <div className="flex-1 flex-center">
                   <p className="feature-text g_text">
-                    Titanium has one of the best strength-to-weight ratios of any metal, making these our {' '}
+                    Using MIDI files as independent audio layers  {' '}
                     <span className="text-white">
-                      lightest Pro models ever.
+                      reduces audio separation efforts {' '}
                     </span>
-                    You'll notice the difference the moment you pick one up.
+                    allowing possibilty of AAD (Auditory Attention Detection) in real-time for listening music.
                   </p>
                 </div>
 

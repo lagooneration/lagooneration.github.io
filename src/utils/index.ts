@@ -24,7 +24,7 @@ import yellow from "/assets/images/yellow.jpg";
 import blue from "/assets/images/blue.jpg";
 import white from "/assets/images/white.jpg";
 import black from "/assets/images/black.jpg";
-import explore1 from "/assets/images/explore1.jpg";
+import explore1 from "/assets/images/hp.jpg";
 import explore2 from "/assets/videos/midi.gif";
 import chip from "/assets/images/plugin.jpg";
 import frame from "/assets/images/frame.png";
@@ -37,6 +37,9 @@ import roadmapIMG4 from "/assets/images/image-4.png";
 import checkimg from "/assets/images/check-02.svg";
 import gridimg from "/assets/images/grid.png";
 import loadingimg from "/assets/images/loading-01.svg";
+
+import mute from "/assets/images/mute.svg";
+import unmute from "/assets/images/speaker.svg";
 
 export const heroVideo = hmv;
 export const smallHeroVideo = smallmv;
@@ -73,3 +76,6 @@ export const roadmap4 = roadmapIMG4;
 export const check2 = checkimg;
 export const grid = gridimg;
 export const loading1 = loadingimg;
+
+export const muteImg = mute;
+export const unmuteImg = unmute;

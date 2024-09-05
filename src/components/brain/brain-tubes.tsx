@@ -59,7 +59,7 @@ function Tube(props: { curve: THREE.CatmullRomCurve3 }) {
     brainMat.current.uniforms.time.value = clock.getElapsedTime();
 
     brainMat.current.uniforms.mouse.value = new THREE.Vector3(
-      (mouse.x * viewport.width) / 2,
+      -(mouse.x * viewport.width) / 2,
       (mouse.y * viewport.height) / 2,
       0,
     );

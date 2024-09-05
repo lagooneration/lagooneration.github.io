@@ -1,4 +1,5 @@
-import Cta from "./ui/Cta.tsx";
+// import Cta from "./ui/Cta.tsx";
+import Knowmore from "./ui/Cta.tsx";
 import Heading from "./ui/Heading";
 import Section from "./ui/Section";
 import Tagline from "./ui/Tagline";
@@ -7,13 +8,13 @@ import { check2, grid, loading1 } from "../utils/index.ts";
 import { Gradient } from "./ui/Gradient.tsx";
 
 const Roadmap = () => (
-  <Section className="overflow-hidden" id="roadmap">
-    <div className="container md:pb-10">
+  <Section className="common-padding" id="roadmap">
+    <div className="container md:pb-10 common-padding">
       <Heading tag="Ready to get started" title="What we’re working on" />
 
       <div className="relative grid gap-6 md:grid-cols-2 md:gap-4 md:pb-[7rem]">
         {roadmap.map((item) => {
-          const status = item.status === "done" ? "Done" : "In progress";
+          const status = item.status === "done" ? "6 seconds" : "50 seconds";
 
           return (
             <div
@@ -69,7 +70,7 @@ const Roadmap = () => (
       </div>
 
       <div className="flex justify-center mt-12 md:mt-15 xl:mt-20">
-        <Cta href="/roadmap">Our roadmap</Cta>
+        <Knowmore href="/Hero">Our roadmap</Knowmore>
       </div>
     </div>
   </Section>

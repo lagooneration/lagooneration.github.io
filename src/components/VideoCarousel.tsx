@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 
 import { hightlightsSlides } from "../constants";
 import { pauseImg, playImg, replayImg } from "../utils/index.ts";
+// import { is } from "@react-three/fiber/dist/declarations/src/core/utils";
+import { muteImg, unmuteImg } from "../utils/index.ts";
 
 const VideoCarousel = () => {
   const videoRef = useRef([]);
@@ -19,10 +21,11 @@ const VideoCarousel = () => {
     videoId: 0,
     isLastVideo: false,
     isPlaying: false,
+    isMuted: false,
   });
 
   const [loadedData, setLoadedData] = useState([]);
-  const { isEnd, isLastVideo, startPlay, videoId, isPlaying } = video;
+  const { isEnd, isLastVideo, startPlay, videoId, isPlaying, isMuted } = video;
 
   useGSAP(() => {
     // slider animation to move the video out of the screen and bring the next video in
@@ -123,7 +126,7 @@ const VideoCarousel = () => {
         startPlay && videoRef.current[videoId].play();
       }
     }
-  }, [startPlay, videoId, isPlaying, loadedData]);
+  }, [startPlay, videoId, isPlaying, isMuted, loadedData]);
 
   // vd id is the id for every video until id becomes number 3
   const handleProcess = (type, i) => {
@@ -146,6 +149,13 @@ const VideoCarousel = () => {
 
       case "play":
         setVideo((pre) => ({ ...pre, isPlaying: !pre.isPlaying }));
+        break;
+
+      case "toggle-sound":
+        setVideo((pre) => ({
+          ...pre,
+          isMuted: !pre.isMuted,
+        }));
         break;
 
       default:
@@ -224,6 +234,17 @@ const VideoCarousel = () => {
                 ? () => handleProcess("play")
                 : () => handleProcess("pause")
             }
+          />
+        </button>
+
+        <button 
+          className={`sound-btn ${!isMuted ? 'bg-gray-200' : ''}`} 
+          onClick={() => handleProcess("toggle-sound")}
+          data-muted={isMuted}
+        >
+          <img
+            src={isMuted ? muteImg : unmuteImg}
+            alt={isMuted ? "Unmute" : "Mute"}
           />
         </button>
       </div>

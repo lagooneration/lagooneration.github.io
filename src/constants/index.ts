@@ -19,32 +19,32 @@ export const hightlightsSlides = [
   {
     id: 1,
     textLists: [
-      "Enter A17 Pro.",
-      "Game‑changing chip.",
-      "Groundbreaking performance.",
+      "Ability to focus",
+      "is severly affected.",
+      
     ],
     video: highlightFirstVideo,
     videoDuration: 4,
   },
   {
     id: 2,
-    textLists: ["Titanium.", "So strong. So light. So Pro."],
+    textLists: ["Hear Speech.", "via cochlear implant."],
     video: highlightSecondVideo,
     videoDuration: 5,
   },
   {
     id: 3,
     textLists: [
-      "iPhone 15 Pro Max has the",
-      "longest optical zoom in",
-      "iPhone ever. Far out.",
+      "Hear music.",
+      "via cochlear implant.",
+   
     ],
     video: highlightThirdVideo,
     videoDuration: 2,
   },
   {
     id: 4,
-    textLists: ["All-new Action button.", "What will yours do?."],
+    textLists: ["The answer could be", "MUSIC."],
     video: highlightFourthVideo,
     videoDuration: 3.63,
   },
@@ -53,33 +53,33 @@ export const hightlightsSlides = [
 export const models = [
   {
     id: 1,
-    title: "iPhone 15 Pro in Natural Titanium",
+    title: "Active Auditory Attention",
     color: ["#8F8A81", "#ffe7b9", "#6f6c64"],
     img: yellowImg,
   },
   {
     id: 2,
-    title: "iPhone 15 Pro in Blue Titanium",
+    title: "Active Auditory Attention",
     color: ["#53596E", "#6395ff", "#21242e"],
     img: blueImg,
   },
   {
     id: 3,
-    title: "iPhone 15 Pro in White Titanium",
+    title: "Active Auditory Attention",
     color: ["#C9C8C2", "#ffffff", "#C9C8C2"],
     img: whiteImg,
   },
   {
     id: 4,
-    title: "iPhone 15 Pro in Black Titanium",
+    title: "Active Auditory Attention",
     color: ["#454749", "#3b3b3b", "#181819"],
     img: blackImg,
   },
 ];
 
 export const sizes = [
-  { label: '6.1"', value: "small" },
-  { label: '6.7"', value: "large" },
+  { label: 'Ear-EEG', value: "small" },
+  { label: 'Head-EEG', value: "large" },
 ];
 
 export const footerLinks = [
@@ -93,19 +93,19 @@ export const footerLinks = [
 export const roadmap = [
   {
     id: "0",
-    title: "Voice recognition",
-    text: "Enable the chatbot to understand and respond to voice commands, making it easier for users to interact with the app hands-free.",
-    date: "May 2023",
-    status: "done",
+    title: "Convolutional time-domain audio separation",
+    text: "Single-channel, speaker-independent speech separation methods have recently seen great progress. However, the accuracy, latency, and computational cost of such methods remain insufficient",
+    date: "Demucs",
+    status: "progress",
     imageUrl: roadmap1,
     colorful: true,
   },
   {
     id: "1",
-    title: "Gamification",
-    text: "Add game-like elements, such as badges or leaderboards, to incentivize users to engage with the chatbot more frequently.",
-    date: "May 2023",
-    status: "progress",
+    title: "Hybrid Spectrogram and Waveform Source Separation",
+    text: "Single-channel, speaker-independent speech separation methods have recently seen great progress. However, the accuracy, latency, and computational cost of such methods remain insufficient.",
+    date: "Conv-TasNet",
+    status: "done",
     imageUrl: roadmap2,
   },
   {
