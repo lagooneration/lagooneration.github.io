@@ -13,6 +13,7 @@ const VideoCarousel = () => {
   const videoRef = useRef([]);
   const videoSpanRef = useRef([]);
   const videoDivRef = useRef([]);
+  const muteRef = useRef();
 
   // video and indicator
   const [video, setVideo] = useState({
@@ -53,7 +54,7 @@ const VideoCarousel = () => {
 
   useEffect(() => {
     let currentProgress = 0;
-    let span = videoSpanRef.current;
+    const span = videoSpanRef.current;
 
     if (span[videoId]) {
       // animation to move the indicator
@@ -179,7 +180,8 @@ const VideoCarousel = () => {
                     list.id === 2 && "translate-x-44"
                   } pointer-events-none`}
                   preload="auto"
-                  muted
+                  muted = {isMuted}
+                  
                   ref={(el) => (videoRef.current[i] = el)}
                   onEnded={() =>
                     i !== 3

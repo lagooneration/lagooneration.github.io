@@ -1,13 +1,86 @@
-# React + TypeScript + Vite
+## Live Demo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- Click [here](https://lagooneration.netlify.app/) to view the live demo.
 
-Currently, two official plugins are available:
+# Neuro-steered headphones
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This is a concept for EEG integrated Neuro-steered headphones that utilizes Auditory Attention Detection (AAD) to enhance the listening experience. The project is built using Three.js and Webpack.
 
-## Expanding the ESLint configuration
+## How To Use:
+
+To get started, follow these simple steps:
+
+### Prerequisites
+
+Make sure you have node `16.0.0` or higher and npm `9.0.0` or higher installed.
+
+### Setup
+
+- With git, clone the code to your machine, or download a ZIP of all the files directly.
+
+```
+git clone https://github.com/lagooneration/lagooneration.github.io.git
+```
+
+- Once the files are on your machine, open the **Next-Internalization** folder in [Visual Studio Code](https://code.visualstudio.com/download).
+
+```
+cd Neurophones && code .
+```
+
+## Install
+
+- After opening the files in Visual Studio Code, open the **VS Code** integrated terminal and run the following commands:
+
+```
+npm install
+```
+
+This will install all the packages and dependencies used in the project.
+
+## Usage
+
+- Run the following command to start a local server:
+
+```
+npm run dev
+```
+
+This will open up the project on a browser on `http://localhost:8080` / `http://192.168.0.12:8080`
+
+## Build
+
+- To create a production build:
+
+```
+npm run build
+```
+
+## Built With
+
+- Three.js
+- JavaScript
+- HTML
+- CSS
+- GLSL
+- Webpack
+
+## Resources
+
+- [adrianhajdin concept](https://github.com/adrianhajdin/iphone/tree/main)
+- Brain Shader by [Laniman](https://github.com/Laniman/threejs-brain-animation)
+- Neural Interface by [OpenTechLab](https://www.printables.com/@OpenTechLab_85377)
+- [Arizona State University Research](https://www.youtube.com/watch?v=00WOao4kpwM)
+
+## Authors
+
+👤 **Puneet Lagoo**
+
+- GitHub: [@lagooneration](https://github.com/lagooneration)
+- LinkedIn: [Puneet Lagoo](https://www.linkedin.com/in/lagooneration)
+
+
+## Expanding the ESLint configuration (Production Ready)
 
 If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
@@ -47,4 +120,16 @@ export default tseslint.config({
     ...react.configs['jsx-runtime'].rules,
   },
 })
+
+## Feedback and Contributions
+
+If you have any feedback, suggestions, or would like to contribute to this project, your involvement is highly valued. Feel free to open an [issue](../../issues/) or submit a pull request with your ideas and enhancements.
+
+Happy coding and showcasing!
+
+## Show your support
+
+Give a ⭐️ if you like this project!
+
+
 ```

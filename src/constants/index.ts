@@ -30,7 +30,7 @@ export const hightlightsSlides = [
     id: 2,
     textLists: ["Hear Speech.", "via cochlear implant."],
     video: highlightSecondVideo,
-    videoDuration: 5,
+    videoDuration: 18,
   },
   {
     id: 3,
