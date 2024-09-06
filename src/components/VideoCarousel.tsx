@@ -6,14 +6,12 @@ import { useEffect, useRef, useState } from "react";
 
 import { hightlightsSlides } from "../constants";
 import { pauseImg, playImg, replayImg } from "../utils/index.ts";
-// import { is } from "@react-three/fiber/dist/declarations/src/core/utils";
 import { muteImg, unmuteImg } from "../utils/index.ts";
 
 const VideoCarousel = () => {
-  const videoRef = useRef([]);
-  const videoSpanRef = useRef([]);
-  const videoDivRef = useRef([]);
-  const muteRef = useRef();
+  const videoRef = useRef<HTMLVideoElement[]>([]);
+  const videoSpanRef = useRef<HTMLSpanElement[]>([]);
+  const videoDivRef = useRef<HTMLSpanElement[]>([]);
 
   // video and indicator
   const [video, setVideo] = useState({
@@ -25,7 +23,7 @@ const VideoCarousel = () => {
     isMuted: false,
   });
 
-  const [loadedData, setLoadedData] = useState([]);
+  const [loadedData, setLoadedData] = useState<Event[]>([]);
   const { isEnd, isLastVideo, startPlay, videoId, isPlaying, isMuted } = video;
 
   useGSAP(() => {
@@ -58,7 +56,7 @@ const VideoCarousel = () => {
 
     if (span[videoId]) {
       // animation to move the indicator
-      let anim = gsap.to(span[videoId], {
+      const anim = gsap.to(span[videoId], {
         onUpdate: () => {
           // get the progress of the video
           const progress = Math.ceil(anim.progress() * 100);
@@ -103,10 +101,13 @@ const VideoCarousel = () => {
 
       // update the progress bar
       const animUpdate = () => {
-        anim.progress(
-          videoRef.current[videoId].currentTime /
-            hightlightsSlides[videoId].videoDuration
-        );
+        const currentVideo = videoRef.current[videoId];
+        if (currentVideo) {
+          anim.progress(
+            currentVideo.currentTime /
+              hightlightsSlides[videoId].videoDuration
+          );
+        }
       };
 
       if (isPlaying) {
@@ -117,23 +118,28 @@ const VideoCarousel = () => {
         gsap.ticker.remove(animUpdate);
       }
     }
-  }, [videoId, startPlay]);
+  }, [videoId, startPlay, isPlaying]);
 
   useEffect(() => {
     if (loadedData.length > 3) {
-      if (!isPlaying) {
-        videoRef.current[videoId].pause();
-      } else {
-        startPlay && videoRef.current[videoId].play();
+      const currentVideo = videoRef.current[videoId];
+      if (currentVideo) {
+        if (!isPlaying) {
+          currentVideo.pause();
+        } else if (startPlay) {
+          currentVideo.play();
+        }
       }
     }
   }, [startPlay, videoId, isPlaying, isMuted, loadedData]);
 
   // vd id is the id for every video until id becomes number 3
-  const handleProcess = (type, i) => {
+  const handleProcess = (type: string, i?: number) => {
     switch (type) {
       case "video-end":
-        setVideo((pre) => ({ ...pre, isEnd: true, videoId: i + 1 }));
+        if (i !== undefined) {
+          setVideo((pre) => ({ ...pre, isEnd: true, videoId: i + 1 }));
+        }
         break;
 
       case "video-last":
@@ -145,9 +151,6 @@ const VideoCarousel = () => {
         break;
 
       case "pause":
-        setVideo((pre) => ({ ...pre, isPlaying: !pre.isPlaying }));
-        break;
-
       case "play":
         setVideo((pre) => ({ ...pre, isPlaying: !pre.isPlaying }));
         break;
@@ -164,7 +167,7 @@ const VideoCarousel = () => {
     }
   };
 
-  const handleLoadedMetaData = (i, e) => setLoadedData((pre) => [...pre, e]);
+  const handleLoadedMetaData = (e: Event, i?: number) => setLoadedData((pre) => [...pre, e]);
 
   return (
     <>
@@ -177,12 +180,13 @@ const VideoCarousel = () => {
                   id="video"
                   playsInline={true}
                   className={`${
-                    list.id === 2 && "translate-x-44"
+                    list.id === 2 && "translate-y-4"
                   } pointer-events-none`}
                   preload="auto"
-                  muted = {isMuted}
-                  
-                  ref={(el) => (videoRef.current[i] = el)}
+                  muted={isMuted}
+                  ref={(el) => {
+                    if (el) videoRef.current[i] = el;
+                  }}
                   onEnded={() =>
                     i !== 3
                       ? handleProcess("video-end", i)
@@ -215,11 +219,16 @@ const VideoCarousel = () => {
             <span
               key={i}
               className="mx-2 w-3 h-3 bg-gray-200 rounded-full relative cursor-pointer"
-              ref={(el) => (videoDivRef.current[i] = el)}
+              ref={(el) => {
+                if (el) videoDivRef.current[i] = el;
+              }}
+              
             >
               <span
                 className="absolute h-full w-full rounded-full"
-                ref={(el) => (videoSpanRef.current[i] = el)}
+                ref={(el) => {
+                  if (el) videoSpanRef.current[i] = el;
+                }}
               />
             </span>
           ))}

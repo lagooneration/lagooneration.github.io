@@ -9,7 +9,7 @@ import { Gradient } from "./ui/Gradient.tsx";
 
 const Roadmap = () => (
   <Section className="common-padding" id="roadmap">
-    <div className="container md:pb-10 common-padding">
+    <div className="common-padding">
       <Heading tag="Ready to get started" title="What we’re working on" />
 
       <div className="relative grid gap-6 md:grid-cols-2 md:gap-4 md:pb-[7rem]">

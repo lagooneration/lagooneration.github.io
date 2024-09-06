@@ -29,7 +29,7 @@ const HowItWorks = () => {
   }, []);
 
   return (
-    <section className="common-padding">
+    <section id="CONTACT" className="common-padding">
       <div className="screen-max-width">
         <div id="chip" className="flex-center w-full my-20">
           <img src={chipImg} alt="chip" width={180} height={180} />
@@ -64,7 +64,7 @@ const HowItWorks = () => {
                 </video>
               </div>
           </div>
-          <p className="text-gray font-semibold text-center mt-3">Honkai: Star Rail</p>
+          <p className="text-gray font-semibold text-center mt-3">Multichannel-Mixing Visualizer</p>
           </div>
 
           <div className="hiw-text-container">
