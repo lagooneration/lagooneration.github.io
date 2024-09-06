@@ -6,6 +6,7 @@ import Loader from './Loader';
 // import IPhone from './IPhone.tsx';
 import Neuroxones from './Neuroxones.tsx';
 import { Suspense } from "react";
+import { Brainmodel } from './brain/Brainmodel.tsx';
 
 const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, size, item }: any) => {
   return (
@@ -20,7 +21,7 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
       <PerspectiveCamera makeDefault position={[0, 0, 5]} />
 
       <Lights />
-
+      {/* <Brainmodel /> */}
       <OrbitControls 
         makeDefault
         ref={controlRef}

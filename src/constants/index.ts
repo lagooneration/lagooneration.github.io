@@ -24,7 +24,7 @@ export const hightlightsSlides = [
       
     ],
     video: highlightFirstVideo,
-    videoDuration: 4,
+    videoDuration: 5,
   },
   {
     id: 2,
@@ -83,19 +83,23 @@ export const sizes = [
 ];
 
 export const footerLinks = [
-  "Privacy Policy",
-  "Terms of Use",
-  "Sales Policy",
-  "Legal",
-  "Site Map",
+  "Neuroxones",
+  "Citizen Corrects",
+  "WhatsApp",
+  "Contributions",
 ];
+//   { name: "Neuroxones", href: "https://neurophones.netlify.app/" },
+//   { name: "Citizen Corrects", href: "https://www.citizencorrects.com" },
+//   { name: "WhatsApp", href: "https://api.whatsapp.com/send?phone=9478972509" },
+//   { name: "Contributions", href: "https://github.com/lagooneration/lagooneration.github.io/blob/master/README.md#resources" }
+// ];
 
 export const roadmap = [
   {
     id: "0",
     title: "Convolutional time-domain audio separation",
     text: "Single-channel, speaker-independent speech separation methods have recently seen great progress. However, the accuracy, latency, and computational cost of such methods remain insufficient",
-    date: "Demucs",
+    date: "DEMUCS",
     status: "progress",
     imageUrl: roadmap1,
     colorful: true,
@@ -104,23 +108,23 @@ export const roadmap = [
     id: "1",
     title: "Hybrid Spectrogram and Waveform Source Separation",
     text: "Single-channel, speaker-independent speech separation methods have recently seen great progress. However, the accuracy, latency, and computational cost of such methods remain insufficient.",
-    date: "Conv-TasNet",
+    date: "CONV-TasNet",
     status: "done",
     imageUrl: roadmap2,
   },
   {
     id: "2",
-    title: "Training Models by listening music",
-    text: "Allow users to customize the auditory attention behavior, making it more engaging and fun to interact which can be used later for real world applications.",
-    date: "Learning by Music",
+    title: "Concept Actualization",
+    text: "Click on DEMO to experience the real-time auditory attention detection using EEG data.",
+    date: "CONCEPT",
     status: "done",
     imageUrl: roadmap3,
   },
   {
     id: "3",
-    title: "Research & Development",
-    text: "Allow the chatbot to access external data sources, such as weather APIs or news APIs, to provide more relevant recommendations.",
-    date: "R&D",
+    title: "Training models by listening music",
+    text: "Allow users to customize the auditory attention behavior, making it more engaging and fun to interact which can be used later for real world applications.",
+    date: "Research & Development",
     status: "progress",
     imageUrl: roadmap4,
   },

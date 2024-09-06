@@ -69,8 +69,8 @@ const Roadmap = () => (
         <Gradient />
       </div>
 
-      <div className="flex justify-center mt-12 md:mt-15 xl:mt-20">
-        <Knowmore href="/Hero">Our roadmap</Knowmore>
+      <div className="flex justify-center mt-12 md:mt-12 xl:mt-[-120px] ml-8 absolute">
+        <Knowmore href="https://neurophones.netlify.app/">Our roadmap</Knowmore>
       </div>
     </div>
   </Section>

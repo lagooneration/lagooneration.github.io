@@ -35,22 +35,31 @@ const Features = () => {
     <section className="h-full common-padding bg-zinc relative overflow-hidden">
       <div className="screen-max-wdith">
         <div className="mb-12 w-full">
-          <h1 id="features_title" className="section-heading">Research</h1>
+          <h1 id="features_title" className="section-heading">Inspiration</h1>
         </div>
         
         <div className="flex flex-col justify-center items-center overflow-hidden">
           <div className="mt-12 mb-14 flex-center">
             <h2 className="text-5xl lg:text-5xl font-semibold">Neuro-steered Auditory Attention Detection</h2>
+            
           </div>
 
           <div className="flex-center flex-col sm:px-10">
-            <div className="relative h-[50vh] w-full flex items-center">
-              <video playsInline id="exploreVideo" className="w-full h-full object-cover object-center" preload="none" muted autoPlay ref={videoRef}>
+            <div className="relative h-[38vh] w-full flex items-center">
+              {/* <video playsInline id="exploreVideo" className="w-full h-full object-cover object-center" preload="none" muted autoPlay ref={videoRef}>
                 <source src={exploreVideo} type="video/mp4" />
-              </video>
-            </div>
+              </video> */}
+              <div className="flex flex-col h-[390px] w-full rounded-md">
+             <img src={exploreVideo} alt="titanium" className="feature-video g_grow rounded-lg" />
+             <div className="mt-2"></div>
+                <div className="mt-4 flex justify-center items-center w-full">
+                  <p className="text-gray-200">EEG-Based Auditory Attention Detection via Frequency and Channel Neural Attention. <a className="underline text-emerald-400" href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9633231" target="_blank"> *Siqi Cai</a></p>
+                </div>
+             </div>
 
-            <div className="flex flex-col w-full relative">
+            </div>
+            <div className="mt-4"></div>
+            <div className="flex flex-col w-full relative mt-12">
               <div className="feature-video-container">
                 <div className="overflow-hidden flex-1 h-[50vh]">
                   <img src={explore2Img} alt="titanium" className="feature-video g_grow" />
