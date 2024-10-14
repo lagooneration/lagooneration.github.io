@@ -20,7 +20,7 @@ export const BrainMaterial = shaderMaterial(
       vProgress = smoothstep(-1., 1., sin(vUv.x*8. + time * 3.));
       
       vec3 p = position;
-      float maxDist = 0.05;
+      float maxDist = 0.1;
       float dist = length(mouse - p);
       if (dist < maxDist) {
         vec3 dir = normalize(mouse - p);
@@ -59,9 +59,9 @@ function Tube(props: { curve: THREE.CatmullRomCurve3 }) {
     brainMat.current.uniforms.time.value = clock.getElapsedTime();
 
     brainMat.current.uniforms.mouse.value = new THREE.Vector3(
-      -(mouse.x * viewport.width) / 2,
-      (mouse.y * viewport.height) / 2,
-      0,
+      (mouse.x * viewport.width) / 2,
+      -(mouse.y * viewport.height) / 2,
+      -(mouse.y * viewport.height) / 2,
     );
   });
 
@@ -73,8 +73,8 @@ function Tube(props: { curve: THREE.CatmullRomCurve3 }) {
           ref={brainMat}
           side={THREE.DoubleSide}
           transparent={true}
-          depthTest={false}
-          depthWrite={false}
+          depthTest={true}
+          depthWrite={true}
           blending={THREE.AdditiveBlending}
         />
       </mesh>

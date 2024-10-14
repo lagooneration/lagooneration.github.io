@@ -29,10 +29,10 @@ import explore2 from "/assets/videos/midi.gif";
 import chip from "/assets/images/plugin.jpg";
 import frame from "/assets/images/frame.png";
 
-import roadmapIMG1 from "/assets/images/image-1.png";
-import roadmapIMG2 from "/assets/images/image-2.png";
-import roadmapIMG3 from "/assets/images/image-3.png";
-import roadmapIMG4 from "/assets/images/image-4.png";
+import roadmapIMG1 from "/assets/images/demucs.png";
+import roadmapIMG2 from "/assets/images/road1.png";
+import roadmapIMG3 from "/assets/videos/demo.gif";
+import roadmapIMG4 from "/assets/images/musicth.png";
 
 import checkimg from "/assets/images/check-02.svg";
 import gridimg from "/assets/images/grid.png";

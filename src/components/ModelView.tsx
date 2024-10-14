@@ -7,6 +7,7 @@ import Loader from './Loader';
 import Neuroxones from './Neuroxones.tsx';
 import { Suspense } from "react";
 import { Brainmodel } from './brain/Brainmodel.tsx';
+import { DepthOfField } from "@react-three/postprocessing";
 
 const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, size, item }: any) => {
   return (
@@ -21,6 +22,8 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
       <PerspectiveCamera makeDefault position={[0, 0, 5]} />
 
       <Lights />
+
+
       {/* <Brainmodel /> */}
       <OrbitControls 
         makeDefault
@@ -31,7 +34,7 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
         target={new THREE.Vector3(0, 0 ,0)}
         onEnd={() => setRotationState(controlRef.current.getAzimuthalAngle())}
       /> 
-
+        
       <group ref={groupRef} name={`${index === 1} ? 'small' : 'large`} position={[0, -1 ,0]}>
         <Suspense fallback={<Loader />}>
           <Neuroxones
@@ -40,6 +43,7 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
           size={size} 
           rotation={[0, Math.PI/1.9,0]}
           />
+
         </Suspense>
       </group>
     </View>

@@ -9,6 +9,7 @@ import { Canvas } from "@react-three/fiber";
 import { View } from "@react-three/drei";
 import { models, sizes } from "../constants/index.ts";
 import { animateWithGsapTimeline } from "../utils/animations.ts";
+import { DepthOfField } from "@react-three/postprocessing";
 
 const Model = () => {
   const [size, setSize] = useState('small');
@@ -93,7 +94,10 @@ const Model = () => {
               }}
               eventSource={document.getElementById('root')}
             >
+
+              
               <View.Port />
+              
             </Canvas>
           </div>
 

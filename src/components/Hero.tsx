@@ -1,29 +1,29 @@
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { heroVideo, smallHeroVideo } from '../utils/index.ts';
-import { useEffect, useState } from 'react';
+//import { heroVideo, smallHeroVideo } from '../utils/index.ts';
+// import { useEffect } from 'react';
 import { Brain } from '../components/brain/brain.tsx';
-import { Button } from './ui/Button.tsx';
+// import { Button } from './ui/Button.tsx';
 // import Experience from './Experience.tsx';
 
 const Hero = () => {
-  const [videoSrc, setVideoSrc] = useState(window.innerWidth < 760 ? smallHeroVideo : heroVideo)
+  // const [videoSrc, setVideoSrc] = useState(window.innerWidth < 760 ? smallHeroVideo : heroVideo)
 
-  const handleVideoSrcSet = () => {
-    if(window.innerWidth < 760) {
-      setVideoSrc(smallHeroVideo)
-    } else {
-      setVideoSrc(heroVideo)
-    }
-  }
+  // const handleVideoSrcSet = () => {
+  //   if(window.innerWidth < 760) {
+  //     setVideoSrc(smallHeroVideo)
+  //   } else {
+  //     setVideoSrc(heroVideo)
+  //   }
+  // }
 
-  useEffect(() => {
-    window.addEventListener('resize', handleVideoSrcSet);
+  // useEffect(() => {
+  //   window.addEventListener('resize', handleVideoSrcSet);
 
-    return () => {
-      window.removeEventListener('reisze', handleVideoSrcSet)
-    }
-  }, [])
+  //   return () => {
+  //     window.removeEventListener('reisze', handleVideoSrcSet)
+  //   }
+  // }, [])
 
   useGSAP(() => {
     gsap.to('#hero', { opacity: 1, delay: 2 })
@@ -34,27 +34,29 @@ const Hero = () => {
     <>
     
     <section className="w-full nav-height bg-transparent relative">
-      
-      <div className="h-5/6 w-full flex flex-start flex-col mt-[100px]">
-        <p id="hero" className="hero-title z-1">The <br /> Cocktail Party Problem</p>
-        <div className="md:w-10/12 w-10/12">
-          {/* <video className="pointer-events-none" autoPlay muted playsInline={true} key={videoSrc}>
-            <source src={videoSrc} type="video/mp4" />
-          </video> */}
-          <div className="absolute z-4 w-full h-screen">
-            <Brain />
-          </div>
-          
-        </div>
+    <div className="absolute h-[200px] w-full flex flex-center justify-center flex-col mt-[100px] z-12">
+        <p id="hero" className="hero-title text-white absolute">The <br /> Cocktail Party Problem</p>
+        
+     
       </div>
+    <div className="absolute z-0 w-full h-[900px]">
+              <Brain />
+          </div>
       
       <div
         id="cta"
-        className="flex flex-col items-center opacity-0 translate-y-20 z-3"
+        className="flex flex-col gap-2 w-full lg:h-[800px] md:h-[800px] justify-end items-center opacity-0 translate-y-20 mt-[80px] z-3 absolute pd-4"
       >
-        <Button><a href="#highlights" className='btn'>KNOW MORE</a></Button>
-        <p className="font-normal text-xl">Ability to focus on the sound of your interest</p>
+        
+        <p className="font-mono lg:text-xl md:text-lg pl-12 pr-12 flex flex-center justify-center align-center text-center">The ability to focus on a specific sound in a noisy environment is known as selective auditory attention</p>
+
+        <button className="bg-slate-950 text-slate-400 border border-slate-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group">
+  <span className="bg-slate-400 shadow-slate-400 absolute -top-[150%] left-0 inline-flex w-80 h-[5px] rounded-md opacity-50 group-hover:top-[150%] duration-500 shadow-[0_0_10px_10px_rgba(0,0,0,0.3)]"></span>
+  Know More
+</button>
+        
       </div>
+      
     </section>
     </>
   )

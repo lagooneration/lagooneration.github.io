@@ -14,7 +14,7 @@ const Roadmap = () => (
 
       <div className="relative grid gap-6 md:grid-cols-2 md:gap-4 md:pb-[7rem]">
         {roadmap.map((item) => {
-          const status = item.status === "done" ? "6 seconds" : "50 seconds";
+          const status = item.status === "done" ? "done" : "progress";
 
           return (
             <div
@@ -67,9 +67,10 @@ const Roadmap = () => (
         })}
 
         <Gradient />
+        
       </div>
-
-      <div className="flex justify-center mt-12 md:mt-12 xl:mt-[-120px] ml-8 absolute">
+      
+      <div className="flex justify-center mt-12 md:mt-[-110px] xl:mt-[-255px] md:ml-[30px] lg:ml-[400px]  absolute">
         <Knowmore href="https://neurophones.netlify.app/">Our roadmap</Knowmore>
       </div>
     </div>

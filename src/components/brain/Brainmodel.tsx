@@ -46,10 +46,12 @@ import {  useTexture } from '@react-three/drei'
 
 import React, { useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
+import * as THREE from 'three'
+
 
 export function Brainmodel(props : JSX.IntrinsicElements['group']) {
-  const { nodes, materials } = useGLTF('/models/brainlite.glb')
-  const texture = useTexture('/assets/images/3.jpg');
+  const { nodes } = useGLTF('/models/brainlite.glb')
+  // const texture = useTexture('/assets/images/3.jpg');
   return (
     <group {...props} dispose={null}>
       <mesh
@@ -57,15 +59,20 @@ export function Brainmodel(props : JSX.IntrinsicElements['group']) {
         receiveShadow
         geometry={nodes.Brain_Model.geometry}
         material={nodes.Brain_Model.material}
+        
       />
-      <meshToonMaterial 
+      {/* <meshToonMaterial 
           attach="material" 
           map={texture}
-          transparent={false}
-          opacity={1}
+          transparent={true}
+          opacity={0.2}
           // color={materials.BRAIN_PROCEDURAL_TEXTURE.color}
           // side={THREE.DoubleSide}
-        />
+        /> */}
+        <meshNormalMaterial
+         wireframe={true}
+           attach="material"
+          />
     </group>
   )
 }

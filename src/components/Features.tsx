@@ -5,29 +5,27 @@ import { explore1Img, explore2Img, exploreVideo } from '../utils/index.ts';
 import gsap from 'gsap';
 
 const Features = () => {
-  const videoRef = useRef();
-
   useGSAP(() => {
     gsap.to('#exploreVideo', {
       scrollTrigger: {
         trigger: '#exploreVideo',
-        toggleActions: 'play pause reverse restart',
         start: '-10% bottom',
       },
       onComplete: () => {
-        videoRef.current.play();
+        console.log('Image is now visible');
       }
     })
 
-    animateWithGsap('#features_title', { y:0, opacity:1})
+    animateWithGsap('#features_title', { y:0, opacity:1}, { duration: 1 });
     animateWithGsap(
       '.g_grow',
       { scale: 1, opacity: 1, ease: 'power1' },
-      { scrub: 5.5 }
+      { scrub: 5.5, duration: 1 }
     );
     animateWithGsap(
       '.g_text',
-      {y:0, opacity: 1,ease: 'power2.inOut',duration: 1}
+      {y:0, opacity: 1,ease: 'power2.inOut',duration: 1},
+      { duration: 1 }
     )
   }, []);
 
@@ -50,7 +48,7 @@ const Features = () => {
                 <source src={exploreVideo} type="video/mp4" />
               </video> */}
               <div className="flex flex-col h-[390px] w-full rounded-md">
-             <img src={exploreVideo} alt="titanium" className="feature-video g_grow rounded-lg" />
+             <img src={exploreVideo} id="exploreVideo" alt="titanium" className="feature-video g_grow rounded-lg" />
              <div className="mt-2"></div>
                 <div className="mt-4 flex justify-center items-center w-full">
                   <p className="text-gray-200">EEG-Based Auditory Attention Detection via Frequency and Channel Neural Attention. <a className="underline text-emerald-400" href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9633231" target="_blank"> *Siqi Cai</a></p>
